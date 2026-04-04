@@ -10,7 +10,12 @@ else:
     load_dotenv()
 
 class Config:
-    GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
+    # Read comma separated list of keys (fallback to single key if that's what's currently there)
+    _keys_str = os.getenv('GEMINI_API_KEYS', os.getenv('GEMINI_API_KEY', ''))
+    GEMINI_API_KEYS = [k.strip() for k in _keys_str.split(',')] if _keys_str else []
+    
+    DEEPSEEK_API_KEY = os.getenv('DEEPSEEK_API_KEY', '')
+    
     UPLOAD_FOLDER = os.getenv('UPLOAD_FOLDER', 'uploads')
     MAX_FILE_SIZE = int(os.getenv('MAX_FILE_SIZE', 16 * 1024 * 1024))
     ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg'}
@@ -18,6 +23,11 @@ class Config:
     # MongoDB Configuration
     MONGO_URI = os.getenv('MONGO_URI')
     MONGO_DB_NAME = os.getenv('MONGO_DB_NAME', 'ai_examiner')  
+    
+    # Batch processing configuration
+    BATCH_PROCESSING_MAX_WORKERS = int(os.getenv('BATCH_PROCESSING_MAX_WORKERS', '3'))
+    BATCH_PROCESSING_TIMEOUT = int(os.getenv('BATCH_PROCESSING_TIMEOUT', '3600'))  # seconds
+    CONFIG_FILE_NAME = 'config.json'
     
     @staticmethod
     def allowed_file(filename):

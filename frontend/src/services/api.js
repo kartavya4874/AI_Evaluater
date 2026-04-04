@@ -1,10 +1,11 @@
 import axios from 'axios';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
-
+const API_BASE_URL = process.env.NODE_ENV === 'production' 
+  ? (process.env.REACT_APP_API_URL || '/api') 
+  : (process.env.REACT_APP_API_URL || 'http://localhost:5000/api');
 const api = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 120000, // 2 minutes - Gemini vision is much faster than EasyOCR
+  timeout: 0, // No timeout - evaluating up to 36 pages via Gemini Vision can take several minutes
 });
 
 // Teacher APIs
@@ -131,6 +132,86 @@ export const extractTextOnly = async (file) => {
   formData.append('file', file);
   
   const response = await api.post('/ocr-only', formData);
+  return response.data;
+};
+
+export const updateManualEvaluation = async (evaluationId, marksAwarded, feedback) => {
+  const response = await api.put(`/evaluations/${evaluationId}/manual`, {
+    marks_awarded: marksAwarded,
+    feedback: feedback
+  });
+  return response.data;
+};
+
+// ==================== BATCH PROCESSING APIs ====================
+
+/**
+ * Start batch processing. Returns immediately - use subscribeToBatchStream for real-time updates.
+ */
+export const batchProcessCourses = async (rootDirectory, parallel = true, maxWorkers = 3, examType = 'end_sem', maxMarks = null) => {
+  const payload = {
+    root_directory: rootDirectory,
+    parallel,
+    max_workers: maxWorkers,
+    exam_type: examType
+  };
+  if (maxMarks !== null) {
+    payload.max_marks = maxMarks;
+  }
+
+  const response = await api.post('/batch/process-courses', payload, {
+    headers: { 'Content-Type': 'application/json' }
+  });
+  return response.data;
+};
+
+/**
+ * Subscribe to real-time batch processing events via Server-Sent Events.
+ * @param {function} onEvent - Callback(eventData) called for each event
+ * @returns {EventSource} - Call .close() to disconnect
+ */
+export const subscribeToBatchStream = (onEvent) => {
+  const eventSource = new EventSource(`${API_BASE_URL}/batch/stream`);
+  
+  eventSource.onmessage = (event) => {
+    try {
+      const data = JSON.parse(event.data);
+      if (data.type !== 'heartbeat') {
+        onEvent(data);
+      }
+    } catch (err) {
+      console.error('SSE parse error:', err);
+    }
+  };
+
+  eventSource.onerror = (err) => {
+    console.error('SSE connection error:', err);
+    // Don't auto-close - the browser will try to reconnect
+  };
+
+  return eventSource;
+};
+
+/**
+ * Stop the currently running batch processing.
+ */
+export const stopBatchProcessing = async () => {
+  const response = await api.post('/batch/stop');
+  return response.data;
+};
+
+export const getBatchStatus = async () => {
+  const response = await api.get('/batch/status');
+  return response.data;
+};
+
+export const getBatchResults = async () => {
+  const response = await api.get('/batch/results');
+  return response.data;
+};
+
+export const getBatchResultsByCourse = async (courseCode) => {
+  const response = await api.get(`/batch/results/${courseCode}`);
   return response.data;
 };
 

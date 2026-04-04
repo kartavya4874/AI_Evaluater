@@ -12,11 +12,16 @@ from io import BytesIO
 
 logger = logging.getLogger(__name__)
 
-# Set Poppler path only for Windows development
-POPPLER_PATH = None
-if platform.system() == 'Windows':
-    # Local development path
-    POPPLER_PATH = r"C:\Users\Jayesh\poppler\poppler-23.08.0\Library\bin"
+# Set Poppler path for Windows
+POPPLER_PATH = os.getenv('POPPLER_PATH')
+
+if platform.system() == 'Windows' and not POPPLER_PATH:
+    # Fallback to local project path if not in environment
+    local_poppler = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'bin', 'poppler', 'Library', 'bin')
+    if os.path.exists(local_poppler):
+        POPPLER_PATH = local_poppler
+    else:
+        logger.warning("Poppler path not found in environment and local 'bin/poppler' not found.")
 
 class PDFProcessor:
     @staticmethod
@@ -32,8 +37,8 @@ class PDFProcessor:
             raise Exception(f"Error extracting text from PDF: {str(e)}")
     
     @staticmethod
-    def convert_pdf_to_images(pdf_path, max_pages=5):
-        """Convert PDF to images for Gemini vision API (limited to first 5 pages)"""
+    def convert_pdf_to_images(pdf_path, max_pages=36):
+        """Convert PDF to images for Gemini vision API (limited to first 36 pages)"""
         try:
             logger.info(f"Converting PDF to images: {pdf_path}")
             # Very low DPI for speed - Gemini can read low-res images fine
@@ -64,16 +69,21 @@ class PDFProcessor:
                     img_byte_arr.seek(0)
                     img_base64 = base64.standard_b64encode(img_byte_arr.getvalue()).decode()
                     
-                    # Use Gemini vision to extract text
-                    response = gemini_service.model.generate_content([
-                        "Extract all text from this image. Include handwritten and typed text. Return ONLY the extracted text, nothing else.",
+                    # Use Gemini vision to extract text with built-in retry and key rotation logic
+                    prompt = [
+                        "Extract all student handwritten text, but DO NOT extract any red-pen grading marks, circle totals, or overall grades written by teachers. Return ONLY the extracted text, nothing else.",
                         {
                             "mime_type": "image/jpeg",
                             "data": img_base64
                         }
-                    ])
+                    ]
+                    response = gemini_service._generate_with_retry(prompt)
                     
-                    page_text = response.text.strip() if response.text else "[No text detected]"
+                    # Safely extract text (Gemini throws ValueError on empty images if we call .text directly)
+                    try:
+                        page_text = response.text.strip() if getattr(response, 'parts', None) or hasattr(response, 'text') else "[No text detected]"
+                    except ValueError:
+                        page_text = "[No text detected]"
                     extracted_text += f"\n--- Page {idx + 1} ---\n{page_text}\n"
                     
                     # Cleanup

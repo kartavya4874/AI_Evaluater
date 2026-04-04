@@ -7,6 +7,8 @@ import Evaluate from './pages/Evaluate';
 import Results from './pages/Results';
 import Management from './pages/Management';
 import EvaluationHistory from './pages/EvaluationHistory';
+import BatchEvaluate from './pages/BatchEvaluate';
+import BatchResults from './pages/BatchResults';
 import './App.css';
 
 function App() {
@@ -37,6 +39,8 @@ function App() {
           <Route path="/results/:evaluationId" element={<Results />} />
           <Route path="/management" element={<Management setLoading={setAppLoading} />} />
           <Route path="/history" element={<EvaluationHistory setLoading={setAppLoading} />} />
+          <Route path="/batch" element={<BatchEvaluate setLoading={setAppLoading} />} />
+          <Route path="/batch-results" element={<BatchResults setLoading={setAppLoading} />} />
         </Routes>
       </div>
     </Router>

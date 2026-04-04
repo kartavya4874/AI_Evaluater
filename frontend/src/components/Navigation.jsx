@@ -70,6 +70,24 @@ const Navigation = () => {
               History
             </Link>
           </li>
+          <li className="nav-item">
+            <Link 
+              to="/batch" 
+              className={`nav-link nav-link-primary ${isActive('/batch') ? 'active' : ''}`}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Batch Mode
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link 
+              to="/batch-results" 
+              className={`nav-link ${isActive('/batch-results') ? 'active' : ''}`}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Batch Results
+            </Link>
+          </li>
         </ul>
       </div>
     </nav>

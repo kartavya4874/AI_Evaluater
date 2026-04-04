@@ -2,6 +2,7 @@ from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure, OperationFailure
 from config import Config
 import logging
+import certifi
 
 logger = logging.getLogger(__name__)
 
@@ -37,7 +38,8 @@ class DatabaseConnection:
             self._client = MongoClient(
                 Config.MONGO_URI,
                 serverSelectionTimeoutMS=5000,
-                connectTimeoutMS=10000
+                connectTimeoutMS=10000,
+                tlsCAFile=certifi.where()
             )
             
             # Test connection
