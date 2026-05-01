@@ -3,12 +3,49 @@ import axios from 'axios';
 const API_BASE_URL = process.env.NODE_ENV === 'production' 
   ? (process.env.REACT_APP_API_URL || '/api') 
   : (process.env.REACT_APP_API_URL || 'http://localhost:5000/api');
+
 const api = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 0, // No timeout - evaluating up to 36 pages via Gemini Vision can take several minutes
+  timeout: 0,
 });
 
-// Teacher APIs
+// Request interceptor — attach JWT token
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+// Response interceptor — handle 401
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('token');
+      if (window.location.pathname !== '/login') {
+        window.location.href = '/login';
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
+// ==================== AUTH APIs ====================
+
+export const login = async (email, password) => {
+  const response = await api.post('/auth/login', { email, password });
+  return response.data;
+};
+
+export const getMe = async () => {
+  const response = await api.get('/auth/me');
+  return response.data;
+};
+
+// ==================== Teacher APIs ====================
+
 export const createTeacher = async (name, email, subject) => {
   const response = await api.post('/teachers', { name, email, subject }, {
     headers: { 'Content-Type': 'application/json' }
@@ -31,7 +68,8 @@ export const deleteTeacher = async (teacherId) => {
   return response.data;
 };
 
-// Student APIs
+// ==================== Student APIs ====================
+
 export const createStudent = async (name, email, rollNumber, className) => {
   const response = await api.post('/students', { 
     name, 
@@ -64,24 +102,20 @@ export const getStudentStatistics = async (studentId) => {
   return response.data;
 };
 
-// Evaluation APIs
+// ==================== Evaluation APIs ====================
+
 export const uploadModelAnswer = async (file) => {
   const formData = new FormData();
   formData.append('file', file);
-  
   const response = await api.post('/upload-model-answer', formData);
   return response.data;
 };
 
 export const evaluateAnswer = async (formDataOrFile, modelAnswer, maxMarks, question = '', teacherId = null, studentId = null) => {
-  // Handle both FormData object and individual parameters
   let formData;
-  
   if (formDataOrFile instanceof FormData) {
-    // If FormData is passed directly, use it as-is
     formData = formDataOrFile;
   } else {
-    // Otherwise create FormData from individual parameters
     formData = new FormData();
     formData.append('student_file', formDataOrFile);
     formData.append('model_answer', modelAnswer);
@@ -90,7 +124,6 @@ export const evaluateAnswer = async (formDataOrFile, modelAnswer, maxMarks, ques
     if (teacherId) formData.append('teacher_id', teacherId);
     if (studentId) formData.append('student_id', studentId);
   }
-  
   const response = await api.post('/evaluate-answer', formData, {
     headers: { 'Content-Type': 'multipart/form-data' }
   });
@@ -130,7 +163,6 @@ export const deleteEvaluation = async (evaluationId) => {
 export const extractTextOnly = async (file) => {
   const formData = new FormData();
   formData.append('file', file);
-  
   const response = await api.post('/ocr-only', formData);
   return response.data;
 };
@@ -145,9 +177,6 @@ export const updateManualEvaluation = async (evaluationId, marksAwarded, feedbac
 
 // ==================== BATCH PROCESSING APIs ====================
 
-/**
- * Start batch processing. Returns immediately - use subscribeToBatchStream for real-time updates.
- */
 export const batchProcessCourses = async (rootDirectory, parallel = true, maxWorkers = 3, examType = 'end_sem', maxMarks = null) => {
   const payload = {
     root_directory: rootDirectory,
@@ -158,20 +187,16 @@ export const batchProcessCourses = async (rootDirectory, parallel = true, maxWor
   if (maxMarks !== null) {
     payload.max_marks = maxMarks;
   }
-
   const response = await api.post('/batch/process-courses', payload, {
     headers: { 'Content-Type': 'application/json' }
   });
   return response.data;
 };
 
-/**
- * Subscribe to real-time batch processing events via Server-Sent Events.
- * @param {function} onEvent - Callback(eventData) called for each event
- * @returns {EventSource} - Call .close() to disconnect
- */
 export const subscribeToBatchStream = (onEvent) => {
-  const eventSource = new EventSource(`${API_BASE_URL}/batch/stream`);
+  const token = localStorage.getItem('token');
+  const url = `${API_BASE_URL}/batch/stream${token ? `?token=${token}` : ''}`;
+  const eventSource = new EventSource(url);
   
   eventSource.onmessage = (event) => {
     try {
@@ -186,15 +211,11 @@ export const subscribeToBatchStream = (onEvent) => {
 
   eventSource.onerror = (err) => {
     console.error('SSE connection error:', err);
-    // Don't auto-close - the browser will try to reconnect
   };
 
   return eventSource;
 };
 
-/**
- * Stop the currently running batch processing.
- */
 export const stopBatchProcessing = async () => {
   const response = await api.post('/batch/stop');
   return response.data;
@@ -212,6 +233,28 @@ export const getBatchResults = async () => {
 
 export const getBatchResultsByCourse = async (courseCode) => {
   const response = await api.get(`/batch/results/${courseCode}`);
+  return response.data;
+};
+
+// ==================== FOLDER UPLOAD ====================
+
+export const uploadBatchFolder = async (files, onProgress) => {
+  const formData = new FormData();
+  
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    formData.append('files', file);
+    // Send the relative path so backend can reconstruct folder structure
+    formData.append(`path_${file.name}`, file.webkitRelativePath || file.name);
+  }
+  
+  const response = await api.post('/batch/upload-folder', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+    onUploadProgress: onProgress ? (progressEvent) => {
+      const pct = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+      onProgress(pct);
+    } : undefined
+  });
   return response.data;
 };
 
