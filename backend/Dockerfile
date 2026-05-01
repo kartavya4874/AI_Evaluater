@@ -53,4 +53,4 @@ RUN find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true && \
 EXPOSE 7860
 
 # Run the application
-CMD ["gunicorn", "--bind", "0.0.0.0:7860", "--workers", "2", "--timeout", "300", "app:app"]
+CMD ["gunicorn", "--bind", "0.0.0.0:7860", "--workers", "2", "--timeout", "900", "app:app"]
