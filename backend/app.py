@@ -39,7 +39,9 @@ logger = LoggerSetup.setup_app_logger()
 
 # Configuration
 app.config['UPLOAD_FOLDER'] = Config.UPLOAD_FOLDER
-app.config['MAX_CONTENT_LENGTH'] = Config.MAX_FILE_SIZE
+# Removed MAX_CONTENT_LENGTH to prevent Werkzeug from blocking large folder uploads.
+# Hugging Face's reverse proxy will handle upper limit protections anyway.
+# app.config['MAX_CONTENT_LENGTH'] = Config.MAX_FILE_SIZE
 
 # Initialize services
 pdf_processor = PDFProcessor()
