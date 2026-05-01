@@ -52,5 +52,5 @@ RUN find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true && \
 # Expose Hugging Face default port
 EXPOSE 7860
 
-# Run the application
-CMD ["gunicorn", "--bind", "0.0.0.0:7860", "--workers", "2", "--timeout", "900", "app:app"]
+# Run the application with gevent async workers (required for SSE streaming)
+CMD ["gunicorn", "--bind", "0.0.0.0:7860", "--workers", "2", "--worker-class", "gevent", "--timeout", "900", "app:app"]
