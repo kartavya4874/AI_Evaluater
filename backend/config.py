@@ -17,7 +17,7 @@ class Config:
     DEEPSEEK_API_KEY = os.getenv('DEEPSEEK_API_KEY', '')
     
     UPLOAD_FOLDER = os.getenv('UPLOAD_FOLDER', 'uploads')
-    MAX_FILE_SIZE = int(os.getenv('MAX_FILE_SIZE', 16 * 1024 * 1024))
+    MAX_FILE_SIZE = int(os.getenv('MAX_FILE_SIZE', 1024 * 1024 * 1024)) # 1 GB
     ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg'}
     
     # MongoDB Configuration
@@ -28,6 +28,14 @@ class Config:
     BATCH_PROCESSING_MAX_WORKERS = int(os.getenv('BATCH_PROCESSING_MAX_WORKERS', '3'))
     BATCH_PROCESSING_TIMEOUT = int(os.getenv('BATCH_PROCESSING_TIMEOUT', '3600'))  # seconds
     CONFIG_FILE_NAME = 'config.json'
+    
+    # Authentication
+    JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', 'ai-examiner-secret-key-change-in-production')
+    ADMIN_EMAIL = os.getenv('ADMIN_EMAIL', 'admin@aiexaminer.com')
+    ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD', 'admin123')
+    
+    # Batch upload folder (for folder uploads from browser)
+    BATCH_UPLOAD_FOLDER = os.getenv('BATCH_UPLOAD_FOLDER', 'batch_uploads')
     
     @staticmethod
     def allowed_file(filename):

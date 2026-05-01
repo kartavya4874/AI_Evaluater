@@ -13,4 +13,5 @@ if __name__ == '__main__':
     
     # Run the application with waitress instead of Werkzeug
     # threads=16 allows Waitress to handle many concurrent API calls
-    serve(app, host='0.0.0.0', port=5000, threads=16)
+    # max_request_body_size=1073741824 explicitly allows up to 1GB uploads
+    serve(app, host='0.0.0.0', port=5000, threads=16, max_request_body_size=1073741824)

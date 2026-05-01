@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, Response
+from flask import Flask, request, jsonify, Response, g
 from flask_cors import CORS
 from config import Config
 from utils.pdf_processor import PDFProcessor
@@ -14,6 +14,11 @@ import hashlib
 import logging
 import threading
 import queue
+import jwt
+import datetime
+import shutil
+import tempfile
+from functools import wraps
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -54,6 +59,82 @@ def serialize_doc(doc):
         return doc
     return doc
 
+# ==================== AUTH HELPERS ====================
+
+def require_auth(f):
+    """Decorator to require JWT authentication on routes."""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        token = None
+        auth_header = request.headers.get('Authorization', '')
+        if auth_header.startswith('Bearer '):
+            token = auth_header.split(' ', 1)[1]
+        
+        if not token:
+            return jsonify({'error': 'Authentication required'}), 401
+        
+        try:
+            payload = jwt.decode(token, Config.JWT_SECRET_KEY, algorithms=['HS256'])
+            g.user_email = payload.get('email')
+        except jwt.ExpiredSignatureError:
+            return jsonify({'error': 'Token expired'}), 401
+        except jwt.InvalidTokenError:
+            return jsonify({'error': 'Invalid token'}), 401
+        
+        return f(*args, **kwargs)
+    return decorated_function
+
+
+# ==================== AUTH ROUTES ====================
+
+@app.route('/api/auth/login', methods=['POST'])
+def auth_login():
+    """Login with email and password from .env config."""
+    try:
+        data = request.json
+        email = data.get('email', '').strip()
+        password = data.get('password', '')
+        
+        if not email or not password:
+            return jsonify({'error': 'Email and password are required'}), 400
+        
+        if email != Config.ADMIN_EMAIL or password != Config.ADMIN_PASSWORD:
+            return jsonify({'error': 'Invalid credentials'}), 401
+        
+        # Generate JWT token
+        payload = {
+            'email': email,
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=24),
+            'iat': datetime.datetime.utcnow()
+        }
+        token = jwt.encode(payload, Config.JWT_SECRET_KEY, algorithm='HS256')
+        
+        return jsonify({
+            'success': True,
+            'token': token,
+            'user': {
+                'email': email,
+                'name': 'Administrator'
+            }
+        })
+    except Exception as e:
+        logger.error(f"Login error: {str(e)}")
+        return jsonify({'error': 'Login failed'}), 500
+
+
+@app.route('/api/auth/me', methods=['GET'])
+@require_auth
+def auth_me():
+    """Get current authenticated user."""
+    return jsonify({
+        'success': True,
+        'user': {
+            'email': g.user_email,
+            'name': 'Administrator'
+        }
+    })
+
+
 @app.route('/', methods=['GET'])
 def root():
     """Root endpoint - API info"""
@@ -82,6 +163,7 @@ def health_check():
 # ==================== TEACHER ROUTES ====================
 
 @app.route('/api/teachers', methods=['POST'])
+@require_auth
 def create_teacher():
     """Create a new teacher"""
     try:
@@ -108,6 +190,7 @@ def create_teacher():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/teachers/<teacher_id>', methods=['GET'])
+@require_auth
 def get_teacher(teacher_id):
     """Get teacher by ID"""
     try:
@@ -123,6 +206,7 @@ def get_teacher(teacher_id):
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/teachers', methods=['GET'])
+@require_auth
 def get_all_teachers():
     """Get all teachers"""
     try:
@@ -138,6 +222,7 @@ def get_all_teachers():
 # ==================== STUDENT ROUTES ====================
 
 @app.route('/api/students', methods=['POST'])
+@require_auth
 def create_student():
     """Create a new student"""
     try:
@@ -165,6 +250,7 @@ def create_student():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/students/<student_id>', methods=['GET'])
+@require_auth
 def get_student(student_id):
     """Get student by ID"""
     try:
@@ -180,6 +266,7 @@ def get_student(student_id):
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/students', methods=['GET'])
+@require_auth
 def get_all_students():
     """Get all students"""
     try:
@@ -193,6 +280,7 @@ def get_all_students():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/students/<student_id>/statistics', methods=['GET'])
+@require_auth
 def get_student_statistics(student_id):
     """Get statistics for a student"""
     try:
@@ -215,6 +303,7 @@ def get_student_statistics(student_id):
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/teachers/<teacher_id>', methods=['DELETE'])
+@require_auth
 def delete_teacher(teacher_id):
     """Delete a teacher"""
     try:
@@ -225,6 +314,7 @@ def delete_teacher(teacher_id):
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/students/<student_id>', methods=['DELETE'])
+@require_auth
 def delete_student(student_id):
     """Delete a student"""
     try:
@@ -237,6 +327,7 @@ def delete_student(student_id):
 # ==================== EVALUATION ROUTES ====================
 
 @app.route('/api/upload-model-answer', methods=['POST'])
+@require_auth
 def upload_model_answer():
     """Handle model answer upload"""
     try:
@@ -293,6 +384,7 @@ def upload_model_answer():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/evaluate-answer', methods=['POST'])
+@require_auth
 def evaluate_answer():
     """Evaluate student answer against model answer and store in database"""
     try:
@@ -439,6 +531,7 @@ def evaluate_answer():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/evaluations', methods=['GET'])
+@require_auth
 def get_all_evaluations():
     """Get all evaluations"""
     try:
@@ -452,6 +545,7 @@ def get_all_evaluations():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/evaluations/<evaluation_id>', methods=['GET'])
+@require_auth
 def get_evaluation(evaluation_id):
     """Get evaluation by ID"""
     try:
@@ -467,6 +561,7 @@ def get_evaluation(evaluation_id):
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/evaluations/<evaluation_id>/manual', methods=['PUT'])
+@require_auth
 def update_manual_evaluation(evaluation_id):
     """Manually grade an evaluation that needed review"""
     try:
@@ -495,6 +590,7 @@ def update_manual_evaluation(evaluation_id):
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/evaluations/student/<student_id>', methods=['GET'])
+@require_auth
 def get_student_evaluations(student_id):
     """Get all evaluations for a student"""
     try:
@@ -510,6 +606,7 @@ def get_student_evaluations(student_id):
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/evaluations/teacher/<teacher_id>', methods=['GET'])
+@require_auth
 def get_teacher_evaluations(teacher_id):
     """Get all evaluations by a teacher"""
     try:
@@ -525,6 +622,7 @@ def get_teacher_evaluations(teacher_id):
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/evaluations/recent', methods=['GET'])
+@require_auth
 def get_recent_evaluations():
     """Get recent evaluations"""
     try:
@@ -540,6 +638,7 @@ def get_recent_evaluations():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/evaluations/<evaluation_id>', methods=['DELETE'])
+@require_auth
 def delete_evaluation(evaluation_id):
     """Delete an evaluation"""
     try:
@@ -556,6 +655,7 @@ def delete_evaluation(evaluation_id):
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/ocr-only', methods=['POST'])
+@require_auth
 def ocr_only():
     """Extract text from handwritten PDF without evaluation"""
     try:
@@ -743,6 +843,7 @@ def _run_batch_processing(root_directory, parallel, max_workers, max_marks, exam
 
 
 @app.route('/api/batch/process-courses', methods=['POST'])
+@require_auth
 def batch_process_courses():
     """Start batch processing in a background thread."""
     global _batch_processing, _batch_thread, _batch_event_queue
@@ -832,6 +933,7 @@ def batch_stream():
 
 
 @app.route('/api/batch/stop', methods=['POST'])
+@require_auth
 def batch_stop():
     """Stop the currently running batch processing."""
     global _batch_manager
@@ -846,6 +948,7 @@ def batch_stop():
 
 
 @app.route('/api/batch/status', methods=['GET'])
+@require_auth
 def batch_status():
     """Get current batch processing status."""
     global _batch_manager, _batch_processing
@@ -859,6 +962,7 @@ def batch_status():
 
 
 @app.route('/api/batch/results', methods=['GET'])
+@require_auth
 def batch_results():
     """Get all batch evaluation results."""
     try:
@@ -882,6 +986,7 @@ def batch_results():
 
 
 @app.route('/api/batch/results/<course_code>', methods=['GET'])
+@require_auth
 def batch_results_by_course(course_code):
     """Get batch results for a specific course."""
     try:
@@ -897,6 +1002,62 @@ def batch_results_by_course(course_code):
         })
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+# ==================== FOLDER UPLOAD ROUTE ====================
+
+@app.route('/api/batch/upload-folder', methods=['POST'])
+@require_auth
+def batch_upload_folder():
+    """Accept folder upload from browser and reconstruct directory structure."""
+    try:
+        if 'files' not in request.files:
+            return jsonify({'error': 'No files provided'}), 400
+        
+        files = request.files.getlist('files')
+        if not files:
+            return jsonify({'error': 'No files selected'}), 400
+        
+        # Create a unique temp directory for this upload
+        upload_base = os.path.join(os.path.dirname(__file__), Config.BATCH_UPLOAD_FOLDER)
+        os.makedirs(upload_base, exist_ok=True)
+        upload_dir = tempfile.mkdtemp(dir=upload_base, prefix='batch_')
+        
+        saved_count = 0
+        for file in files:
+            # Get the relative path from the browser (webkitRelativePath)
+            relative_path = request.form.get(f'path_{file.filename}', file.filename)
+            
+            # Security: strip leading slashes and normalize
+            relative_path = relative_path.lstrip('/').lstrip('\\\\')
+            
+            # Remove the top-level folder name from the path so we get
+            # course_code/files directly
+            parts = relative_path.replace('\\\\', '/').split('/')
+            if len(parts) > 1:
+                # Skip the root folder name that webkitdirectory includes
+                relative_path = '/'.join(parts[1:])
+            else:
+                relative_path = parts[0]
+            
+            # Create subdirectories as needed
+            full_path = os.path.join(upload_dir, relative_path)
+            os.makedirs(os.path.dirname(full_path), exist_ok=True)
+            
+            file.save(full_path)
+            saved_count += 1
+        
+        logger.info(f"Folder upload: saved {saved_count} files to {upload_dir}")
+        
+        return jsonify({
+            'success': True,
+            'upload_dir': upload_dir,
+            'file_count': saved_count
+        })
+        
+    except Exception as e:
+        logger.error(f"Folder upload error: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
 
 if __name__ == '__main__':
     # Validate required environment variables
@@ -921,4 +1082,3 @@ if __name__ == '__main__':
     finally:
         # Close database connection on shutdown
         db_connection.close()
-
