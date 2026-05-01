@@ -30,3 +30,9 @@ yarn-error.log
 *~
 .tmp
 .temp
+
+# Backend runtime data
+backend/cache/
+backend/logs/
+backend/uploads/
+backend/batch_uploads/

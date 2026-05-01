@@ -53,28 +53,31 @@ class CourseProcessor:
                     "Please set max_marks in the UI or add a config.json file."
                 )
 
-        # Scan subdirectories
-        for item in sorted(os.listdir(self.root_directory)):
-            item_path = os.path.join(self.root_directory, item)
+        # Scan subdirectories recursively to find course folders regardless of nesting level
+        for root, dirs, files in os.walk(self.root_directory):
+            for item in dirs:
+                if item.startswith('.'):
+                    continue
 
-            # Skip files (config.json, etc.) and hidden directories
-            if not os.path.isdir(item_path) or item.startswith('.'):
-                continue
+                # Check if folder name matches course code pattern
+                if not COURSE_CODE_PATTERN.match(item):
+                    continue
+                
+                course_code = item
+                
+                # If we already processed this course code (e.g. nested MB3103/MB3103), skip
+                if course_code in self.courses:
+                    continue
 
-            # Check if folder name matches course code pattern
-            if not COURSE_CODE_PATTERN.match(item):
-                logger.warning(f"Skipping non-course directory: {item}")
-                continue
+                item_path = os.path.join(root, item)
+                course_info = self._process_course_folder(course_code, item_path)
 
-            course_code = item
-            course_info = self._process_course_folder(course_code, item_path)
-
-            if course_info:
-                self.courses[course_code] = course_info
-                logger.info(
-                    f"Discovered course {course_code}: "
-                    f"{len(course_info['student_sheets'])} student sheets"
-                )
+                if course_info:
+                    self.courses[course_code] = course_info
+                    logger.info(
+                        f"Discovered course {course_code}: "
+                        f"{len(course_info['student_sheets'])} student sheets"
+                    )
 
         if not self.courses:
             raise ValueError(f"No valid course folders found in {self.root_directory}")

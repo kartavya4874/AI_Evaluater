@@ -1024,22 +1024,33 @@ def batch_upload_folder():
         os.makedirs(upload_base, exist_ok=True)
         upload_dir = tempfile.mkdtemp(dir=upload_base, prefix='batch_')
         
+        # Collect ALL path_* fields from the form for debugging
+        path_fields = {k: v for k, v in request.form.items() if k.startswith('path_')}
+        logger.info(f"Folder upload: received {len(files)} files, {len(path_fields)} path fields")
+        if path_fields:
+            sample_paths = list(path_fields.values())[:3]
+            logger.info(f"Sample paths from browser: {sample_paths}")
+        
         saved_count = 0
         for file in files:
-            # Get the relative path from the browser (webkitRelativePath)
-            relative_path = request.form.get(f'path_{file.filename}', file.filename)
+            # Try multiple strategies to find the relative path
+            # Strategy 1: path_{filename} (original approach)
+            relative_path = request.form.get(f'path_{file.filename}')
+            
+            # Strategy 2: If not found, try with just the basename
+            if not relative_path:
+                basename = os.path.basename(file.filename)
+                relative_path = request.form.get(f'path_{basename}')
+            
+            # Strategy 3: Use the file.filename directly (Flask sometimes preserves full path)
+            if not relative_path:
+                relative_path = file.filename
+            
+            logger.info(f"  File: {file.filename} -> relative_path: {relative_path}")
             
             # Security: strip leading slashes and normalize
-            relative_path = relative_path.lstrip('/').lstrip('\\\\')
-            
-            # Remove the top-level folder name from the path so we get
-            # course_code/files directly
-            parts = relative_path.replace('\\\\', '/').split('/')
-            if len(parts) > 1:
-                # Skip the root folder name that webkitdirectory includes
-                relative_path = '/'.join(parts[1:])
-            else:
-                relative_path = parts[0]
+            relative_path = relative_path.lstrip('/').lstrip('\\')
+            relative_path = relative_path.replace('\\', '/')
             
             # Create subdirectories as needed
             full_path = os.path.join(upload_dir, relative_path)
@@ -1047,6 +1058,15 @@ def batch_upload_folder():
             
             file.save(full_path)
             saved_count += 1
+        
+        # Log the resulting directory structure for debugging
+        for root, dirs, dir_files in os.walk(upload_dir):
+            level = root.replace(upload_dir, '').count(os.sep)
+            indent = ' ' * 2 * level
+            logger.info(f"{indent}{os.path.basename(root)}/")
+            sub_indent = ' ' * 2 * (level + 1)
+            for f in dir_files:
+                logger.info(f"{sub_indent}{f}")
         
         logger.info(f"Folder upload: saved {saved_count} files to {upload_dir}")
         
