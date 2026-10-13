@@ -5,8 +5,8 @@ from utils.config_loader import ConfigLoader
 
 logger = logging.getLogger(__name__)
 
-# Pattern to match course codes like MB3103, CH3501, PH2401, FS3401
-COURSE_CODE_PATTERN = re.compile(r'^[A-Z]{2,}\d{3,}$')
+# Keep suffixes in the batch identifier so FS3401 and FS3401_MSE stay distinct.
+COURSE_CODE_PATTERN = re.compile(r'^[A-Z]{2,}\d{3,}(?:[_ -][A-Z0-9]+)*$', re.IGNORECASE)
 
 
 class CourseProcessor:
@@ -104,18 +104,25 @@ class CourseProcessor:
         model_answer_pattern = re.compile(
             r'^([a-z]{2,}\d{3,}_?)?(model[_\s]?answer|answer[_\s]?key)$'
         )
+        question_paper_pattern = re.compile(
+            r'^([a-z]{2,}\d{3,}_?)?question[_\s]?paper$'
+        )
 
         for filename in sorted(os.listdir(folder_path)):
             if not filename.lower().endswith('.pdf'):
                 continue
 
             file_path = os.path.join(folder_path, filename)
+            if not os.path.isfile(file_path):
+                continue
             base_name = os.path.splitext(filename)[0].lower()
 
             # Identify model answer (flexible naming)
             if model_answer_pattern.match(base_name):
                 model_answer_path = file_path
                 logger.info(f"  [{course_code}] Model answer: {filename}")
+            elif question_paper_pattern.match(base_name):
+                logger.info(f"  [{course_code}] Skipping question paper: {filename}")
             else:
                 # Everything else is a student sheet — filename is roll number
                 roll_number = os.path.splitext(filename)[0]

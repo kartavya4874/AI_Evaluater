@@ -12,6 +12,9 @@ logger = logging.getLogger(__name__)
 VLLM_BASE_URL = os.getenv("VLLM_BASE_URL", "http://localhost:8000/v1")
 VLLM_MODEL = os.getenv("VLLM_MODEL", "google/gemma-4-31B-it")
 VLLM_API_KEY = os.getenv("VLLM_API_KEY", "EMPTY")
+VLLM_TIMEOUT_SECONDS = int(os.getenv("VLLM_TIMEOUT_SECONDS", "600"))
+if VLLM_TIMEOUT_SECONDS <= 0:
+    raise ValueError("VLLM_TIMEOUT_SECONDS must be a positive integer")
 
 
 # ==================== PROMPT TEMPLATES ====================
@@ -131,9 +134,9 @@ class _DummyResponse:
 
 
 def _call_vllm(messages: list, *, max_tokens: int = 1500, temperature: float = 0.0,
-               require_json: bool = False, timeout: int = 300) -> _DummyResponse:
+               require_json: bool = False, timeout: int = VLLM_TIMEOUT_SECONDS) -> _DummyResponse:
     """
-    Call the local vLLM OpenAI-compatible chat completions endpoint with timeout=300s.
+    Call the vLLM OpenAI-compatible endpoint with a configurable response timeout.
     """
     url = f"{VLLM_BASE_URL}/chat/completions"
     payload = {
@@ -201,7 +204,7 @@ class GeminiService:
             messages.append({"role": "user", "content": str(prompt)})
 
         try:
-            return _call_vllm(messages, max_tokens=1500, temperature=0.0, require_json=require_json, timeout=300)
+            return _call_vllm(messages, max_tokens=1500, temperature=0.0, require_json=require_json)
         except Exception as e:
             logger.warning(f"vLLM call failed (attempting retry): {str(e)}")
             raise e
