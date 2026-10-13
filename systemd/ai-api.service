@@ -1,0 +1,19 @@
+\"\"\"[Unit]
+Description=AI Examiner Python Backend API
+After=network.target
+
+[Service]
+User=your_server_user # <<< CHANGE THIS to your actual system user (e.g., gthdgx)
+Group=www-data      # Or the group of your server user
+WorkingDirectory=/home/gthdgx/project/ai-examer/AI_Evaluater
+Environment="FLASK_APP=backend/app.py" # Pointing to the main entry point
+Environment="PYTHONUNBUFFERED=1"
+
+# Use Gunicorn with gevent for optimal async handling (as done before)
+ExecStart=/home/gthdgx/.venv/bin/gunicorn --workers 4 --worker-class gevent --bind unix:/tmp/ai_examiner.sock backend.app:app
+
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target\"\"

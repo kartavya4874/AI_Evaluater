@@ -1,0 +1,23 @@
+2026-10-07 15:57:33 [INFO] root - Logger initialized. Persistent audit logs are enabled.
+2026-10-07 15:57:33 [INFO] utils.gemini_service - GeminiService initialised → vLLM endpoint: http://localhost:8000/v1  model: google/gemma-4-31B-it
+2026-10-07 15:57:34 [INFO] root - Logger initialized. Persistent audit logs are enabled.
+2026-10-07 15:57:34 [INFO] utils.gemini_service - GeminiService initialised → vLLM endpoint: http://localhost:8000/v1  model: google/gemma-4-31B-it
+2026-10-09 11:02:53 [INFO] root - Folder upload: received 7 files, 7 path fields
+2026-10-09 11:02:53 [INFO] root - Sample paths from browser: ['FS3401/FS3401_2201304001.pdf', 'FS3401/FS3401_2201304002.pdf', 'FS3401/FS3401_2201304003.pdf']
+2026-10-09 11:02:53 [INFO] root -   File: FS3401/FS3401_2201304001.pdf -> relative_path: FS3401/FS3401_2201304001.pdf
+2026-10-09 11:02:53 [INFO] root -   File: FS3401/FS3401_2201304002.pdf -> relative_path: FS3401/FS3401_2201304002.pdf
+2026-10-09 11:02:53 [INFO] root -   File: FS3401/FS3401_2201304003.pdf -> relative_path: FS3401/FS3401_2201304003.pdf
+2026-10-09 11:02:53 [INFO] root -   File: FS3401/FS3401_2201304004.pdf -> relative_path: FS3401/FS3401_2201304004.pdf
+2026-10-09 11:02:53 [INFO] root -   File: FS3401/FS3401_2201304005.pdf -> relative_path: FS3401/FS3401_2201304005.pdf
+2026-10-09 11:02:53 [INFO] root -   File: FS3401/FS3401_2201304006.pdf -> relative_path: FS3401/FS3401_2201304006.pdf
+2026-10-09 11:02:53 [INFO] root -   File: FS3401/FS3401_Model_Answer.pdf -> relative_path: FS3401/FS3401_Model_Answer.pdf
+2026-10-09 11:02:53 [INFO] root - batch_q4ve3vhc/
+2026-10-09 11:02:53 [INFO] root -   FS3401/
+2026-10-09 11:02:53 [INFO] root -     FS3401_2201304006.pdf
+2026-10-09 11:02:53 [INFO] root -     FS3401_2201304002.pdf
+2026-10-09 11:02:53 [INFO] root -     FS3401_2201304001.pdf
+2026-10-09 11:02:53 [INFO] root -     FS3401_2201304003.pdf
+2026-10-09 11:02:53 [INFO] root -     FS3401_2201304005.pdf
+2026-10-09 11:02:53 [INFO] root -     FS3401_Model_Answer.pdf
+2026-10-09 11:02:53 [INFO] root -     FS3401_2201304004.pdf
+2026-10-09 11:02:53 [INFO] root - Folder upload: saved 7 files to /home/gthdgx/project/ai-examer/AI_Evaluater/backend/batch_uploads/batch_q4ve3vhc

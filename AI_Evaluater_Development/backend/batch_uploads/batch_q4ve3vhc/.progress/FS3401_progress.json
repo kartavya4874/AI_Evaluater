@@ -1,0 +1,50 @@
+{
+  "course_code": "FS3401",
+  "completed": [
+    "FS3401_2201304002",
+    "FS3401_2201304001",
+    "FS3401_2201304005",
+    "FS3401_2201304006",
+    "FS3401_2201304003",
+    "FS3401_2201304004"
+  ],
+  "total_completed": 6,
+  "last_results": [
+    {
+      "roll_number": "FS3401_2201304001",
+      "marks_awarded": 0,
+      "grade": "N/A",
+      "status": "completed"
+    },
+    {
+      "roll_number": "FS3401_2201304002",
+      "marks_awarded": 0,
+      "grade": "N/A",
+      "status": "completed"
+    },
+    {
+      "roll_number": "FS3401_2201304003",
+      "marks_awarded": 0,
+      "grade": "N/A",
+      "status": "completed"
+    },
+    {
+      "roll_number": "FS3401_2201304004",
+      "marks_awarded": 0,
+      "grade": "N/A",
+      "status": "completed"
+    },
+    {
+      "roll_number": "FS3401_2201304005",
+      "marks_awarded": 0,
+      "grade": "N/A",
+      "status": "completed"
+    },
+    {
+      "roll_number": "FS3401_2201304006",
+      "marks_awarded": 0,
+      "grade": "N/A",
+      "status": "completed"
+    }
+  ]
+}

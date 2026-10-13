@@ -1,0 +1,9 @@
+{
+  "marks_awarded": 0,
+  "percentage": 0,
+  "strengths": [],
+  "missing_points": [],
+  "feedback": "Error during evaluation: vLLM failed after 5 attempts. Last error: HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=300)",
+  "grade": "N/A",
+  "needs_review": true
+}

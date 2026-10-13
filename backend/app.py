@@ -28,6 +28,7 @@ app = Flask(__name__)
 # Configure CORS for both development and production
 cors_origins = [
     'http://localhost:3000',  # Local development
+    'http://localhost:3001',  # Local development when port 3000 is occupied
     'http://localhost:5000',
     os.getenv('FRONTEND_URL', 'http://localhost:3000')  # Production Vercel URL
 ]
@@ -1082,13 +1083,8 @@ def batch_upload_folder():
 
 
 if __name__ == '__main__':
-    # Validate required environment variables
-    required_vars = ['GEMINI_API_KEY', 'MONGO_URI']
-    missing_vars = [var for var in required_vars if not os.getenv(var)]
-    
-    if missing_vars:
-        logger.error(f"Missing required environment variables: {', '.join(missing_vars)}")
-        raise RuntimeError(f"Missing environment variables: {', '.join(missing_vars)}")
+    # Validate required environment variables (optional checks if needed)
+    # Using local vLLM and local/mock MongoDB, so no hard requirements here.
     
     # Create uploads folder if it doesn't exist
     if not os.path.exists(Config.UPLOAD_FOLDER):

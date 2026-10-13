@@ -1,0 +1,41 @@
+
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ai-examiner-backend
+    ports:
+      - "127.0.0.1:7860:7860"
+    environment:
+      MONGO_URI: mongodb://ai-evaluater-mongodb:27017/
+      DATABASE_NAME: ai_examiner
+      VLLM_BASE_URL: http://host.docker.internal:18000/v1
+      VLLM_MODEL: google/gemma-4-31B-it
+      VLLM_API_KEY: EMPTY
+    volumes:
+      - ./backend/uploads:/app/uploads
+    networks:
+      - ai-examiner-network
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: ai-examiner-frontend
+    ports:
+      -  "127.0.0.1:8080:80"
+    depends_on:
+      - backend
+    networks:
+      - ai-examiner-network
+    restart: unless-stopped
+
+volumes:
+  mongodb_data:
+
+networks:
+  ai-examiner-network:
+    driver: bridge
