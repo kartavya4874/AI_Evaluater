@@ -108,7 +108,7 @@ class MultiuserTests(unittest.TestCase):
             return self.client.post('/api/access/import', headers={'Role': 'admin'}, data={'file': (content, 'courses.xlsx')})
         self.assertEqual(upload([['FS3401', 'Physics']]).status_code, 200)
         self.assertEqual(self.db.courses.find_one({'_id': 'FS3401'})['uploaders'], ['faculty@example.com'])
-        self.assertEqual(upload([['ZZ1234', 'Valid'], ['bad', 'Invalid']]).status_code, 400)
+        self.assertEqual(upload([['ZZ1234', 'Valid'], ['bad/code', 'Invalid']]).status_code, 400)
         self.assertIsNone(self.db.courses.find_one({'_id': 'ZZ1234'}))
 
     def test_unknown_faculty_cannot_be_assigned(self):

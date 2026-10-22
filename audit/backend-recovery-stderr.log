@@ -1,0 +1,1701 @@
+2026-10-22 19:45:54 [INFO] root - Logger initialized. Persistent audit logs are enabled.
+2026-10-22 19:45:54 [INFO] utils.gemini_service - GeminiService initialised → vLLM endpoint: https://dgx.geetauniversity.edu.in/v1 | model: google/gemma-4-31B-it
+2026-10-22 19:45:54 [INFO] root - Testing database connection...
+2026-10-22 19:45:54 [INFO] utils.db_connection - Attempting to connect to MongoDB...
+2026-10-22 19:45:54 [INFO] utils.db_connection - Connecting to configured MongoDB
+2026-10-22 19:46:01 [WARNING] root - Database unavailable at startup; the worker will reconnect automatically
+2026-10-22 19:46:01 [INFO] utils.db_connection - Attempting to connect to MongoDB...
+2026-10-22 19:46:01 [INFO] utils.db_connection - Connecting to configured MongoDB
+2026-10-22 19:46:01 [INFO] worker - Evaluation worker started automatically
+2026-10-22 19:46:01 [INFO] werkzeug - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.15:5000
+2026-10-22 19:46:01 [INFO] werkzeug - [33mPress CTRL+C to quit[0m
+2026-10-22 19:46:07 [ERROR] worker - Worker interrupted; automatically recovering in 5 seconds
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 108, in _resolve_uri
+    results = _resolve(
+        "_" + self.__srv + "._tcp." + self.__fqdn, "SRV", lifetime=self.__connect_timeout
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 53, in _resolve
+    return resolver.resolve(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1572, in resolve
+    return get_default_resolver().resolve(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        qname,
+        ^^^^^^
+    ...<7 lines>...
+        search,
+        ^^^^^^^
+    )
+    ^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1328, in resolve
+    timeout = self._compute_timeout(start, lifetime, resolution.errors)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1084, in _compute_timeout
+    raise LifetimeTimeout(timeout=duration, errors=errors)
+dns.resolver.LifetimeTimeout: The resolution lifetime expired after 5.409 seconds: Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 46, in connect
+    self._client = MongoClient(mongo_uri, **client_kwargs)
+                   ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 908, in __init__
+    self._get_topology()  # type: ignore[unused-coroutine]
+    ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 1776, in _get_topology
+    self._resolve_srv()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 927, in _resolve_srv
+    res = uri_parser._parse_srv(
+        entity,
+    ...<6 lines>...
+        srv_max_hosts=srv_max_hosts,
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\uri_parser.py", line 168, in _parse_srv
+    nodes = dns_resolver.get_hosts()
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 148, in get_hosts
+    _, nodes = self._get_srv_response_and_hosts(True)
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 122, in _get_srv_response_and_hosts
+    results = self._resolve_uri(encapsulate_errors)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 116, in _resolve_uri
+    raise ConfigurationError(str(exc)) from exc
+pymongo.errors.ConfigurationError: The resolution lifetime expired after 5.409 seconds: Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 122, in supervise
+    run(stopped)
+    ~~~^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 19, in run
+    db = db_connection.get_db()
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 78, in get_db
+    return self.connect()
+           ~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 61, in connect
+    raise RuntimeError('MongoDB is unavailable; refusing to use nonpersistent storage') from e
+RuntimeError: MongoDB is unavailable; refusing to use nonpersistent storage
+2026-10-22 19:46:12 [INFO] utils.db_connection - Attempting to connect to MongoDB...
+2026-10-22 19:46:12 [INFO] utils.db_connection - Connecting to configured MongoDB
+2026-10-22 19:46:19 [ERROR] worker - Worker interrupted; automatically recovering in 5 seconds
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 108, in _resolve_uri
+    results = _resolve(
+        "_" + self.__srv + "._tcp." + self.__fqdn, "SRV", lifetime=self.__connect_timeout
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 53, in _resolve
+    return resolver.resolve(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1572, in resolve
+    return get_default_resolver().resolve(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        qname,
+        ^^^^^^
+    ...<7 lines>...
+        search,
+        ^^^^^^^
+    )
+    ^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1328, in resolve
+    timeout = self._compute_timeout(start, lifetime, resolution.errors)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1084, in _compute_timeout
+    raise LifetimeTimeout(timeout=duration, errors=errors)
+dns.resolver.LifetimeTimeout: The resolution lifetime expired after 5.402 seconds: Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 46, in connect
+    self._client = MongoClient(mongo_uri, **client_kwargs)
+                   ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 908, in __init__
+    self._get_topology()  # type: ignore[unused-coroutine]
+    ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 1776, in _get_topology
+    self._resolve_srv()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 927, in _resolve_srv
+    res = uri_parser._parse_srv(
+        entity,
+    ...<6 lines>...
+        srv_max_hosts=srv_max_hosts,
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\uri_parser.py", line 168, in _parse_srv
+    nodes = dns_resolver.get_hosts()
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 148, in get_hosts
+    _, nodes = self._get_srv_response_and_hosts(True)
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 122, in _get_srv_response_and_hosts
+    results = self._resolve_uri(encapsulate_errors)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 116, in _resolve_uri
+    raise ConfigurationError(str(exc)) from exc
+pymongo.errors.ConfigurationError: The resolution lifetime expired after 5.402 seconds: Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 122, in supervise
+    run(stopped)
+    ~~~^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 19, in run
+    db = db_connection.get_db()
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 78, in get_db
+    return self.connect()
+           ~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 61, in connect
+    raise RuntimeError('MongoDB is unavailable; refusing to use nonpersistent storage') from e
+RuntimeError: MongoDB is unavailable; refusing to use nonpersistent storage
+2026-10-22 19:46:23 [INFO] utils.db_connection - Attempting to connect to MongoDB...
+2026-10-22 19:46:23 [INFO] utils.db_connection - Connecting to configured MongoDB
+2026-10-22 19:46:24 [INFO] utils.db_connection - Attempting to connect to MongoDB...
+2026-10-22 19:46:24 [INFO] utils.db_connection - Connecting to configured MongoDB
+2026-10-22 19:46:30 [INFO] werkzeug - 127.0.0.1 - - [22/Oct/2026 19:46:30] "[35m[1mGET /api/ready HTTP/1.1[0m" 503 -
+2026-10-22 19:46:30 [ERROR] worker - Worker interrupted; automatically recovering in 5 seconds
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 108, in _resolve_uri
+    results = _resolve(
+        "_" + self.__srv + "._tcp." + self.__fqdn, "SRV", lifetime=self.__connect_timeout
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 53, in _resolve
+    return resolver.resolve(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1572, in resolve
+    return get_default_resolver().resolve(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        qname,
+        ^^^^^^
+    ...<7 lines>...
+        search,
+        ^^^^^^^
+    )
+    ^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1328, in resolve
+    timeout = self._compute_timeout(start, lifetime, resolution.errors)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1084, in _compute_timeout
+    raise LifetimeTimeout(timeout=duration, errors=errors)
+dns.resolver.LifetimeTimeout: The resolution lifetime expired after 5.410 seconds: Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 46, in connect
+    self._client = MongoClient(mongo_uri, **client_kwargs)
+                   ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 908, in __init__
+    self._get_topology()  # type: ignore[unused-coroutine]
+    ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 1776, in _get_topology
+    self._resolve_srv()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 927, in _resolve_srv
+    res = uri_parser._parse_srv(
+        entity,
+    ...<6 lines>...
+        srv_max_hosts=srv_max_hosts,
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\uri_parser.py", line 168, in _parse_srv
+    nodes = dns_resolver.get_hosts()
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 148, in get_hosts
+    _, nodes = self._get_srv_response_and_hosts(True)
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 122, in _get_srv_response_and_hosts
+    results = self._resolve_uri(encapsulate_errors)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 116, in _resolve_uri
+    raise ConfigurationError(str(exc)) from exc
+pymongo.errors.ConfigurationError: The resolution lifetime expired after 5.410 seconds: Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 122, in supervise
+    run(stopped)
+    ~~~^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 19, in run
+    db = db_connection.get_db()
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 78, in get_db
+    return self.connect()
+           ~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 61, in connect
+    raise RuntimeError('MongoDB is unavailable; refusing to use nonpersistent storage') from e
+RuntimeError: MongoDB is unavailable; refusing to use nonpersistent storage
+2026-10-22 19:46:35 [INFO] utils.db_connection - Attempting to connect to MongoDB...
+2026-10-22 19:46:35 [INFO] utils.db_connection - Connecting to configured MongoDB
+2026-10-22 19:46:41 [ERROR] worker - Worker interrupted; automatically recovering in 5 seconds
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 108, in _resolve_uri
+    results = _resolve(
+        "_" + self.__srv + "._tcp." + self.__fqdn, "SRV", lifetime=self.__connect_timeout
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 53, in _resolve
+    return resolver.resolve(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1572, in resolve
+    return get_default_resolver().resolve(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        qname,
+        ^^^^^^
+    ...<7 lines>...
+        search,
+        ^^^^^^^
+    )
+    ^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1328, in resolve
+    timeout = self._compute_timeout(start, lifetime, resolution.errors)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1084, in _compute_timeout
+    raise LifetimeTimeout(timeout=duration, errors=errors)
+dns.resolver.LifetimeTimeout: The resolution lifetime expired after 5.406 seconds: Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 46, in connect
+    self._client = MongoClient(mongo_uri, **client_kwargs)
+                   ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 908, in __init__
+    self._get_topology()  # type: ignore[unused-coroutine]
+    ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 1776, in _get_topology
+    self._resolve_srv()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 927, in _resolve_srv
+    res = uri_parser._parse_srv(
+        entity,
+    ...<6 lines>...
+        srv_max_hosts=srv_max_hosts,
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\uri_parser.py", line 168, in _parse_srv
+    nodes = dns_resolver.get_hosts()
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 148, in get_hosts
+    _, nodes = self._get_srv_response_and_hosts(True)
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 122, in _get_srv_response_and_hosts
+    results = self._resolve_uri(encapsulate_errors)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 116, in _resolve_uri
+    raise ConfigurationError(str(exc)) from exc
+pymongo.errors.ConfigurationError: The resolution lifetime expired after 5.406 seconds: Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 122, in supervise
+    run(stopped)
+    ~~~^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 19, in run
+    db = db_connection.get_db()
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 78, in get_db
+    return self.connect()
+           ~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 61, in connect
+    raise RuntimeError('MongoDB is unavailable; refusing to use nonpersistent storage') from e
+RuntimeError: MongoDB is unavailable; refusing to use nonpersistent storage
+2026-10-22 19:46:46 [INFO] utils.db_connection - Attempting to connect to MongoDB...
+2026-10-22 19:46:46 [INFO] utils.db_connection - Connecting to configured MongoDB
+2026-10-22 19:46:54 [ERROR] worker - Worker interrupted; automatically recovering in 5 seconds
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 108, in _resolve_uri
+    results = _resolve(
+        "_" + self.__srv + "._tcp." + self.__fqdn, "SRV", lifetime=self.__connect_timeout
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 53, in _resolve
+    return resolver.resolve(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1572, in resolve
+    return get_default_resolver().resolve(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        qname,
+        ^^^^^^
+    ...<7 lines>...
+        search,
+        ^^^^^^^
+    )
+    ^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1328, in resolve
+    timeout = self._compute_timeout(start, lifetime, resolution.errors)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1084, in _compute_timeout
+    raise LifetimeTimeout(timeout=duration, errors=errors)
+dns.resolver.LifetimeTimeout: The resolution lifetime expired after 5.405 seconds: Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 46, in connect
+    self._client = MongoClient(mongo_uri, **client_kwargs)
+                   ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 908, in __init__
+    self._get_topology()  # type: ignore[unused-coroutine]
+    ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 1776, in _get_topology
+    self._resolve_srv()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 927, in _resolve_srv
+    res = uri_parser._parse_srv(
+        entity,
+    ...<6 lines>...
+        srv_max_hosts=srv_max_hosts,
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\uri_parser.py", line 168, in _parse_srv
+    nodes = dns_resolver.get_hosts()
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 148, in get_hosts
+    _, nodes = self._get_srv_response_and_hosts(True)
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 122, in _get_srv_response_and_hosts
+    results = self._resolve_uri(encapsulate_errors)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 116, in _resolve_uri
+    raise ConfigurationError(str(exc)) from exc
+pymongo.errors.ConfigurationError: The resolution lifetime expired after 5.405 seconds: Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 122, in supervise
+    run(stopped)
+    ~~~^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 19, in run
+    db = db_connection.get_db()
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 78, in get_db
+    return self.connect()
+           ~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 61, in connect
+    raise RuntimeError('MongoDB is unavailable; refusing to use nonpersistent storage') from e
+RuntimeError: MongoDB is unavailable; refusing to use nonpersistent storage
+2026-10-22 19:46:59 [INFO] utils.db_connection - Attempting to connect to MongoDB...
+2026-10-22 19:46:59 [INFO] utils.db_connection - Connecting to configured MongoDB
+2026-10-22 19:47:06 [ERROR] worker - Worker interrupted; automatically recovering in 5 seconds
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 108, in _resolve_uri
+    results = _resolve(
+        "_" + self.__srv + "._tcp." + self.__fqdn, "SRV", lifetime=self.__connect_timeout
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 53, in _resolve
+    return resolver.resolve(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1572, in resolve
+    return get_default_resolver().resolve(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        qname,
+        ^^^^^^
+    ...<7 lines>...
+        search,
+        ^^^^^^^
+    )
+    ^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1328, in resolve
+    timeout = self._compute_timeout(start, lifetime, resolution.errors)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1084, in _compute_timeout
+    raise LifetimeTimeout(timeout=duration, errors=errors)
+dns.resolver.LifetimeTimeout: The resolution lifetime expired after 5.410 seconds: Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 46, in connect
+    self._client = MongoClient(mongo_uri, **client_kwargs)
+                   ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 908, in __init__
+    self._get_topology()  # type: ignore[unused-coroutine]
+    ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 1776, in _get_topology
+    self._resolve_srv()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 927, in _resolve_srv
+    res = uri_parser._parse_srv(
+        entity,
+    ...<6 lines>...
+        srv_max_hosts=srv_max_hosts,
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\uri_parser.py", line 168, in _parse_srv
+    nodes = dns_resolver.get_hosts()
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 148, in get_hosts
+    _, nodes = self._get_srv_response_and_hosts(True)
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 122, in _get_srv_response_and_hosts
+    results = self._resolve_uri(encapsulate_errors)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 116, in _resolve_uri
+    raise ConfigurationError(str(exc)) from exc
+pymongo.errors.ConfigurationError: The resolution lifetime expired after 5.410 seconds: Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 122, in supervise
+    run(stopped)
+    ~~~^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 19, in run
+    db = db_connection.get_db()
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 78, in get_db
+    return self.connect()
+           ~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 61, in connect
+    raise RuntimeError('MongoDB is unavailable; refusing to use nonpersistent storage') from e
+RuntimeError: MongoDB is unavailable; refusing to use nonpersistent storage
+2026-10-22 19:47:11 [INFO] utils.db_connection - Attempting to connect to MongoDB...
+2026-10-22 19:47:11 [INFO] utils.db_connection - Connecting to configured MongoDB
+2026-10-22 19:47:17 [ERROR] worker - Worker interrupted; automatically recovering in 5 seconds
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 108, in _resolve_uri
+    results = _resolve(
+        "_" + self.__srv + "._tcp." + self.__fqdn, "SRV", lifetime=self.__connect_timeout
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 53, in _resolve
+    return resolver.resolve(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1572, in resolve
+    return get_default_resolver().resolve(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        qname,
+        ^^^^^^
+    ...<7 lines>...
+        search,
+        ^^^^^^^
+    )
+    ^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1328, in resolve
+    timeout = self._compute_timeout(start, lifetime, resolution.errors)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1084, in _compute_timeout
+    raise LifetimeTimeout(timeout=duration, errors=errors)
+dns.resolver.LifetimeTimeout: The resolution lifetime expired after 5.409 seconds: Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 46, in connect
+    self._client = MongoClient(mongo_uri, **client_kwargs)
+                   ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 908, in __init__
+    self._get_topology()  # type: ignore[unused-coroutine]
+    ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 1776, in _get_topology
+    self._resolve_srv()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 927, in _resolve_srv
+    res = uri_parser._parse_srv(
+        entity,
+    ...<6 lines>...
+        srv_max_hosts=srv_max_hosts,
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\uri_parser.py", line 168, in _parse_srv
+    nodes = dns_resolver.get_hosts()
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 148, in get_hosts
+    _, nodes = self._get_srv_response_and_hosts(True)
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 122, in _get_srv_response_and_hosts
+    results = self._resolve_uri(encapsulate_errors)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 116, in _resolve_uri
+    raise ConfigurationError(str(exc)) from exc
+pymongo.errors.ConfigurationError: The resolution lifetime expired after 5.409 seconds: Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 122, in supervise
+    run(stopped)
+    ~~~^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 19, in run
+    db = db_connection.get_db()
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 78, in get_db
+    return self.connect()
+           ~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 61, in connect
+    raise RuntimeError('MongoDB is unavailable; refusing to use nonpersistent storage') from e
+RuntimeError: MongoDB is unavailable; refusing to use nonpersistent storage
+2026-10-22 19:47:22 [INFO] utils.db_connection - Attempting to connect to MongoDB...
+2026-10-22 19:47:22 [INFO] utils.db_connection - Connecting to configured MongoDB
+2026-10-22 19:47:28 [ERROR] worker - Worker interrupted; automatically recovering in 5 seconds
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 108, in _resolve_uri
+    results = _resolve(
+        "_" + self.__srv + "._tcp." + self.__fqdn, "SRV", lifetime=self.__connect_timeout
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 53, in _resolve
+    return resolver.resolve(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1572, in resolve
+    return get_default_resolver().resolve(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        qname,
+        ^^^^^^
+    ...<7 lines>...
+        search,
+        ^^^^^^^
+    )
+    ^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1328, in resolve
+    timeout = self._compute_timeout(start, lifetime, resolution.errors)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1084, in _compute_timeout
+    raise LifetimeTimeout(timeout=duration, errors=errors)
+dns.resolver.LifetimeTimeout: The resolution lifetime expired after 5.411 seconds: Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 46, in connect
+    self._client = MongoClient(mongo_uri, **client_kwargs)
+                   ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 908, in __init__
+    self._get_topology()  # type: ignore[unused-coroutine]
+    ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 1776, in _get_topology
+    self._resolve_srv()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 927, in _resolve_srv
+    res = uri_parser._parse_srv(
+        entity,
+    ...<6 lines>...
+        srv_max_hosts=srv_max_hosts,
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\uri_parser.py", line 168, in _parse_srv
+    nodes = dns_resolver.get_hosts()
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 148, in get_hosts
+    _, nodes = self._get_srv_response_and_hosts(True)
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 122, in _get_srv_response_and_hosts
+    results = self._resolve_uri(encapsulate_errors)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 116, in _resolve_uri
+    raise ConfigurationError(str(exc)) from exc
+pymongo.errors.ConfigurationError: The resolution lifetime expired after 5.411 seconds: Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 122, in supervise
+    run(stopped)
+    ~~~^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 19, in run
+    db = db_connection.get_db()
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 78, in get_db
+    return self.connect()
+           ~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 61, in connect
+    raise RuntimeError('MongoDB is unavailable; refusing to use nonpersistent storage') from e
+RuntimeError: MongoDB is unavailable; refusing to use nonpersistent storage
+2026-10-22 19:47:33 [INFO] utils.db_connection - Attempting to connect to MongoDB...
+2026-10-22 19:47:33 [INFO] utils.db_connection - Connecting to configured MongoDB
+2026-10-22 19:47:39 [ERROR] worker - Worker interrupted; automatically recovering in 5 seconds
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 108, in _resolve_uri
+    results = _resolve(
+        "_" + self.__srv + "._tcp." + self.__fqdn, "SRV", lifetime=self.__connect_timeout
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 53, in _resolve
+    return resolver.resolve(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1572, in resolve
+    return get_default_resolver().resolve(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        qname,
+        ^^^^^^
+    ...<7 lines>...
+        search,
+        ^^^^^^^
+    )
+    ^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1328, in resolve
+    timeout = self._compute_timeout(start, lifetime, resolution.errors)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1084, in _compute_timeout
+    raise LifetimeTimeout(timeout=duration, errors=errors)
+dns.resolver.LifetimeTimeout: The resolution lifetime expired after 5.409 seconds: Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 46, in connect
+    self._client = MongoClient(mongo_uri, **client_kwargs)
+                   ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 908, in __init__
+    self._get_topology()  # type: ignore[unused-coroutine]
+    ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 1776, in _get_topology
+    self._resolve_srv()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 927, in _resolve_srv
+    res = uri_parser._parse_srv(
+        entity,
+    ...<6 lines>...
+        srv_max_hosts=srv_max_hosts,
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\uri_parser.py", line 168, in _parse_srv
+    nodes = dns_resolver.get_hosts()
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 148, in get_hosts
+    _, nodes = self._get_srv_response_and_hosts(True)
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 122, in _get_srv_response_and_hosts
+    results = self._resolve_uri(encapsulate_errors)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 116, in _resolve_uri
+    raise ConfigurationError(str(exc)) from exc
+pymongo.errors.ConfigurationError: The resolution lifetime expired after 5.409 seconds: Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 122, in supervise
+    run(stopped)
+    ~~~^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 19, in run
+    db = db_connection.get_db()
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 78, in get_db
+    return self.connect()
+           ~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 61, in connect
+    raise RuntimeError('MongoDB is unavailable; refusing to use nonpersistent storage') from e
+RuntimeError: MongoDB is unavailable; refusing to use nonpersistent storage
+2026-10-22 19:47:44 [INFO] utils.db_connection - Attempting to connect to MongoDB...
+2026-10-22 19:47:44 [INFO] utils.db_connection - Connecting to configured MongoDB
+2026-10-22 19:47:50 [ERROR] worker - Worker interrupted; automatically recovering in 5 seconds
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 108, in _resolve_uri
+    results = _resolve(
+        "_" + self.__srv + "._tcp." + self.__fqdn, "SRV", lifetime=self.__connect_timeout
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 53, in _resolve
+    return resolver.resolve(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1572, in resolve
+    return get_default_resolver().resolve(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        qname,
+        ^^^^^^
+    ...<7 lines>...
+        search,
+        ^^^^^^^
+    )
+    ^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1328, in resolve
+    timeout = self._compute_timeout(start, lifetime, resolution.errors)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1084, in _compute_timeout
+    raise LifetimeTimeout(timeout=duration, errors=errors)
+dns.resolver.LifetimeTimeout: The resolution lifetime expired after 5.415 seconds: Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 46, in connect
+    self._client = MongoClient(mongo_uri, **client_kwargs)
+                   ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 908, in __init__
+    self._get_topology()  # type: ignore[unused-coroutine]
+    ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 1776, in _get_topology
+    self._resolve_srv()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 927, in _resolve_srv
+    res = uri_parser._parse_srv(
+        entity,
+    ...<6 lines>...
+        srv_max_hosts=srv_max_hosts,
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\uri_parser.py", line 168, in _parse_srv
+    nodes = dns_resolver.get_hosts()
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 148, in get_hosts
+    _, nodes = self._get_srv_response_and_hosts(True)
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 122, in _get_srv_response_and_hosts
+    results = self._resolve_uri(encapsulate_errors)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 116, in _resolve_uri
+    raise ConfigurationError(str(exc)) from exc
+pymongo.errors.ConfigurationError: The resolution lifetime expired after 5.415 seconds: Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 122, in supervise
+    run(stopped)
+    ~~~^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 19, in run
+    db = db_connection.get_db()
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 78, in get_db
+    return self.connect()
+           ~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 61, in connect
+    raise RuntimeError('MongoDB is unavailable; refusing to use nonpersistent storage') from e
+RuntimeError: MongoDB is unavailable; refusing to use nonpersistent storage
+2026-10-22 19:47:55 [INFO] utils.db_connection - Attempting to connect to MongoDB...
+2026-10-22 19:47:55 [INFO] utils.db_connection - Connecting to configured MongoDB
+2026-10-22 19:48:00 [ERROR] worker - Worker interrupted; automatically recovering in 5 seconds
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 108, in _resolve_uri
+    results = _resolve(
+        "_" + self.__srv + "._tcp." + self.__fqdn, "SRV", lifetime=self.__connect_timeout
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 53, in _resolve
+    return resolver.resolve(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1572, in resolve
+    return get_default_resolver().resolve(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        qname,
+        ^^^^^^
+    ...<7 lines>...
+        search,
+        ^^^^^^^
+    )
+    ^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1328, in resolve
+    timeout = self._compute_timeout(start, lifetime, resolution.errors)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1084, in _compute_timeout
+    raise LifetimeTimeout(timeout=duration, errors=errors)
+dns.resolver.LifetimeTimeout: The resolution lifetime expired after 5.408 seconds: Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 46, in connect
+    self._client = MongoClient(mongo_uri, **client_kwargs)
+                   ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 908, in __init__
+    self._get_topology()  # type: ignore[unused-coroutine]
+    ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 1776, in _get_topology
+    self._resolve_srv()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 927, in _resolve_srv
+    res = uri_parser._parse_srv(
+        entity,
+    ...<6 lines>...
+        srv_max_hosts=srv_max_hosts,
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\uri_parser.py", line 168, in _parse_srv
+    nodes = dns_resolver.get_hosts()
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 148, in get_hosts
+    _, nodes = self._get_srv_response_and_hosts(True)
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 122, in _get_srv_response_and_hosts
+    results = self._resolve_uri(encapsulate_errors)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 116, in _resolve_uri
+    raise ConfigurationError(str(exc)) from exc
+pymongo.errors.ConfigurationError: The resolution lifetime expired after 5.408 seconds: Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 122, in supervise
+    run(stopped)
+    ~~~^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 19, in run
+    db = db_connection.get_db()
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 78, in get_db
+    return self.connect()
+           ~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 61, in connect
+    raise RuntimeError('MongoDB is unavailable; refusing to use nonpersistent storage') from e
+RuntimeError: MongoDB is unavailable; refusing to use nonpersistent storage
+2026-10-22 19:48:05 [INFO] utils.db_connection - Attempting to connect to MongoDB...
+2026-10-22 19:48:05 [INFO] utils.db_connection - Connecting to configured MongoDB
+2026-10-22 19:48:11 [ERROR] worker - Worker interrupted; automatically recovering in 5 seconds
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 108, in _resolve_uri
+    results = _resolve(
+        "_" + self.__srv + "._tcp." + self.__fqdn, "SRV", lifetime=self.__connect_timeout
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 53, in _resolve
+    return resolver.resolve(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1572, in resolve
+    return get_default_resolver().resolve(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        qname,
+        ^^^^^^
+    ...<7 lines>...
+        search,
+        ^^^^^^^
+    )
+    ^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1328, in resolve
+    timeout = self._compute_timeout(start, lifetime, resolution.errors)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1084, in _compute_timeout
+    raise LifetimeTimeout(timeout=duration, errors=errors)
+dns.resolver.LifetimeTimeout: The resolution lifetime expired after 5.404 seconds: Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 46, in connect
+    self._client = MongoClient(mongo_uri, **client_kwargs)
+                   ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 908, in __init__
+    self._get_topology()  # type: ignore[unused-coroutine]
+    ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 1776, in _get_topology
+    self._resolve_srv()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 927, in _resolve_srv
+    res = uri_parser._parse_srv(
+        entity,
+    ...<6 lines>...
+        srv_max_hosts=srv_max_hosts,
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\uri_parser.py", line 168, in _parse_srv
+    nodes = dns_resolver.get_hosts()
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 148, in get_hosts
+    _, nodes = self._get_srv_response_and_hosts(True)
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 122, in _get_srv_response_and_hosts
+    results = self._resolve_uri(encapsulate_errors)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 116, in _resolve_uri
+    raise ConfigurationError(str(exc)) from exc
+pymongo.errors.ConfigurationError: The resolution lifetime expired after 5.404 seconds: Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 122, in supervise
+    run(stopped)
+    ~~~^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 19, in run
+    db = db_connection.get_db()
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 78, in get_db
+    return self.connect()
+           ~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 61, in connect
+    raise RuntimeError('MongoDB is unavailable; refusing to use nonpersistent storage') from e
+RuntimeError: MongoDB is unavailable; refusing to use nonpersistent storage
+2026-10-22 19:48:16 [INFO] utils.db_connection - Attempting to connect to MongoDB...
+2026-10-22 19:48:16 [INFO] utils.db_connection - Connecting to configured MongoDB
+2026-10-22 19:48:22 [ERROR] worker - Worker interrupted; automatically recovering in 5 seconds
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 108, in _resolve_uri
+    results = _resolve(
+        "_" + self.__srv + "._tcp." + self.__fqdn, "SRV", lifetime=self.__connect_timeout
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 53, in _resolve
+    return resolver.resolve(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1572, in resolve
+    return get_default_resolver().resolve(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        qname,
+        ^^^^^^
+    ...<7 lines>...
+        search,
+        ^^^^^^^
+    )
+    ^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1328, in resolve
+    timeout = self._compute_timeout(start, lifetime, resolution.errors)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1084, in _compute_timeout
+    raise LifetimeTimeout(timeout=duration, errors=errors)
+dns.resolver.LifetimeTimeout: The resolution lifetime expired after 5.406 seconds: Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 46, in connect
+    self._client = MongoClient(mongo_uri, **client_kwargs)
+                   ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 908, in __init__
+    self._get_topology()  # type: ignore[unused-coroutine]
+    ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 1776, in _get_topology
+    self._resolve_srv()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 927, in _resolve_srv
+    res = uri_parser._parse_srv(
+        entity,
+    ...<6 lines>...
+        srv_max_hosts=srv_max_hosts,
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\uri_parser.py", line 168, in _parse_srv
+    nodes = dns_resolver.get_hosts()
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 148, in get_hosts
+    _, nodes = self._get_srv_response_and_hosts(True)
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 122, in _get_srv_response_and_hosts
+    results = self._resolve_uri(encapsulate_errors)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 116, in _resolve_uri
+    raise ConfigurationError(str(exc)) from exc
+pymongo.errors.ConfigurationError: The resolution lifetime expired after 5.406 seconds: Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 122, in supervise
+    run(stopped)
+    ~~~^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 19, in run
+    db = db_connection.get_db()
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 78, in get_db
+    return self.connect()
+           ~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 61, in connect
+    raise RuntimeError('MongoDB is unavailable; refusing to use nonpersistent storage') from e
+RuntimeError: MongoDB is unavailable; refusing to use nonpersistent storage
+2026-10-22 19:48:27 [INFO] utils.db_connection - Attempting to connect to MongoDB...
+2026-10-22 19:48:27 [INFO] utils.db_connection - Connecting to configured MongoDB
+2026-10-22 19:48:32 [ERROR] worker - Worker interrupted; automatically recovering in 5 seconds
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 108, in _resolve_uri
+    results = _resolve(
+        "_" + self.__srv + "._tcp." + self.__fqdn, "SRV", lifetime=self.__connect_timeout
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 53, in _resolve
+    return resolver.resolve(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1572, in resolve
+    return get_default_resolver().resolve(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        qname,
+        ^^^^^^
+    ...<7 lines>...
+        search,
+        ^^^^^^^
+    )
+    ^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1328, in resolve
+    timeout = self._compute_timeout(start, lifetime, resolution.errors)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1084, in _compute_timeout
+    raise LifetimeTimeout(timeout=duration, errors=errors)
+dns.resolver.LifetimeTimeout: The resolution lifetime expired after 5.407 seconds: Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 46, in connect
+    self._client = MongoClient(mongo_uri, **client_kwargs)
+                   ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 908, in __init__
+    self._get_topology()  # type: ignore[unused-coroutine]
+    ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 1776, in _get_topology
+    self._resolve_srv()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 927, in _resolve_srv
+    res = uri_parser._parse_srv(
+        entity,
+    ...<6 lines>...
+        srv_max_hosts=srv_max_hosts,
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\uri_parser.py", line 168, in _parse_srv
+    nodes = dns_resolver.get_hosts()
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 148, in get_hosts
+    _, nodes = self._get_srv_response_and_hosts(True)
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 122, in _get_srv_response_and_hosts
+    results = self._resolve_uri(encapsulate_errors)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 116, in _resolve_uri
+    raise ConfigurationError(str(exc)) from exc
+pymongo.errors.ConfigurationError: The resolution lifetime expired after 5.407 seconds: Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 122, in supervise
+    run(stopped)
+    ~~~^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 19, in run
+    db = db_connection.get_db()
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 78, in get_db
+    return self.connect()
+           ~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 61, in connect
+    raise RuntimeError('MongoDB is unavailable; refusing to use nonpersistent storage') from e
+RuntimeError: MongoDB is unavailable; refusing to use nonpersistent storage
+2026-10-22 19:48:37 [INFO] utils.db_connection - Attempting to connect to MongoDB...
+2026-10-22 19:48:37 [INFO] utils.db_connection - Connecting to configured MongoDB
+2026-10-22 19:48:43 [ERROR] worker - Worker interrupted; automatically recovering in 5 seconds
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 108, in _resolve_uri
+    results = _resolve(
+        "_" + self.__srv + "._tcp." + self.__fqdn, "SRV", lifetime=self.__connect_timeout
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 53, in _resolve
+    return resolver.resolve(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1572, in resolve
+    return get_default_resolver().resolve(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        qname,
+        ^^^^^^
+    ...<7 lines>...
+        search,
+        ^^^^^^^
+    )
+    ^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1328, in resolve
+    timeout = self._compute_timeout(start, lifetime, resolution.errors)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1084, in _compute_timeout
+    raise LifetimeTimeout(timeout=duration, errors=errors)
+dns.resolver.LifetimeTimeout: The resolution lifetime expired after 5.402 seconds: Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 46, in connect
+    self._client = MongoClient(mongo_uri, **client_kwargs)
+                   ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 908, in __init__
+    self._get_topology()  # type: ignore[unused-coroutine]
+    ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 1776, in _get_topology
+    self._resolve_srv()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 927, in _resolve_srv
+    res = uri_parser._parse_srv(
+        entity,
+    ...<6 lines>...
+        srv_max_hosts=srv_max_hosts,
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\uri_parser.py", line 168, in _parse_srv
+    nodes = dns_resolver.get_hosts()
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 148, in get_hosts
+    _, nodes = self._get_srv_response_and_hosts(True)
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 122, in _get_srv_response_and_hosts
+    results = self._resolve_uri(encapsulate_errors)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 116, in _resolve_uri
+    raise ConfigurationError(str(exc)) from exc
+pymongo.errors.ConfigurationError: The resolution lifetime expired after 5.402 seconds: Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 122, in supervise
+    run(stopped)
+    ~~~^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 19, in run
+    db = db_connection.get_db()
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 78, in get_db
+    return self.connect()
+           ~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 61, in connect
+    raise RuntimeError('MongoDB is unavailable; refusing to use nonpersistent storage') from e
+RuntimeError: MongoDB is unavailable; refusing to use nonpersistent storage
+2026-10-22 19:48:48 [INFO] utils.db_connection - Attempting to connect to MongoDB...
+2026-10-22 19:48:48 [INFO] utils.db_connection - Connecting to configured MongoDB
+2026-10-22 19:48:54 [ERROR] worker - Worker interrupted; automatically recovering in 5 seconds
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 108, in _resolve_uri
+    results = _resolve(
+        "_" + self.__srv + "._tcp." + self.__fqdn, "SRV", lifetime=self.__connect_timeout
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 53, in _resolve
+    return resolver.resolve(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1572, in resolve
+    return get_default_resolver().resolve(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        qname,
+        ^^^^^^
+    ...<7 lines>...
+        search,
+        ^^^^^^^
+    )
+    ^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1328, in resolve
+    timeout = self._compute_timeout(start, lifetime, resolution.errors)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1084, in _compute_timeout
+    raise LifetimeTimeout(timeout=duration, errors=errors)
+dns.resolver.LifetimeTimeout: The resolution lifetime expired after 5.401 seconds: Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 46, in connect
+    self._client = MongoClient(mongo_uri, **client_kwargs)
+                   ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 908, in __init__
+    self._get_topology()  # type: ignore[unused-coroutine]
+    ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 1776, in _get_topology
+    self._resolve_srv()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 927, in _resolve_srv
+    res = uri_parser._parse_srv(
+        entity,
+    ...<6 lines>...
+        srv_max_hosts=srv_max_hosts,
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\uri_parser.py", line 168, in _parse_srv
+    nodes = dns_resolver.get_hosts()
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 148, in get_hosts
+    _, nodes = self._get_srv_response_and_hosts(True)
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 122, in _get_srv_response_and_hosts
+    results = self._resolve_uri(encapsulate_errors)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 116, in _resolve_uri
+    raise ConfigurationError(str(exc)) from exc
+pymongo.errors.ConfigurationError: The resolution lifetime expired after 5.401 seconds: Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 122, in supervise
+    run(stopped)
+    ~~~^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 19, in run
+    db = db_connection.get_db()
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 78, in get_db
+    return self.connect()
+           ~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 61, in connect
+    raise RuntimeError('MongoDB is unavailable; refusing to use nonpersistent storage') from e
+RuntimeError: MongoDB is unavailable; refusing to use nonpersistent storage
+2026-10-22 19:48:59 [INFO] utils.db_connection - Attempting to connect to MongoDB...
+2026-10-22 19:48:59 [INFO] utils.db_connection - Connecting to configured MongoDB
+2026-10-22 19:49:05 [ERROR] worker - Worker interrupted; automatically recovering in 5 seconds
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 108, in _resolve_uri
+    results = _resolve(
+        "_" + self.__srv + "._tcp." + self.__fqdn, "SRV", lifetime=self.__connect_timeout
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 53, in _resolve
+    return resolver.resolve(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1572, in resolve
+    return get_default_resolver().resolve(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        qname,
+        ^^^^^^
+    ...<7 lines>...
+        search,
+        ^^^^^^^
+    )
+    ^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1328, in resolve
+    timeout = self._compute_timeout(start, lifetime, resolution.errors)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1084, in _compute_timeout
+    raise LifetimeTimeout(timeout=duration, errors=errors)
+dns.resolver.LifetimeTimeout: The resolution lifetime expired after 5.411 seconds: Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 46, in connect
+    self._client = MongoClient(mongo_uri, **client_kwargs)
+                   ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 908, in __init__
+    self._get_topology()  # type: ignore[unused-coroutine]
+    ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 1776, in _get_topology
+    self._resolve_srv()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 927, in _resolve_srv
+    res = uri_parser._parse_srv(
+        entity,
+    ...<6 lines>...
+        srv_max_hosts=srv_max_hosts,
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\uri_parser.py", line 168, in _parse_srv
+    nodes = dns_resolver.get_hosts()
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 148, in get_hosts
+    _, nodes = self._get_srv_response_and_hosts(True)
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 122, in _get_srv_response_and_hosts
+    results = self._resolve_uri(encapsulate_errors)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 116, in _resolve_uri
+    raise ConfigurationError(str(exc)) from exc
+pymongo.errors.ConfigurationError: The resolution lifetime expired after 5.411 seconds: Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 122, in supervise
+    run(stopped)
+    ~~~^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 19, in run
+    db = db_connection.get_db()
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 78, in get_db
+    return self.connect()
+           ~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 61, in connect
+    raise RuntimeError('MongoDB is unavailable; refusing to use nonpersistent storage') from e
+RuntimeError: MongoDB is unavailable; refusing to use nonpersistent storage
+2026-10-22 19:49:10 [INFO] utils.db_connection - Attempting to connect to MongoDB...
+2026-10-22 19:49:10 [INFO] utils.db_connection - Connecting to configured MongoDB
+2026-10-22 19:49:10 [INFO] utils.db_connection - Attempting to connect to MongoDB...
+2026-10-22 19:49:10 [INFO] utils.db_connection - Connecting to configured MongoDB
+2026-10-22 19:49:16 [ERROR] worker - Worker interrupted; automatically recovering in 5 seconds
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 108, in _resolve_uri
+    results = _resolve(
+        "_" + self.__srv + "._tcp." + self.__fqdn, "SRV", lifetime=self.__connect_timeout
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 53, in _resolve
+    return resolver.resolve(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1572, in resolve
+    return get_default_resolver().resolve(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        qname,
+        ^^^^^^
+    ...<7 lines>...
+        search,
+        ^^^^^^^
+    )
+    ^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1328, in resolve
+    timeout = self._compute_timeout(start, lifetime, resolution.errors)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1084, in _compute_timeout
+    raise LifetimeTimeout(timeout=duration, errors=errors)
+dns.resolver.LifetimeTimeout: The resolution lifetime expired after 5.402 seconds: Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 46, in connect
+    self._client = MongoClient(mongo_uri, **client_kwargs)
+                   ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 908, in __init__
+    self._get_topology()  # type: ignore[unused-coroutine]
+    ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 1776, in _get_topology
+    self._resolve_srv()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 927, in _resolve_srv
+    res = uri_parser._parse_srv(
+        entity,
+    ...<6 lines>...
+        srv_max_hosts=srv_max_hosts,
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\uri_parser.py", line 168, in _parse_srv
+    nodes = dns_resolver.get_hosts()
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 148, in get_hosts
+    _, nodes = self._get_srv_response_and_hosts(True)
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 122, in _get_srv_response_and_hosts
+    results = self._resolve_uri(encapsulate_errors)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 116, in _resolve_uri
+    raise ConfigurationError(str(exc)) from exc
+pymongo.errors.ConfigurationError: The resolution lifetime expired after 5.402 seconds: Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 122, in supervise
+    run(stopped)
+    ~~~^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 19, in run
+    db = db_connection.get_db()
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 78, in get_db
+    return self.connect()
+           ~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 61, in connect
+    raise RuntimeError('MongoDB is unavailable; refusing to use nonpersistent storage') from e
+RuntimeError: MongoDB is unavailable; refusing to use nonpersistent storage
+2026-10-22 19:49:16 [INFO] werkzeug - 127.0.0.1 - - [22/Oct/2026 19:49:16] "[35m[1mGET /api/ready HTTP/1.1[0m" 503 -
+2026-10-22 19:49:21 [INFO] utils.db_connection - Attempting to connect to MongoDB...
+2026-10-22 19:49:21 [INFO] utils.db_connection - Connecting to configured MongoDB
+2026-10-22 19:49:26 [ERROR] worker - Worker interrupted; automatically recovering in 5 seconds
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 108, in _resolve_uri
+    results = _resolve(
+        "_" + self.__srv + "._tcp." + self.__fqdn, "SRV", lifetime=self.__connect_timeout
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 53, in _resolve
+    return resolver.resolve(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1572, in resolve
+    return get_default_resolver().resolve(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        qname,
+        ^^^^^^
+    ...<7 lines>...
+        search,
+        ^^^^^^^
+    )
+    ^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1328, in resolve
+    timeout = self._compute_timeout(start, lifetime, resolution.errors)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1084, in _compute_timeout
+    raise LifetimeTimeout(timeout=duration, errors=errors)
+dns.resolver.LifetimeTimeout: The resolution lifetime expired after 5.407 seconds: Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 46, in connect
+    self._client = MongoClient(mongo_uri, **client_kwargs)
+                   ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 908, in __init__
+    self._get_topology()  # type: ignore[unused-coroutine]
+    ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 1776, in _get_topology
+    self._resolve_srv()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 927, in _resolve_srv
+    res = uri_parser._parse_srv(
+        entity,
+    ...<6 lines>...
+        srv_max_hosts=srv_max_hosts,
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\uri_parser.py", line 168, in _parse_srv
+    nodes = dns_resolver.get_hosts()
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 148, in get_hosts
+    _, nodes = self._get_srv_response_and_hosts(True)
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 122, in _get_srv_response_and_hosts
+    results = self._resolve_uri(encapsulate_errors)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 116, in _resolve_uri
+    raise ConfigurationError(str(exc)) from exc
+pymongo.errors.ConfigurationError: The resolution lifetime expired after 5.407 seconds: Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 122, in supervise
+    run(stopped)
+    ~~~^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 19, in run
+    db = db_connection.get_db()
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 78, in get_db
+    return self.connect()
+           ~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 61, in connect
+    raise RuntimeError('MongoDB is unavailable; refusing to use nonpersistent storage') from e
+RuntimeError: MongoDB is unavailable; refusing to use nonpersistent storage
+2026-10-22 19:49:31 [INFO] utils.db_connection - Attempting to connect to MongoDB...
+2026-10-22 19:49:31 [INFO] utils.db_connection - Connecting to configured MongoDB
+2026-10-22 19:49:37 [ERROR] worker - Worker interrupted; automatically recovering in 5 seconds
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 108, in _resolve_uri
+    results = _resolve(
+        "_" + self.__srv + "._tcp." + self.__fqdn, "SRV", lifetime=self.__connect_timeout
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 53, in _resolve
+    return resolver.resolve(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1572, in resolve
+    return get_default_resolver().resolve(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        qname,
+        ^^^^^^
+    ...<7 lines>...
+        search,
+        ^^^^^^^
+    )
+    ^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1328, in resolve
+    timeout = self._compute_timeout(start, lifetime, resolution.errors)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1084, in _compute_timeout
+    raise LifetimeTimeout(timeout=duration, errors=errors)
+dns.resolver.LifetimeTimeout: The resolution lifetime expired after 5.411 seconds: Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 46, in connect
+    self._client = MongoClient(mongo_uri, **client_kwargs)
+                   ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 908, in __init__
+    self._get_topology()  # type: ignore[unused-coroutine]
+    ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 1776, in _get_topology
+    self._resolve_srv()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 927, in _resolve_srv
+    res = uri_parser._parse_srv(
+        entity,
+    ...<6 lines>...
+        srv_max_hosts=srv_max_hosts,
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\uri_parser.py", line 168, in _parse_srv
+    nodes = dns_resolver.get_hosts()
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 148, in get_hosts
+    _, nodes = self._get_srv_response_and_hosts(True)
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 122, in _get_srv_response_and_hosts
+    results = self._resolve_uri(encapsulate_errors)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 116, in _resolve_uri
+    raise ConfigurationError(str(exc)) from exc
+pymongo.errors.ConfigurationError: The resolution lifetime expired after 5.411 seconds: Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 122, in supervise
+    run(stopped)
+    ~~~^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 19, in run
+    db = db_connection.get_db()
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 78, in get_db
+    return self.connect()
+           ~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 61, in connect
+    raise RuntimeError('MongoDB is unavailable; refusing to use nonpersistent storage') from e
+RuntimeError: MongoDB is unavailable; refusing to use nonpersistent storage
+2026-10-22 19:49:42 [INFO] utils.db_connection - Attempting to connect to MongoDB...
+2026-10-22 19:49:42 [INFO] utils.db_connection - Connecting to configured MongoDB
+2026-10-22 19:49:46 [INFO] utils.db_connection - Attempting to connect to MongoDB...
+2026-10-22 19:49:46 [INFO] utils.db_connection - Connecting to configured MongoDB
+2026-10-22 19:49:48 [ERROR] worker - Worker interrupted; automatically recovering in 5 seconds
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 108, in _resolve_uri
+    results = _resolve(
+        "_" + self.__srv + "._tcp." + self.__fqdn, "SRV", lifetime=self.__connect_timeout
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 53, in _resolve
+    return resolver.resolve(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1572, in resolve
+    return get_default_resolver().resolve(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        qname,
+        ^^^^^^
+    ...<7 lines>...
+        search,
+        ^^^^^^^
+    )
+    ^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1328, in resolve
+    timeout = self._compute_timeout(start, lifetime, resolution.errors)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1084, in _compute_timeout
+    raise LifetimeTimeout(timeout=duration, errors=errors)
+dns.resolver.LifetimeTimeout: The resolution lifetime expired after 5.402 seconds: Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 46, in connect
+    self._client = MongoClient(mongo_uri, **client_kwargs)
+                   ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 908, in __init__
+    self._get_topology()  # type: ignore[unused-coroutine]
+    ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 1776, in _get_topology
+    self._resolve_srv()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 927, in _resolve_srv
+    res = uri_parser._parse_srv(
+        entity,
+    ...<6 lines>...
+        srv_max_hosts=srv_max_hosts,
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\uri_parser.py", line 168, in _parse_srv
+    nodes = dns_resolver.get_hosts()
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 148, in get_hosts
+    _, nodes = self._get_srv_response_and_hosts(True)
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 122, in _get_srv_response_and_hosts
+    results = self._resolve_uri(encapsulate_errors)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 116, in _resolve_uri
+    raise ConfigurationError(str(exc)) from exc
+pymongo.errors.ConfigurationError: The resolution lifetime expired after 5.402 seconds: Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 122, in supervise
+    run(stopped)
+    ~~~^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 19, in run
+    db = db_connection.get_db()
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 78, in get_db
+    return self.connect()
+           ~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 61, in connect
+    raise RuntimeError('MongoDB is unavailable; refusing to use nonpersistent storage') from e
+RuntimeError: MongoDB is unavailable; refusing to use nonpersistent storage
+2026-10-22 19:49:52 [INFO] werkzeug - 127.0.0.1 - - [22/Oct/2026 19:49:52] "[35m[1mGET /api/ready HTTP/1.1[0m" 503 -
+2026-10-22 19:49:53 [INFO] utils.db_connection - Attempting to connect to MongoDB...
+2026-10-22 19:49:53 [INFO] utils.db_connection - Connecting to configured MongoDB
+2026-10-22 19:49:58 [ERROR] worker - Worker interrupted; automatically recovering in 5 seconds
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 108, in _resolve_uri
+    results = _resolve(
+        "_" + self.__srv + "._tcp." + self.__fqdn, "SRV", lifetime=self.__connect_timeout
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 53, in _resolve
+    return resolver.resolve(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1572, in resolve
+    return get_default_resolver().resolve(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        qname,
+        ^^^^^^
+    ...<7 lines>...
+        search,
+        ^^^^^^^
+    )
+    ^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1328, in resolve
+    timeout = self._compute_timeout(start, lifetime, resolution.errors)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1084, in _compute_timeout
+    raise LifetimeTimeout(timeout=duration, errors=errors)
+dns.resolver.LifetimeTimeout: The resolution lifetime expired after 5.411 seconds: Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 46, in connect
+    self._client = MongoClient(mongo_uri, **client_kwargs)
+                   ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 908, in __init__
+    self._get_topology()  # type: ignore[unused-coroutine]
+    ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 1776, in _get_topology
+    self._resolve_srv()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 927, in _resolve_srv
+    res = uri_parser._parse_srv(
+        entity,
+    ...<6 lines>...
+        srv_max_hosts=srv_max_hosts,
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\uri_parser.py", line 168, in _parse_srv
+    nodes = dns_resolver.get_hosts()
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 148, in get_hosts
+    _, nodes = self._get_srv_response_and_hosts(True)
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 122, in _get_srv_response_and_hosts
+    results = self._resolve_uri(encapsulate_errors)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 116, in _resolve_uri
+    raise ConfigurationError(str(exc)) from exc
+pymongo.errors.ConfigurationError: The resolution lifetime expired after 5.411 seconds: Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 122, in supervise
+    run(stopped)
+    ~~~^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 19, in run
+    db = db_connection.get_db()
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 78, in get_db
+    return self.connect()
+           ~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 61, in connect
+    raise RuntimeError('MongoDB is unavailable; refusing to use nonpersistent storage') from e
+RuntimeError: MongoDB is unavailable; refusing to use nonpersistent storage
+2026-10-22 19:50:03 [INFO] utils.db_connection - Attempting to connect to MongoDB...
+2026-10-22 19:50:03 [INFO] utils.db_connection - Connecting to configured MongoDB
+2026-10-22 19:50:09 [ERROR] worker - Worker interrupted; automatically recovering in 5 seconds
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 108, in _resolve_uri
+    results = _resolve(
+        "_" + self.__srv + "._tcp." + self.__fqdn, "SRV", lifetime=self.__connect_timeout
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 53, in _resolve
+    return resolver.resolve(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1572, in resolve
+    return get_default_resolver().resolve(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        qname,
+        ^^^^^^
+    ...<7 lines>...
+        search,
+        ^^^^^^^
+    )
+    ^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1328, in resolve
+    timeout = self._compute_timeout(start, lifetime, resolution.errors)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1084, in _compute_timeout
+    raise LifetimeTimeout(timeout=duration, errors=errors)
+dns.resolver.LifetimeTimeout: The resolution lifetime expired after 5.408 seconds: Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 46, in connect
+    self._client = MongoClient(mongo_uri, **client_kwargs)
+                   ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 908, in __init__
+    self._get_topology()  # type: ignore[unused-coroutine]
+    ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 1776, in _get_topology
+    self._resolve_srv()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 927, in _resolve_srv
+    res = uri_parser._parse_srv(
+        entity,
+    ...<6 lines>...
+        srv_max_hosts=srv_max_hosts,
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\uri_parser.py", line 168, in _parse_srv
+    nodes = dns_resolver.get_hosts()
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 148, in get_hosts
+    _, nodes = self._get_srv_response_and_hosts(True)
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 122, in _get_srv_response_and_hosts
+    results = self._resolve_uri(encapsulate_errors)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 116, in _resolve_uri
+    raise ConfigurationError(str(exc)) from exc
+pymongo.errors.ConfigurationError: The resolution lifetime expired after 5.408 seconds: Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 122, in supervise
+    run(stopped)
+    ~~~^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 19, in run
+    db = db_connection.get_db()
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 78, in get_db
+    return self.connect()
+           ~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 61, in connect
+    raise RuntimeError('MongoDB is unavailable; refusing to use nonpersistent storage') from e
+RuntimeError: MongoDB is unavailable; refusing to use nonpersistent storage
+2026-10-22 19:50:14 [INFO] utils.db_connection - Attempting to connect to MongoDB...
+2026-10-22 19:50:14 [INFO] utils.db_connection - Connecting to configured MongoDB
+2026-10-22 19:50:20 [ERROR] worker - Worker interrupted; automatically recovering in 5 seconds
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 108, in _resolve_uri
+    results = _resolve(
+        "_" + self.__srv + "._tcp." + self.__fqdn, "SRV", lifetime=self.__connect_timeout
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 53, in _resolve
+    return resolver.resolve(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1572, in resolve
+    return get_default_resolver().resolve(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        qname,
+        ^^^^^^
+    ...<7 lines>...
+        search,
+        ^^^^^^^
+    )
+    ^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1328, in resolve
+    timeout = self._compute_timeout(start, lifetime, resolution.errors)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1084, in _compute_timeout
+    raise LifetimeTimeout(timeout=duration, errors=errors)
+dns.resolver.LifetimeTimeout: The resolution lifetime expired after 5.481 seconds: Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 46, in connect
+    self._client = MongoClient(mongo_uri, **client_kwargs)
+                   ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 908, in __init__
+    self._get_topology()  # type: ignore[unused-coroutine]
+    ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 1776, in _get_topology
+    self._resolve_srv()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 927, in _resolve_srv
+    res = uri_parser._parse_srv(
+        entity,
+    ...<6 lines>...
+        srv_max_hosts=srv_max_hosts,
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\uri_parser.py", line 168, in _parse_srv
+    nodes = dns_resolver.get_hosts()
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 148, in get_hosts
+    _, nodes = self._get_srv_response_and_hosts(True)
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 122, in _get_srv_response_and_hosts
+    results = self._resolve_uri(encapsulate_errors)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 116, in _resolve_uri
+    raise ConfigurationError(str(exc)) from exc
+pymongo.errors.ConfigurationError: The resolution lifetime expired after 5.481 seconds: Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.; Server Do53:192.168.1.1@53 answered The DNS operation timed out.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 122, in supervise
+    run(stopped)
+    ~~~^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 19, in run
+    db = db_connection.get_db()
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 78, in get_db
+    return self.connect()
+           ~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 61, in connect
+    raise RuntimeError('MongoDB is unavailable; refusing to use nonpersistent storage') from e
+RuntimeError: MongoDB is unavailable; refusing to use nonpersistent storage

@@ -945,8 +945,11 @@ if __name__ == '__main__':
     try:
         # Test database connection on startup
         logger.info("Testing database connection...")
-        db_connection.connect()
-        logger.info("Database connection successful")
+        try:
+            db_connection.connect()
+            logger.info("Database connection successful")
+        except RuntimeError:
+            logger.warning("Database unavailable at startup; the worker will reconnect automatically")
 
         worker = EmbeddedWorker()
         worker.start()

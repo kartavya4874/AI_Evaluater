@@ -144,3 +144,17 @@ test('pagination sends server filters and loads details on demand', async () => 
   fireEvent.click(screen.getByRole('button', { name: 'Next page' }));
   await waitFor(() => expect(api.get).toHaveBeenCalledWith('/workspace/sheets', expect.objectContaining({ params: expect.objectContaining({ page: 2, page_size: 50 }) })));
 });
+
+
+test('skipped courses expose issues and a corrected-folder upload with original exam settings', async () => {
+  api.get.mockResolvedValue({ data: { sheets: rows, courses: [], worker_online: true,
+    preparations: [{ _id: 'prep', exam_id: 'original-exam', exam_type: 'mst', max_marks: 50,
+      state: 'completed', issues: ['CS101A: missing model_answer.pdf'] }] } });
+  render(<Workspace />);
+  await screen.findByText('CS101A: missing model_answer.pdf');
+  fireEvent.click(screen.getAllByRole('button', { name: 'Upload corrected folders separately' })[0]);
+  expect(screen.getByLabelText(/Examination \/ session ID/)).toHaveValue('original-exam');
+  expect(screen.getByLabelText(/Maximum marks/)).toHaveValue(50);
+  expect(screen.getByRole('button', { name: 'Upload corrected folders' })).toBeInTheDocument();
+  expect(screen.getByText(/Choose only the corrected course folders/)).toBeInTheDocument();
+});

@@ -52,7 +52,7 @@ def create_upload_api(require_auth, upload_root):
             codes = [p.upper() for p in path.split('/')[:-1] if COURSE_CODE_PATTERN.fullmatch(p)]
             if not codes:
                 raise ValueError('Every PDF must be in a course-code folder')
-            for code in codes:
+            for code in codes[-1:]:
                 authorize(db_connection.get_db(), code, 'uploaders')
             seen.add(path.casefold())
             manifest.append({'path': path, 'size': item['size']})

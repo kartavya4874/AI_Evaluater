@@ -24,6 +24,8 @@ export default function Workspace({ resultsOnly = false }) {
   const [marks, setMarks] = useState(100);
   const [showValidation, setShowValidation] = useState(false);
   const [files, setFiles] = useState(null);
+  const [correctionMode, setCorrectionMode] = useState(false);
+  const uploadPanel = useRef(null);
   const [busy, setBusy] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(null);
   const [capabilities, setCapabilities] = useState(null);
@@ -97,6 +99,7 @@ export default function Workspace({ resultsOnly = false }) {
     const uploaded = await uploadBatchFolder(files, value => setUploadProgress(Number.isFinite(value) ? value : null));
     setUploadProgress(null);
     setPhase('Validating course folders and preparing answer sheets…');
+    accessCache.current.at = 0;
     const response = await api.post('/workspace/prepare', { directory: uploaded.upload_dir, exam_id: exam, exam_type: type, max_marks: Number(marks), async: true });
     if (response.data.operation_id) {
       setNotice('Upload saved. Folder preparation is queued and will continue if you leave this page. Prepared sheets appear automatically below.');
@@ -160,7 +163,7 @@ export default function Workspace({ resultsOnly = false }) {
     {admin && capabilities && !capabilities.admin_all_courses && <p role="alert" className="workspace-error">The backend is running an older version without the administrator course-access fix. Restart the backend to load the update, then retry the selected sheets.</p>}
     {connectionError && <p role="status" className="workspace-error">{connectionError}</p>}
     {notice && <p role="status">{notice}</p>}{phase && <div role="status"><p>{phase}</p><progress aria-label="Upload and preparation progress" max="100" value={uploadProgress ?? undefined} />{uploadProgress !== null && <span> {uploadProgress}% transferred</span>}</div>}
-    {!resultsOnly && !workerOnline && <p role="status" className="workspace-error">Processing worker is offline. Queued sheets are saved and will start when the worker is running.</p>}
+    {!resultsOnly && !connectionError && !workerOnline && <p role="status" className="workspace-error">Processing worker is reconnecting or offline. Saved jobs and completed OCR pages are retained. The worker retries automatically while the backend is running; refresh after the connection returns.</p>}
     {!resultsOnly && <><section className="workspace-panel" aria-label="Live progress"><h2>What is happening now</h2>
       <p>{!updated ? 'Connecting to your workspace…' : connectionError ? 'Updates paused — these counts may be out of date.' : `Updated ${updated.toLocaleTimeString()} · refreshes every 3 seconds`}</p>
       <p>{workerOnline && capacity ? `Up to ${capacity} sheets can run in parallel across all courses. Additional sheets wait in the queue.` : ''}</p>
@@ -175,7 +178,7 @@ export default function Workspace({ resultsOnly = false }) {
         <span>Saved limit: {parallelism ?? '…'} / 5. Shared across all users. Lowering the limit lets current work finish.</span>
       </div>}
       <div className="progress-cards">{Object.entries({ ready: 'Ready to evaluate', queued: 'Waiting in queue', processing: 'Evaluating now', review: 'Awaiting review', verified: 'Verified', error: 'Needs retry', cancelled: 'Cancelled', needs_review: 'Source needs review' }).map(([key, label]) => <div key={key}><strong>{counts[key]}</strong><span>{label}</span></div>)}</div>
-      <p>{counts.needs_review ? 'Some sheets need source or marking-scheme review. Check their current work messages below and correct the source before retrying.' : counts.processing ? 'Evaluation is running. See the current step for each student below.' : counts.queued ? (workerOnline ? 'Sheets are waiting for the processing worker.' : 'An administrator needs to restart the processing worker.') : counts.review ? 'Results are ready. Open Review results to inspect feedback and verify marks for export.' : counts.error ? `${counts.error} sheets failed. Nothing is running. Select failed sheets and click Evaluate / use existing to retry. AI request errors may require configuration changes before retrying.` : counts.ready ? 'Select ready sheets below, then click Evaluate / use existing.' : 'Upload a course folder, then select sheets to start evaluation.'}</p>
+      <p>{counts.needs_review ? 'Some sheets need source or marking-scheme review. Check their current work messages below and correct the source before retrying.' : counts.processing ? 'Evaluation is running. See the current step for each student below.' : counts.queued ? (workerOnline ? 'Sheets are waiting for the processing worker.' : 'Saved jobs are waiting for the worker to reconnect. If this persists after connectivity returns, check the backend worker.') : counts.review ? 'Results are ready. Open Review results to inspect feedback and verify marks for export.' : counts.error ? `${counts.error} sheets failed. Nothing is running. Select failed sheets and click Evaluate / use existing to retry. AI request errors may require configuration changes before retrying.` : counts.ready ? 'Select ready sheets below, then click Evaluate / use existing.' : 'Upload a course folder, then select sheets to start evaluation.'}</p>
       <div className="overall-progress"><label htmlFor="evaluation-progress">Evaluation completion for this view: {successful} / {viewTotal} sheets successful</label>
         <progress id="evaluation-progress" max={viewTotal || 1} value={successful} />
         <p>{viewTotal ? Math.round(successful / viewTotal * 100) : 0}% successful · {counts.processing} running · {counts.queued} queued · {counts.error} failed · {counts.cancelled} cancelled</p>
@@ -196,14 +199,18 @@ export default function Workspace({ resultsOnly = false }) {
     </section>
     </>}
     {resultsOnly && <section className="workspace-panel" aria-label="Results summary"><h2>Saved results</h2><div className="progress-cards"><div><strong>{viewTotal}</strong><span>Results in this view</span></div><div><strong>{pageInfo ? counts.review : visible.filter(s => !s.active.verified).length}</strong><span>Awaiting verification</span></div><div><strong>{pageInfo ? counts.verified : visible.filter(s => s.active.verified).length}</strong><span>Verified for export</span></div></div><p>Open View details to inspect feedback. Attempt history lets reviewers compare results or add a manual revision.</p></section>}
-    {!resultsOnly && preparations.length > 0 && <section className="workspace-panel" aria-label="Folder preparation"><h2>Recent folder preparation</h2>{preparations.map(p => <p key={p._id}>{p.exam_id}: {p.kind === 'evaluate' ? 'Bulk submission' : 'Folder preparation'} — {p.state}{p.error ? ` — ${p.error}` : ''}</p>)}</section>}
-    {!resultsOnly && canUpload && <section className="workspace-panel"><h2>1. Upload course answer sheets</h2>
+    {!resultsOnly && preparations.length > 0 && <section className="workspace-panel" aria-label="Folder preparation"><h2>Recent folder preparation</h2>{preparations.map(p => <article key={p._id}><p>{p.exam_id}: {p.kind === 'evaluate' ? 'Bulk submission' : 'Folder preparation'} — {p.state}{p.error ? ` — ${p.error}` : ''}</p>
+        {(p.issues || []).length > 0 && <><ul>{p.issues.map((issue, index) => <li key={index}>{issue}</li>)}</ul><button disabled={busy} onClick={() => { setCorrectionMode(true); setExam(p.exam_id); setType(p.exam_type); setMarks(p.max_marks); setFiles(null); uploadPanel.current?.scrollIntoView?.({ behavior: 'smooth' }); }}>Upload corrected folders separately</button></>}
+      </article>)}</section>}
+    {!resultsOnly && canUpload && <section ref={uploadPanel} className="workspace-panel"><h2>1. Upload course answer sheets</h2>
+      <button disabled={busy} onClick={() => { setCorrectionMode(value => !value); setFiles(null); }}>{correctionMode ? 'Return to normal upload' : 'Upload corrected folders separately'}</button>
+      {correctionMode && <p>Choose only the corrected course folders. Keep the original examination ID and student filenames to update those same sheets. Include the model answers and question paper with explicit marks. Other courses remain unchanged; running sheets must finish before replacement.</p>}
       <p>Use course folders, for example FS3401/model_answer.pdf and FS3401/101.pdf. Administrators can upload any course; faculty can upload only their registered, assigned courses.</p>
       <label>Examination / session ID *<input aria-invalid={showValidation && !!missing.exam} aria-describedby="exam-error" value={exam} onChange={e => setExam(e.target.value)} placeholder="2026-October-MSE" />{showValidation && missing.exam && <small id="exam-error" className="field-error">{missing.exam}</small>}</label>
       <label>Marking scheme<select value={type} onChange={e => { setType(e.target.value); setMarks(e.target.value === 'mst' ? 50 : 100); }}><option value="end_sem">End semester</option><option value="mst">Mid semester</option></select></label>
       <label>Maximum marks *<input aria-invalid={showValidation && !!missing.marks} aria-describedby="marks-error" type="number" min="1" max="1000" value={marks} onChange={e => setMarks(e.target.value)} />{showValidation && missing.marks && <small id="marks-error" className="field-error">{missing.marks}</small>}</label>
-      <label>Course folder *<input aria-invalid={showValidation && !!missing.files} aria-describedby="folder-error" type="file" webkitdirectory="" directory="" multiple onChange={e => setFiles(e.target.files)} />{showValidation && missing.files && <small id="folder-error" className="field-error">{missing.files}</small>}</label>
-      <button disabled={busy} onClick={prepare}>Upload and check existing results</button>
+      <label>Course folder *<input key={correctionMode ? 'correction' : 'normal'} aria-invalid={showValidation && !!missing.files} aria-describedby="folder-error" type="file" webkitdirectory="" directory="" multiple onChange={e => setFiles(e.target.files)} />{showValidation && missing.files && <small id="folder-error" className="field-error">{missing.files}</small>}</label>
+      <button disabled={busy} onClick={prepare}>{correctionMode ? 'Upload corrected folders' : 'Upload and check existing results'}</button>
     </section>}
     <section className="workspace-panel"><h2>{resultsOnly ? 'Review saved marks' : '2. Evaluate and track sheets'}</h2>
       {!resultsOnly && canUpload && <button disabled={busy || !viewTotal} onClick={() => action(async () => {

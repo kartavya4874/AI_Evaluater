@@ -19,6 +19,65 @@ class RecoveryTests(unittest.TestCase):
     setUp = test_workspace.WorkspaceTests.setUp
     process = test_workspace.WorkspaceTests.process
 
+    def test_connection_outage_beyond_retry_limit_resumes_same_attempt(self):
+        import requests
+        self.service.enqueue(self.sheet_id, 'admin')
+        self.db.jobs.update_one({'_id': self.sheet_id}, {'$set': {'retry_count': 20}})
+        self.llm.evaluate_answer.side_effect = requests.exceptions.ConnectionError('offline')
+        self.service.process(self.service.claim('worker'), self.pdf, self.llm, 'worker')
+        job = self.db.jobs.find_one()
+        self.assertEqual(job['state'], 'queued')
+        self.db.jobs.update_one({'_id': self.sheet_id}, {'$set': {'next_run_at': now()}})
+        self.llm.evaluate_answer.side_effect = None
+        self.service.process(self.service.claim('worker'), self.pdf, self.llm, 'worker')
+        self.assertEqual(self.db.jobs.find_one()['state'], 'completed')
+        self.assertEqual(self.db.attempts.count_documents({}), 1)
+        self.assertEqual(self.pdf.extract_text_from_pdf.call_count, 2)
+
+    def test_expired_lease_is_not_user_cancellation(self):
+        self.service.enqueue(self.sheet_id, 'admin')
+        job = self.service.claim('worker')
+        self.db.worker_leases.insert_one({'_id': 'inference', 'owner': 'worker', 'expires': now() - timedelta(seconds=1)})
+        self.service.process(job, self.pdf, self.llm, 'worker')
+        self.assertEqual(self.db.jobs.find_one()['state'], 'queued')
+        self.assertEqual(self.db.attempts.find_one()['error']['type'], 'LeaseLost')
+
+    def test_known_lease_cancellation_is_repaired_but_user_cancellation_is_not(self):
+        for explicit in (False, True):
+            self.db.jobs.delete_many({})
+            self.db.jobs.insert_one({'_id': self.sheet_id, 'state': 'cancelled', 'cancel_requested': explicit,
+                'error': 'Worker lease expired; result will not be activated'})
+            self.service.recover_interrupted('replacement')
+            self.assertEqual(self.db.jobs.find_one()['state'], 'cancelled' if explicit else 'queued')
+
+    def test_recovery_survives_many_coordinator_restarts(self):
+        self.service.enqueue(self.sheet_id, 'admin')
+        self.service.claim('old-worker')
+        self.db.jobs.update_one({'_id': self.sheet_id}, {'$set': {'retry_count': 50}})
+        self.service.recover_interrupted('replacement')
+        self.assertEqual(self.db.jobs.find_one()['state'], 'queued')
+
+    def test_partial_preparation_registers_issues_and_corrected_upload_preserves_other_courses(self):
+        broken = Path(self.temp.name) / 'CS101A'
+        broken.mkdir()
+        (broken / '101.pdf').write_bytes(b'answer')
+        issues = []
+        ids = self.service.prepare(self.temp.name, 'exam-1', 'mst', 100, 'admin', issues=issues)
+        self.assertEqual(ids, [self.sheet_id])
+        self.assertIn('CS101A', issues[0])
+        self.assertIsNotNone(self.db.courses.find_one({'_id': 'CS101A'}))
+        before = self.db.sheets.find_one({'_id': self.sheet_id})
+        with tempfile.TemporaryDirectory() as corrected:
+            folder = Path(corrected) / 'CS101A'
+            folder.mkdir()
+            (folder / '101.pdf').write_bytes(b'answer')
+            (folder / 'model_answer.pdf').write_bytes(b'key')
+            fixed = self.service.prepare(corrected, 'exam-1', 'mst', 100, 'admin')
+            self.assertEqual(len(fixed), 1)
+            self.assertEqual(self.db.sheets.find_one({'_id': self.sheet_id}), before)
+            self.assertEqual(self.service.prepare(corrected, 'exam-1', 'mst', 100, 'admin'), fixed)
+            self.assertEqual(self.db.sheets.count_documents({}), 2)
+
     def test_bulk_submission_replays_without_duplicate_attempts(self):
         operation = {'_id': 'bulk-test', 'kind': 'evaluate', 'actor': 'admin',
             'owner': 'worker', 'sheet_ids': [self.sheet_id], 'submitted': 0, 'state': 'processing'}
@@ -149,6 +208,24 @@ class RecoveryTests(unittest.TestCase):
 
 
 class StructuredGradingTests(unittest.TestCase):
+    def test_separate_question_paper_supplies_marks_and_key_supplies_answers(self):
+        paper = {'questions': [{'question_id': '1', 'max_marks': 10, 'source_quote': 'Q1 10 marks', 'answer': None}]}
+        key = {'questions': [{'question_id': '1', 'max_marks': None, 'source_quote': 'Q1 Correct', 'answer': 'Correct'}]}
+        score = {'marks_awarded': 7, 'feedback': 'Checked', 'strengths': [], 'missing_points': [],
+            'question_scores': [{'question_id': '1', 'max_marks': 10, 'marks_awarded': 7}]}
+        with patch('utils.structured_grading.json_call', side_effect=[paper, key,
+                {'segments': [{'question_id': '1', 'text': 'student answer'}]}, score]):
+            value = evaluate(Mock(), 'student answer', 'Q1 Correct', 10, question='Q1 10 marks')
+        self.assertEqual(value['marks_awarded'], 7)
+
+    def test_separate_documents_cannot_fill_missing_marks_or_conflicting_allocations(self):
+        for allocation in (None, 5):
+            paper = {'questions': [{'question_id': '1', 'max_marks': allocation, 'source_quote': 'Q1 marks', 'answer': None}]}
+            key = {'questions': [{'question_id': '1', 'max_marks': None if allocation is None else 10, 'source_quote': 'Q1 Correct', 'answer': 'Correct'}]}
+            with patch('utils.structured_grading.json_call', side_effect=[paper, key]):
+                with self.assertRaises(NeedsReview):
+                    evaluate(Mock(), 'student answer', 'Q1 Correct', 10, question='Q1 marks')
+
     def test_parallel_questions_preserve_scores_and_order(self):
         import threading
         from types import SimpleNamespace

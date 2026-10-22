@@ -52,6 +52,10 @@ def safe_path(root, relative):
     return target
 
 
+class LeaseLost(TimeoutError):
+    """Infrastructure interruption, not an explicit user cancellation."""
+
+
 class Workspace:
     def __init__(self, db):
         self.db = db
@@ -68,48 +72,69 @@ class Workspace:
         self.db.preparations.create_index([('state', 1), ('created_at', 1)])
         self.db.jobs.create_index([('state', 1), ('next_run_at', 1), ('created_at', 1)])
         self.db.jobs.create_index([('state', 1), ('sheet_snapshot.course_code', 1), ('created_at', 1)])
+        # Register known courses without overwriting names or granting permissions.
+        from utils.course_processor import COURSE_CODE_PATTERN
+        for code in set(self.db.sheets.distinct('course_code') + self.db.evaluations.distinct('course_code')):
+            if isinstance(code, str) and len(code) <= 80 and COURSE_CODE_PATTERN.fullmatch(code):
+                self.db.courses.update_one({'_id': code}, {'$setOnInsert': {
+                    'name': code, 'uploaders': [], 'reviewers': [], 'created_at': now()}}, upsert=True)
+
 
     def audit(self, actor, action, **details):
         self.db.audit.insert_one({'actor': actor, 'action': action, 'at': now(), **details})
 
-    def prepare(self, directory, exam_id, exam_type, max_marks, actor):
+    def prepare(self, directory, exam_id, exam_type, max_marks, actor, issues=None):
         from utils.course_processor import CourseProcessor
         from utils.gemini_service import VLLM_MODEL, END_SEM_PROMPT, MST_PROMPT
         if not isinstance(exam_id, str) or not exam_id.strip() or len(exam_id) > 120:
             raise ValueError('An examination ID/session is required (maximum 120 characters)')
         if exam_type not in ('mst', 'end_sem') or not 0 < max_marks <= 1000:
             raise ValueError('Invalid examination type or maximum marks')
-        courses, _ = CourseProcessor(directory, max_marks).discover_courses()
+        processor = CourseProcessor(directory, max_marks)
+        courses, _ = processor.discover_courses(allow_empty=True)
+        issues = issues if issues is not None else []
+        issues.extend(processor.discovery_errors)
+        for code in processor.discovered_codes:
+            self.db.courses.update_one({'_id': code}, {'$setOnInsert': {
+                'name': code, 'uploaders': [], 'reviewers': [], 'created_at': now()}}, upsert=True)
         ids = []
         for code, course in courses.items():
-            key_hash = file_hash(course['model_answer_path'])
-            paper_path = course.get('question_paper_path')
-            config = {'version': VERSION, 'model': VLLM_MODEL, 'key': key_hash,
-                      'exam_type': exam_type, 'max_marks': max_marks,
-                      'prompt': digest(MST_PROMPT if exam_type == 'mst' else END_SEM_PROMPT)}
-            config['question_paper'] = file_hash(paper_path) if paper_path else None
-            for student in course['student_sheets']:
-                sheet_hash = file_hash(student['file_path'])
-                sheet_config = {**config, 'content_hash': sheet_hash}
-                sheet_id = digest([exam_id.strip(), code, student['roll_number']])
-                running = self.db.jobs.find_one({'_id': sheet_id, 'state': {'$in': ACTIVE + ['managing']}})
-                if running:
-                    raise ValueError('Wait for this sheet to finish before replacing its uploaded inputs')
-                self.db.sheets.update_one({'_id': sheet_id}, {'$setOnInsert': {
-                    'exam_id': exam_id.strip(), 'course_code': code, 'roll_number': student['roll_number'],
-                    'active_attempt': None, 'created_at': now(), 'config': sheet_config,
-                    'file_path': student['file_path'], 'model_path': course['model_answer_path'],
-                    'question_path': paper_path, 'max_marks': max_marks, 'exam_type': exam_type}}, upsert=True)
-                with self.reserve([sheet_id]):
-                    previous = self.db.sheets.find_one({'_id': sheet_id})
-                    pin = bool(previous and previous.get('active_pinned') and previous['config'] == sheet_config)
-                    self.db.sheets.update_one({'_id': sheet_id}, {'$set': {'file_path': student['file_path'], 'model_path': course['model_answer_path'],
-                               'question_path': paper_path,
-                               'content_hash': sheet_hash, 'config': sheet_config, 'max_marks': max_marks,
-                               'exam_type': exam_type,
-                               'active_pinned': pin,
-                               'updated_at': now()}}, upsert=True)
-                ids.append(sheet_id)
+            try:
+                for student in course['student_sheets']:
+                    sid = digest([exam_id.strip(), code, student['roll_number']])
+                    if self.db.jobs.find_one({'_id': sid, 'state': {'$in': ACTIVE + ['managing']}}):
+                        raise ValueError('Wait for running sheets to finish before uploading corrections')
+                    file_hash(student['file_path'])
+                key_hash = file_hash(course['model_answer_path'])
+                paper_path = course.get('question_paper_path')
+                config = {'version': VERSION, 'model': VLLM_MODEL, 'key': key_hash,
+                          'exam_type': exam_type, 'max_marks': max_marks,
+                          'prompt': digest(MST_PROMPT if exam_type == 'mst' else END_SEM_PROMPT)}
+                config['question_paper'] = file_hash(paper_path) if paper_path else None
+                for student in course['student_sheets']:
+                    sheet_hash = file_hash(student['file_path'])
+                    sheet_config = {**config, 'content_hash': sheet_hash}
+                    sheet_id = digest([exam_id.strip(), code, student['roll_number']])
+                    running = self.db.jobs.find_one({'_id': sheet_id, 'state': {'$in': ACTIVE + ['managing']}})
+                    if running:
+                        raise ValueError('Wait for this sheet to finish before replacing its uploaded inputs')
+                    self.db.sheets.update_one({'_id': sheet_id}, {'$setOnInsert': {
+                        'exam_id': exam_id.strip(), 'course_code': code, 'roll_number': student['roll_number'],
+                        'active_attempt': None, 'created_at': now(), 'config': sheet_config,
+                        'file_path': student['file_path'], 'model_path': course['model_answer_path'],
+                        'question_path': paper_path, 'max_marks': max_marks, 'exam_type': exam_type}}, upsert=True)
+                    with self.reserve([sheet_id]):
+                        previous = self.db.sheets.find_one({'_id': sheet_id})
+                        pin = bool(previous and previous.get('active_pinned') and previous['config'] == sheet_config)
+                        self.db.sheets.update_one({'_id': sheet_id}, {'$set': {'file_path': student['file_path'], 'model_path': course['model_answer_path'],
+                                   'question_path': paper_path,
+                                   'content_hash': sheet_hash, 'config': sheet_config, 'max_marks': max_marks,
+                                   'exam_type': exam_type,
+                                   'active_pinned': pin,
+                                   'updated_at': now()}}, upsert=True)
+                    ids.append(sheet_id)
+            except (ValueError, OSError) as exc:
+                issues.append(f'{code}: {exc}')
         self.audit(actor, 'prepare', exam_id=exam_id, count=len(ids))
         return ids
 
@@ -334,9 +359,10 @@ class Workspace:
                 self.db.preparations.update_one({'_id': job['_id'], 'owner': job['owner']}, {'$set': {
                     'state': 'completed', 'error': 'Some sheets could not be queued; inspect errors' if errors else None, 'updated_at': now()}})
                 return
-            ids = self.prepare(job['directory'], job['exam_id'], job['exam_type'], job['max_marks'], job['actor'])
+            issues = []
+            ids = self.prepare(job['directory'], job['exam_id'], job['exam_type'], job['max_marks'], job['actor'], issues=issues)
             self.db.preparations.update_one({'_id': job['_id'], 'owner': job['owner']}, {'$set': {
-                'state': 'completed', 'sheet_ids': ids, 'updated_at': now(), 'error': None}})
+                'state': 'completed', 'sheet_ids': ids, 'issues': issues, 'updated_at': now(), 'error': 'Some courses were skipped; upload corrected folders separately' if issues else None}})
         except PyMongoError:
             raise
         except Exception as exc:
@@ -344,6 +370,12 @@ class Workspace:
                 'state': 'error', 'error': str(exc)[:500], 'updated_at': now()}})
 
     def recover_interrupted(self, owner):
+        # Repair only the known old lease-loss cancellation; never revive an
+        # explicitly cancelled job or a source/marking error.
+        self.db.jobs.update_many({'state': 'cancelled', 'cancel_requested': {'$ne': True},
+            'error': 'Worker lease expired; result will not be activated'}, {'$set': {
+                'state': 'queued', 'stage': 'retry_wait', 'next_run_at': now(), 'updated_at': now(),
+                'error': 'Connection interrupted; resuming saved work automatically'}})
         self.db.preparations.update_many({'state': 'processing', 'owner': {'$ne': owner}},
             {'$set': {'state': 'queued', 'updated_at': now()}})
         for job in self.db.jobs.find({'state': 'processing', 'owner': {'$ne': owner}}):
@@ -362,11 +394,9 @@ class Workspace:
             elif attempt and attempt.get('status') == 'completed':
                 self.publish({**job, 'token': token}, sheet, owner)
                 state, message = 'completed', None
-            elif retries <= MAX_RETRIES:
+            else:
                 state, message = 'queued', 'Worker interrupted; resuming saved work automatically'
                 self.db.attempts.update_one({'_id': job['attempt_id']}, {'$set': {'status': 'processing'}})
-            else:
-                state, message = 'error', 'Automatic recovery exhausted; inspect the worker and retry'
             self.db.jobs.update_one({'_id': job['_id'], 'attempt_id': job['attempt_id'],
                 'owner': job.get('owner'), 'state': 'processing'}, {'$set': {
                     'state': state, 'stage': state, 'error': message, 'progress': None, 'updated_at': now(),
@@ -399,7 +429,7 @@ class Workspace:
                 raise ReviewRequired('This attempt exceeded its 24-hour processing window; inspect and retry')
             lease = self.db.worker_leases.find_one({'_id': 'inference'})
             if lease and (lease['owner'] != owner or lease['expires'] <= now()):
-                raise InterruptedError('Worker lease expired; result will not be activated')
+                raise LeaseLost('Worker connection/lease interrupted; saved work will resume automatically')
             current = self.db.jobs.find_one({'_id': sheet['_id']})
             if (not current or current.get('owner') != owner or current.get('cancel_requested')
                     or current.get('state') != 'processing' or current.get('attempt_id') != attempt_id):
@@ -532,15 +562,20 @@ class Workspace:
                 # Keep the valid result and processing job for startup reconciliation.
                 raise
             retries = job.get('retry_count', 0) + 1
+            infrastructure = isinstance(exc, (requests.exceptions.ConnectionError, requests.exceptions.Timeout, PyMongoError, LeaseLost))
             retryable = isinstance(exc, (requests.exceptions.ConnectionError, requests.exceptions.Timeout, TimeoutError, PyMongoError))
-            status = 'queued' if retryable and retries <= MAX_RETRIES else ('cancelled' if isinstance(exc, InterruptedError) else 'needs_review' if isinstance(exc, ReviewRequired) else 'error')
+            current_job = self.db.jobs.find_one({'_id': sheet['_id'], 'attempt_id': attempt_id})
+            if current_job and current_job.get('cancel_requested'):
+                exc = InterruptedError('Evaluation cancelled')
+                retryable = False
+            status = 'queued' if retryable and (infrastructure or retries <= MAX_RETRIES) else ('cancelled' if isinstance(exc, InterruptedError) else 'needs_review' if isinstance(exc, ReviewRequired) else 'error')
             logger.warning('attempt=%s status=%s error_type=%s', attempt_id, status, type(exc).__name__)
             self.db.attempts.update_one({'_id': attempt_id, 'status': 'processing', 'token': job['token']}, {'$set': {
                 'status': 'processing' if status == 'queued' else status, 'error': {'type': type(exc).__name__, 'message': str(exc)[:500]}, 'finished_at': now()}})
             self.db.sheets.update_one({'_id': sheet['_id'], 'execution.token': job['token']}, {'$set': {'execution.state': status}})
             self.db.jobs.update_one({'_id': sheet['_id'], 'owner': owner, 'token': job['token'], 'attempt_id': attempt_id, 'state': 'processing'}, {'$set': {
                 'state': status, 'stage': 'retry_wait' if status == 'queued' else status, 'error': str(exc)[:500], 'progress': None, 'updated_at': now(),
-                'retry_count': retries, 'next_run_at': now() + timedelta(seconds=min(300, 5 * 2 ** retries) + random.uniform(0, 5))},
+                'retry_count': retries, 'next_run_at': now() + timedelta(seconds=min(300, 5 * 2 ** min(retries, 6)) + random.uniform(0, 5))},
                 '$push': {'events': {'$each': [{'stage': status, 'at': now(), 'message': str(exc)[:500]}], '$slice': -100}}})
 
 

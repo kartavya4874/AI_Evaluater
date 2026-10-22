@@ -4,7 +4,7 @@ This working tree preserves upload → evaluate → review → verify → export
 
 ## Implemented safeguards
 
-- MongoDB stores jobs, attempts, preparation operations and upload receipts. The worker supervisor restarts after coordinator errors. Transient transport failures retry with backoff, with at most five job recoveries; exhausted failures remain visible without fabricated marks.
+- MongoDB stores jobs, attempts, preparation operations and upload receipts. The worker supervisor restarts after coordinator errors. Connection/database outages, provider transport timeouts and lease loss retry with capped backoff until connectivity returns or the user cancels. Coordinator recovery keeps the same attempt and cached pages. Other generic timeouts retain a five-retry limit; source errors require review.
 - Publication checks a per-sheet execution token, ownership, expiry, input version and cancellation flag in one conditional update. A recovered worker fences its predecessor. Saved completed attempts can be reconciled after interruption. Manual/pinned results remain protected.
 - OCR saves each successful page and renders one missing page at a time. Shared answer keys and question papers reuse extraction within the exam/course. Cache references prevent deleting another sheet's shared entry; explicit clearing changes the selected sheet's cache generation so its next run obtains fresh data.
 - Grading extracts a source-backed question rubric, maps the complete student text, grades individual questions, and totals validated scores in Python. Optional rules are checked against the source. Missing, conflicting, unreadable or oversized material requires review. Arbitrary text truncation is not accepted as a grade. Model output truncation retries with larger supported budgets, then becomes review-required.
@@ -88,3 +88,27 @@ Compare accuracy using teacher labels on the same held-out papers; the reported
 8% relative baseline is not yet a measured benchmark. Teacher uploads do not
 train the model automatically. Restart the backend and any standalone workers
 to activate these changes.
+
+
+### Corrected folders and recovery (October 22)
+
+Course codes support letters and digits in any position, plus spaces, underscores
+and hyphens, up to 80 characters. PDF-bearing course folders are registered at
+preparation; existing sheet/result course codes are registered at worker startup.
+Existing names and course assignments are never overwritten. Invalid/incomplete
+courses are listed under preparation issues while valid courses proceed.
+
+Use Upload corrected folders separately with the original exam ID and unchanged
+student filenames. Upload the key and optional question paper alongside corrected
+student PDFs. Only included sheets are updated; running courses are skipped with
+an issue. Preparation does not automatically start evaluation.
+
+Separate question-paper and answer-key extraction now joins by exact question ID:
+explicit marks can come from the paper and answers from the key. Missing or
+conflicting allocations still require review. No marks are inferred from totals.
+
+The known old cancellation message 'Worker lease expired; result will not be
+activated' is repaired on recovery only when the job was not explicitly cancelled.
+A backend that starts offline stays available and its worker retries connection.
+Automatic recovery requires the backend/worker process to remain running; it does
+not restart a powered-off machine or another service.

@@ -107,6 +107,16 @@ class WorkerLifecycleTests(unittest.TestCase):
                 self.assertTrue(worker.stop())
             self.assertTrue(worker.stopped.is_set())
 
+    def test_supervisor_restarts_after_database_returns(self):
+        from worker import supervise
+        stopped = MagicMock()
+        stopped.is_set.side_effect = [False, False, True]
+        with patch('worker.run', side_effect=[RuntimeError('offline'), None]) as attempt:
+            with self.assertLogs('worker', level='ERROR'):
+                supervise(stopped)
+        self.assertEqual(attempt.call_count, 2)
+        self.assertEqual(stopped.wait.call_count, 2)
+
     def test_worker_failure_is_logged(self):
         with patch('worker.run', side_effect=RuntimeError('database unavailable')):
             with self.assertLogs('worker', level='ERROR') as logs:

@@ -6,7 +6,7 @@ from utils.config_loader import ConfigLoader
 logger = logging.getLogger(__name__)
 
 # Keep suffixes in the batch identifier so FS3401 and FS3401_MSE stay distinct.
-COURSE_CODE_PATTERN = re.compile(r'^[A-Z]{2,}\d{3,}(?:[_ -][A-Z0-9]+)*$', re.IGNORECASE)
+COURSE_CODE_PATTERN = re.compile(r'^[A-Z0-9]+(?:[_ -][A-Z0-9]+)*$', re.IGNORECASE)
 
 
 class CourseProcessor:
@@ -15,8 +15,9 @@ class CourseProcessor:
         self.courses = {}
         self.max_marks = max_marks  # If provided from UI, skip config.json
         self.discovery_errors = []
+        self.discovered_codes = set()
 
-    def discover_courses(self):
+    def discover_courses(self, allow_empty=False):
         """
         Scan the root directory for course folders.
         If max_marks was provided via constructor (from UI), config.json is optional.
@@ -60,18 +61,34 @@ class CourseProcessor:
                 if item.startswith('.'):
                     continue
 
-                # Check if folder name matches course code pattern
-                if not COURSE_CODE_PATTERN.match(item):
+                item_path = os.path.join(root, item)
+                # Wrapper folders are not courses; only PDF-bearing folders qualify.
+                try:
+                    if not any(f.lower().endswith('.pdf') for f in os.listdir(item_path)):
+                        continue
+                except OSError as exc:
+                    self.discovery_errors.append(f'{item}: cannot read folder ({exc})')
                     continue
-                
+                if len(item) > 80 or not COURSE_CODE_PATTERN.fullmatch(item):
+                    self.discovery_errors.append(f'{item}: use a course code of up to 80 letters, digits, spaces, underscores or hyphens')
+                    continue
                 course_code = item.upper()
+                self.discovered_codes.add(course_code)
                 
                 # If we already processed this course code (e.g. nested MB3103/MB3103), skip
                 if course_code in self.courses:
+                    self.discovery_errors.append(f'{course_code}: duplicate course folders; upload one corrected folder for this code')
+                    self.courses.pop(course_code)
+                    continue
+                if any(error.startswith(course_code + ': duplicate') for error in self.discovery_errors):
                     continue
 
                 item_path = os.path.join(root, item)
-                course_info = self._process_course_folder(course_code, item_path)
+                try:
+                    course_info = self._process_course_folder(course_code, item_path)
+                except OSError as exc:
+                    self.discovery_errors.append(f'{course_code}: cannot read course files ({exc})')
+                    continue
 
                 if course_info:
                     self.courses[course_code] = course_info
@@ -80,11 +97,11 @@ class CourseProcessor:
                         f"{len(course_info['student_sheets'])} student sheets"
                     )
 
-        if not self.courses:
+        if not self.courses and not allow_empty:
             details = '; '.join(self.discovery_errors) or 'Use a course folder such as FS3401_MSE containing an answer-key PDF and student PDFs.'
             raise ValueError(f"No valid course folders found. {details}")
         if self.discovery_errors:
-            raise ValueError('Some course folders are incomplete: ' + '; '.join(self.discovery_errors))
+            logger.warning('Skipped course folders: %s', '; '.join(self.discovery_errors))
 
         logger.info(f"Total courses discovered: {len(self.courses)}")
         return self.courses, self.max_marks
@@ -107,10 +124,10 @@ class CourseProcessor:
         # Pattern to match model answers with ANY course-code-like prefix
         # e.g., MB3103_model_answer, MA3134_Model_Answer, model_answer, answer_key
         model_answer_pattern = re.compile(
-            r'^([a-z]{2,}\d{3,}_?)?(model[_\s]?answer|answer[_\s]?key)$'
+            r'^(?:[a-z0-9][a-z0-9_ -]*?[_ -]?)?(model[_\s]?answer|answer[_\s]?key)$'
         )
         question_paper_pattern = re.compile(
-            r'^([a-z]{2,}\d{3,}_?)?question[_\s]?paper$'
+            r'^(?:[a-z0-9][a-z0-9_ -]*?[_ -]?)?question[_\s]?paper$'
         )
 
         for filename in sorted(os.listdir(folder_path)):

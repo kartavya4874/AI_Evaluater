@@ -1,0 +1,63 @@
+2026-10-22 19:48:50 [INFO] root - Logger initialized. Persistent audit logs are enabled.
+2026-10-22 19:48:50 [INFO] utils.gemini_service - GeminiService initialised → vLLM endpoint: https://dgx.geetauniversity.edu.in/v1 | model: google/gemma-4-31B-it
+2026-10-22 19:48:50 [INFO] root - Testing database connection...
+2026-10-22 19:48:50 [INFO] utils.db_connection - Attempting to connect to MongoDB...
+2026-10-22 19:48:50 [INFO] utils.db_connection - Connecting to configured MongoDB
+2026-10-22 19:48:54 [INFO] utils.db_connection - Successfully connected to MongoDB database: ai_examiner
+2026-10-22 19:48:54 [INFO] utils.db_connection - Database indexes created successfully
+2026-10-22 19:48:54 [INFO] root - Database connection successful
+2026-10-22 19:48:54 [INFO] worker - Evaluation worker started automatically
+2026-10-22 19:48:54 [INFO] werkzeug - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.15:5000
+2026-10-22 19:48:54 [INFO] werkzeug - [33mPress CTRL+C to quit[0m
+2026-10-22 19:48:57 [INFO] worker - Evaluation worker ready: up to 5 sheets in parallel
+2026-10-22 19:48:58 [INFO] utils.gemini_service - GeminiService initialised → vLLM endpoint: https://dgx.geetauniversity.edu.in/v1 | model: google/gemma-4-31B-it
+2026-10-22 19:48:58 [INFO] utils.workspace - attempt=3d05b3d9b972452386adbfc7c294924c sheet=1a14f64fcee4fab0d32e034304e393f47a564e77d65d851f10f12e8f210cf923 stage=checking_cache
+2026-10-22 19:48:59 [INFO] utils.gemini_service - GeminiService initialised → vLLM endpoint: https://dgx.geetauniversity.edu.in/v1 | model: google/gemma-4-31B-it
+2026-10-22 19:48:59 [INFO] utils.workspace - attempt=3d05b3d9b972452386adbfc7c294924c sheet=1a14f64fcee4fab0d32e034304e393f47a564e77d65d851f10f12e8f210cf923 stage=grading
+2026-10-22 19:48:59 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=checking_cache
+2026-10-22 19:48:59 [INFO] utils.gemini_service - Calling vLLM endpoint: https://dgx.geetauniversity.edu.in/v1/chat/completions (model=google/gemma-4-31B-it, max_tokens=1500, timeout=600s)...
+2026-10-22 19:49:00 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracting_student
+2026-10-22 19:49:00 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracting_student_page_1_of_27
+2026-10-22 19:49:01 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracted_student_page_1_of_27
+2026-10-22 19:49:01 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracting_student_page_2_of_27
+2026-10-22 19:49:01 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracted_student_page_2_of_27
+2026-10-22 19:49:02 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracting_student_page_3_of_27
+2026-10-22 19:49:02 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracted_student_page_3_of_27
+2026-10-22 19:49:02 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracting_student_page_4_of_27
+2026-10-22 19:49:03 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracted_student_page_4_of_27
+2026-10-22 19:49:03 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracting_student_page_5_of_27
+2026-10-22 19:49:03 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracted_student_page_5_of_27
+2026-10-22 19:49:04 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracting_student_page_6_of_27
+2026-10-22 19:49:04 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracted_student_page_6_of_27
+2026-10-22 19:49:04 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracting_student_page_7_of_27
+2026-10-22 19:49:05 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracted_student_page_7_of_27
+2026-10-22 19:49:05 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracting_student_page_8_of_27
+2026-10-22 19:49:06 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracted_student_page_8_of_27
+2026-10-22 19:49:06 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracting_student_page_9_of_27
+2026-10-22 19:49:06 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracted_student_page_9_of_27
+2026-10-22 19:49:07 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracting_student_page_10_of_27
+2026-10-22 19:49:08 [INFO] utils.pdf_processor - Extracting text from 1 images using Gemini vision...
+2026-10-22 19:49:08 [INFO] utils.pdf_processor - Processing page 1/1 with Gemini vision...
+2026-10-22 19:49:08 [INFO] utils.gemini_service - Calling vLLM endpoint: https://dgx.geetauniversity.edu.in/v1/chat/completions (model=google/gemma-4-31B-it, max_tokens=1500, timeout=600s)...
+2026-10-22 19:50:40 [INFO] werkzeug - 127.0.0.1 - - [22/Oct/2026 19:50:40] "GET /api/ready HTTP/1.1" 200 -
+2026-10-22 19:55:56 [INFO] utils.gemini_service - vLLM response status=200 duration=416.91s
+2026-10-22 19:55:56 [WARNING] utils.gemini_service - Truncated response; retrying with output budget 3000 (was 1500)
+2026-10-22 19:55:56 [INFO] utils.gemini_service - Calling vLLM endpoint: https://dgx.geetauniversity.edu.in/v1/chat/completions (model=google/gemma-4-31B-it, max_tokens=3000, timeout=600s)...
+2026-10-22 19:56:06 [INFO] utils.gemini_service - vLLM response status=200 duration=418.79s
+2026-10-22 19:56:06 [WARNING] utils.gemini_service - Truncated response; retrying with output budget 3000 (was 1500)
+2026-10-22 19:56:06 [INFO] utils.gemini_service - Calling vLLM endpoint: https://dgx.geetauniversity.edu.in/v1/chat/completions (model=google/gemma-4-31B-it, max_tokens=3000, timeout=600s)...
+2026-10-22 20:05:58 [WARNING] utils.gemini_service - vLLM call failed: HTTPSConnectionPool(host='dgx.geetauniversity.edu.in', port=443): Read timed out. (read timeout=600)
+2026-10-22 20:06:01 [INFO] utils.gemini_service - Calling vLLM endpoint: https://dgx.geetauniversity.edu.in/v1/chat/completions (model=google/gemma-4-31B-it, max_tokens=1500, timeout=600s)...
+2026-10-22 20:06:10 [WARNING] utils.gemini_service - vLLM call failed: HTTPSConnectionPool(host='dgx.geetauniversity.edu.in', port=443): Read timed out. (read timeout=600)
+2026-10-22 20:06:13 [INFO] utils.gemini_service - Calling vLLM endpoint: https://dgx.geetauniversity.edu.in/v1/chat/completions (model=google/gemma-4-31B-it, max_tokens=1500, timeout=600s)...
+2026-10-22 20:13:08 [INFO] utils.gemini_service - vLLM response status=200 duration=426.77s
+2026-10-22 20:13:08 [WARNING] utils.gemini_service - Truncated response; retrying with output budget 3000 (was 1500)
+2026-10-22 20:13:08 [INFO] utils.gemini_service - Calling vLLM endpoint: https://dgx.geetauniversity.edu.in/v1/chat/completions (model=google/gemma-4-31B-it, max_tokens=3000, timeout=600s)...
+2026-10-22 20:13:24 [INFO] utils.gemini_service - vLLM response status=200 duration=430.71s
+2026-10-22 20:13:24 [WARNING] utils.gemini_service - Truncated response; retrying with output budget 3000 (was 1500)
+2026-10-22 20:13:24 [INFO] utils.gemini_service - Calling vLLM endpoint: https://dgx.geetauniversity.edu.in/v1/chat/completions (model=google/gemma-4-31B-it, max_tokens=3000, timeout=600s)...
+2026-10-22 20:23:10 [WARNING] utils.gemini_service - vLLM call failed: HTTPSConnectionPool(host='dgx.geetauniversity.edu.in', port=443): Read timed out. (read timeout=600)
+2026-10-22 20:23:11 [WARNING] utils.workspace - attempt=3d05b3d9b972452386adbfc7c294924c status=queued error_type=ReadTimeout

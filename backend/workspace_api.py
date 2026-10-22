@@ -225,8 +225,9 @@ def create_workspace_api(require_auth, upload_root):
         if not service.db.uploads.find_one({'_id': str(directory), **({} if is_admin() else {'owner': g.user_email})}):
             raise Forbidden('Upload this folder from your own account first')
         from utils.course_processor import CourseProcessor
-        courses, _ = CourseProcessor(str(directory), int(data.get('max_marks', 0))).discover_courses()
-        for code in courses:
+        processor = CourseProcessor(str(directory), int(data.get('max_marks', 0)))
+        courses, _ = processor.discover_courses(allow_empty=True)
+        for code in processor.discovered_codes:
             authorize(service.db, code, 'uploaders')
         if data.get('async') is True:
             from utils.workspace import digest
@@ -235,10 +236,11 @@ def create_workspace_api(require_auth, upload_root):
                 'directory': str(directory), 'exam_id': data.get('exam_id'), 'exam_type': data.get('exam_type'),
                 'max_marks': int(data.get('max_marks', 0)), 'actor': g.user_email,
                 'state': 'queued', 'created_at': now(), 'updated_at': now()}}, upsert=True)
-            return jsonify(operation_id=operation_id), 202
+            return jsonify(operation_id=operation_id, issues=processor.discovery_errors), 202
+        issues = []
         ids = workspace().prepare(str(directory), data.get('exam_id'), data.get('exam_type'),
-                                  int(data.get('max_marks', 0)), g.user_email)
-        return jsonify(sheet_ids=ids)
+                                  int(data.get('max_marks', 0)), g.user_email, issues=issues)
+        return jsonify(sheet_ids=ids, issues=issues)
 
     @api.get('/preparations/<operation_id>')
     @require_auth
