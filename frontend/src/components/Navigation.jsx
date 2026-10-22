@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { FiMenu, FiX, FiLogOut } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
@@ -6,10 +6,12 @@ import './Navigation.css';
 
 const Navigation = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [evaluateOpen, setEvaluateOpen] = useState(false);
   const location = useLocation();
   const { user, logout } = useAuth();
 
   const isActive = (path) => location.pathname === path;
+  useEffect(() => { setEvaluateOpen(false); setIsMobileMenuOpen(false); }, [location.pathname]);
 
   if (!user) return null;
 
@@ -29,13 +31,18 @@ const Navigation = () => {
         </button>
 
         <ul className={`nav-links ${isMobileMenuOpen ? 'open' : ''}`}>
-          <li><Link to="/" className={`nav-link ${isActive('/') ? 'active' : ''}`} onClick={() => setIsMobileMenuOpen(false)}>Home</Link></li>
-          <li><Link to="/dashboard" className={`nav-link ${isActive('/dashboard') ? 'active' : ''}`} onClick={() => setIsMobileMenuOpen(false)}>Dashboard</Link></li>
-          <li><Link to="/evaluate" className={`nav-link ${isActive('/evaluate') ? 'active' : ''}`} onClick={() => setIsMobileMenuOpen(false)}>Evaluate</Link></li>
-          <li><Link to="/management" className={`nav-link ${isActive('/management') ? 'active' : ''}`} onClick={() => setIsMobileMenuOpen(false)}>Manage</Link></li>
-          <li><Link to="/history" className={`nav-link ${isActive('/history') ? 'active' : ''}`} onClick={() => setIsMobileMenuOpen(false)}>History</Link></li>
-          <li><Link to="/batch" className={`nav-link nav-link-accent ${isActive('/batch') ? 'active' : ''}`} onClick={() => setIsMobileMenuOpen(false)}>Batch Mode</Link></li>
-          <li><Link to="/batch-results" className={`nav-link ${isActive('/batch-results') ? 'active' : ''}`} onClick={() => setIsMobileMenuOpen(false)}>Results</Link></li>
+          <li className="nav-evaluate" onBlur={e => { if (!e.currentTarget.contains(e.relatedTarget)) setEvaluateOpen(false); }} onKeyDown={e => { if (e.key === 'Escape') { setEvaluateOpen(false); e.currentTarget.querySelector('button').focus(); } }}>
+            <button className={`nav-link nav-dropdown-toggle ${location.pathname.startsWith('/evaluate') ? 'active' : ''}`} aria-expanded={evaluateOpen} aria-controls="evaluate-options" onClick={() => setEvaluateOpen(open => !open)}>Evaluate ▾</button>
+            {evaluateOpen && <ul id="evaluate-options" className="nav-dropdown">
+              {user.role === 'admin' ? <li><Link to="/evaluate/single" className="nav-link" onClick={() => setEvaluateOpen(false)}>Single</Link></li> : <li><span className="nav-link" aria-disabled="true">Single (admin only)</span></li>}
+              <li><Link to="/evaluate/batch" className="nav-link" onClick={() => setEvaluateOpen(false)}>Batch</Link></li>
+            </ul>}
+          </li>
+          <li><Link to="/results" className="nav-link" onClick={() => setIsMobileMenuOpen(false)}>Review results</Link></li>
+          <li><Link to="/teacher-comparison" className={`nav-link ${isActive('/teacher-comparison') ? 'active' : ''}`}>Teacher comparison</Link></li>
+          {user.role === 'admin' && <li><Link to="/manage-results" className={`nav-link ${isActive('/manage-results') ? 'active' : ''}`}>Manage answer sheets</Link></li>}
+          <li><Link to="/guide" className={`nav-link ${isActive('/guide') ? 'active' : ''}`} onClick={() => setIsMobileMenuOpen(false)}>User guide</Link></li>
+          {user.role === 'admin' && <li><Link to="/management" className={`nav-link ${isActive('/management') ? 'active' : ''}`} onClick={() => setIsMobileMenuOpen(false)}>Courses & accounts</Link></li>}
         </ul>
 
         <div className="nav-user">

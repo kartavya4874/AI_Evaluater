@@ -1,6 +1,7 @@
 from datetime import datetime
 from bson import ObjectId
 from utils.db_connection import db_connection
+from utils.result_validation import validate_result
 
 class Evaluation:
     @staticmethod
@@ -13,7 +14,10 @@ class Evaluation:
                extracted_text, max_marks, evaluation_result, teacher_name=None, 
                student_name=None, student_rollno=None):
         """Create a new evaluation record"""
+        evaluation_result = validate_result(evaluation_result, max_marks)
         evaluation = {
+            'status': 'completed',
+            'needs_review': False,
             'teacher_id': teacher_id,
             'teacher_name': teacher_name,
             'student_id': student_id,
@@ -30,6 +34,7 @@ class Evaluation:
             'strengths': evaluation_result.get('strengths', []),
             'missing_points': evaluation_result.get('missing_points', []),
             'feedback': evaluation_result.get('feedback', ''),
+            'question_scores': evaluation_result.get('question_scores', []),
             'created_at': datetime.utcnow(),
             'updated_at': datetime.utcnow()
         }
@@ -61,13 +66,13 @@ class Evaluation:
     def get_student_statistics(student_id):
         """Get statistics for a student"""
         pipeline = [
-            {'$match': {'student_id': student_id}},
+            {'$match': {'student_id': student_id, 'status': {'$in': ['completed', 'completed_manually']}, 'marks': {'$type': 'number'}}},
             {'$group': {
                 '_id': None,
                 'total_evaluations': {'$sum': 1},
-                'average_marks': {'$avg': '$marks_awarded'},
+                'average_marks': {'$avg': '$marks'},
                 'average_percentage': {'$avg': '$percentage'},
-                'total_marks': {'$sum': '$marks_awarded'},
+                'total_marks': {'$sum': '$marks'},
                 'max_possible_marks': {'$sum': '$max_marks'}
             }}
         ]
@@ -98,7 +103,10 @@ class Evaluation:
     def create_batch(course_code, roll_number, model_answer, student_answer,
                      extracted_text, max_marks, evaluation_result):
         """Create a new evaluation record for batch processing (no teacher/student roles)."""
+        evaluation_result = validate_result(evaluation_result, max_marks)
         evaluation = {
+            'status': 'completed',
+            'needs_review': False,
             'course_code': course_code,
             'roll_number': roll_number,
             'batch_mode': True,
@@ -113,6 +121,7 @@ class Evaluation:
             'strengths': evaluation_result.get('strengths', []),
             'missing_points': evaluation_result.get('missing_points', []),
             'feedback': evaluation_result.get('feedback', ''),
+            'question_scores': evaluation_result.get('question_scores', []),
             'created_at': datetime.utcnow(),
             'updated_at': datetime.utcnow()
         }

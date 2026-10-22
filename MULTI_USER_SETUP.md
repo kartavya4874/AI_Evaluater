@@ -1,0 +1,17 @@
+# Multi-user setup
+
+Set GOOGLE_CLIENT_ID on the backend to a Google OAuth Web client ID, ADMIN_EMAIL to the initial administrator's Google email, and JWT_SECRET_KEY to a random secret of at least 32 characters. Register the frontend origin in the Google client authorized JavaScript origins. Configure FRONTEND_URL for CORS. No Google client secret is needed for this ID-token flow. Google verifies tokens server-side; password login and old sessions are disabled.
+
+Deploy the backend and rebuilt frontend together. MongoDB and the existing evaluation worker must be running. The initial administrator signs in with Google, opens Courses & faculty, adds approved faculty email addresses, registers courses manually or imports an .xlsx workbook, then assigns uploaders and reviewers independently. Faculty must use the exact approved Google email. Disabled accounts lose access on the next request; course assignments are checked on every request.
+
+Excel: first row must contain course_code and optionally name. Example: FS3401, Applied Physics. Imports validate the complete workbook before writing and preserve existing assignments. Codes are uppercase, follow the existing course-folder naming convention, and are limited to 5000 rows per import. Upload folder names must exactly match registered codes. Register historical course codes before acting on their results. Source uploads are retained by the existing application.
+
+Upload faculty may prepare, evaluate, retry and cancel their courses. Review faculty may revise, select and verify results. Both can inspect assigned courses and download verified workspace results. Only administrators manage accounts, assignments, deletion and previous evaluation endpoints. Administrators retain all existing legacy routes; legacy evaluations are separate from the new course-scoped faculty workflow.
+
+Progress reports actual job states and OCR page numbers, not estimated percentages. The interface shows refresh failures and worker availability. Upload and preparation phases are shown separately. Course assignments currently apply across examination sessions.
+
+Google reference: https://developers.google.com/identity/gsi/web/guides/verify-google-id-token
+
+Parallel evaluation: administrators set 1–5 parallel evaluations in Workspace & progress using the Parallel evaluations selector. The setting is stored in MongoDB settings/_id=evaluation and defaults to three. The worker and AI request gate read it during processing; saving changes requires no restart. Lowering the limit lets existing work finish before admitting more. All users share the limit. The former BATCH_PROCESSING_MAX_WORKERS and VLLM_MAX_CONCURRENT_REQUESTS environment values no longer control workspace concurrency. Restart backend and worker once when deploying this feature so they load the new implementation.
+
+Administrators may now upload, evaluate and review any course, including courses not yet in the registry. Faculty remain restricted to registered, assigned courses. In Courses & accounts, select Administrator when saving a new account, or use Make administrator for an existing faculty member. Additional administrators are stored in the existing MongoDB faculty collection with role=admin, and sign in using their approved Google email. Changes to roles and enabled status are enforced on each request. The initial ADMIN_EMAIL account remains protected, and administrators cannot disable or demote themselves. Missing upload fields are highlighted in red; account and course forms use browser validation prompts.

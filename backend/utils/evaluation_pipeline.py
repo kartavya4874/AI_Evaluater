@@ -4,6 +4,7 @@ import hashlib
 import logging
 import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from utils.result_validation import validate_result, valid_record
 
 logger = logging.getLogger(__name__)
 
@@ -25,7 +26,7 @@ class EvaluationPipeline:
     def _extract_text_cached(self, file_path):
         """Extract text from a PDF with caching support."""
         file_hash = self._get_file_hash(file_path)
-        cache_file = os.path.join(self.cache_dir, f'{file_hash}.txt')
+        cache_file = os.path.join(self.cache_dir, f'ocr_v3_{file_hash}.txt')
 
         if os.path.exists(cache_file):
             logger.info(f"  Cache HIT for {os.path.basename(file_path)} ({file_hash[:12]}...)")
@@ -59,14 +60,14 @@ class EvaluationPipeline:
                          question='', exam_type='end_sem', grading_context=None):
         """Run Gemini evaluation with result caching."""
         # Include exam_type and grading_context in hash for cache differentiation
-        eval_input = f"{student_text}|||{model_text}|||{max_marks}|||{exam_type}"
+        eval_input = f"v2|||{student_text}|||{model_text}|||{max_marks}|||{exam_type}|||{question}"
         eval_hash = hashlib.sha256(eval_input.encode('utf-8')).hexdigest()
         eval_cache_file = os.path.join(self.cache_dir, f'eval_{eval_hash}.json')
 
         if os.path.exists(eval_cache_file):
             logger.info(f"  Evaluation cache HIT ({eval_hash[:12]}...)")
             with open(eval_cache_file, 'r', encoding='utf-8') as ecf:
-                return json.load(ecf)
+                return validate_result(json.load(ecf), max_marks)
 
         logger.info(f"  Evaluation cache MISS — calling Gemini grading...")
         result = self.gemini_service.evaluate_answer(
@@ -74,6 +75,7 @@ class EvaluationPipeline:
             exam_type=exam_type, grading_context=grading_context
         )
 
+        result = validate_result(result, max_marks)
         # Protect against caching internal errors.
         # If the result is a JSON/API error fallback, it's flagged with 'needs_review' and an error payload.
         if result.get('status') == 'error' or (result.get('marks_awarded') == 0 and "Evaluation error" in result.get('feedback', '')):
@@ -118,7 +120,7 @@ class EvaluationPipeline:
             db_completed = set()
             for db_eval in db_evals:
                 # If they actually got marks or passed successfully without triggering review/errors, they are done.
-                if db_eval.get('status') != 'error' and not db_eval.get('needs_review', False):
+                if valid_record(db_eval):
                     db_completed.add(db_eval.get('roll_number'))
                     
             # If the user wiped the corrupted 0s from the DB, we MUST remove them from the 'completed' set 
@@ -212,6 +214,8 @@ Maintain consistency with these patterns while grading independently."""
                 logger.info(f"[{course_code}] Resuming — {len(completed_rolls)} already completed "
                             f"(Skipping {skipped_count} for this run)")
 
+        if skipped_count == total_students:
+            return []
         # Step 1: Extract model answer text
         logger.info(f"[{course_code}] Extracting model answer text...")
         try:
@@ -273,7 +277,7 @@ Maintain consistency with these patterns while grading independently."""
                         self._save_progress(root_directory, course_code, completed_rolls, results)
 
                     if len(completed_for_learning) % 3 == 0:
-                        grading_context = self._build_learning_context(completed_for_learning)
+                        grading_context = None  # Fixed rubric; no order-dependent peer-score calibration.
                         logger.info(f"[{course_code}] Learning context updated "
                                     f"(based on {len(completed_for_learning)} evaluations)")
 

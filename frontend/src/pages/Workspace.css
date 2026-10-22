@@ -1,0 +1,35 @@
+.workspace { max-width: 1400px; margin: auto; padding: 28px; }
+.workspace-panel { padding: 24px; margin: 20px 0; border: 1px solid #697586; border-radius: 12px; }
+.workspace label { display: inline-flex; flex-direction: column; gap: 6px; margin: 8px; }
+.workspace input, .workspace select, .workspace button { font: inherit; padding: 9px 12px; border-radius: 6px; border: 1px solid #697586; }
+.workspace button { cursor: pointer; margin: 5px; background: #243b62; color: white; }
+.workspace button:disabled { opacity: .5; cursor: default; }
+.workspace button[aria-pressed=true] { background: #215bba; }
+.workspace-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 16px; }
+.workspace-scroll { overflow-x: auto; }
+.workspace table { width: 100%; border-collapse: collapse; }
+.workspace td, .workspace th { padding: 12px; text-align: left; border-bottom: 1px solid #697586; }
+.workspace small { display: block; max-width: 360px; overflow-wrap: anywhere; }
+.workspace-error { color: #e45c55; }
+
+.progress-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(125px, 1fr)); gap: 12px; margin: 20px 0; }
+.progress-cards > div { padding: 18px; border: 1px solid #cbd5e1; border-radius: 12px; background: #f8fafc; color: #172554; }
+.progress-cards strong { display: block; font-size: 30px; }
+.progress-cards span { font-size: 14px; }
+.workspace fieldset { border: 1px solid #cbd5e1; border-radius: 8px; padding: 16px; margin: 16px 0; }
+.workspace fieldset label { display: block; margin: 8px 0; }
+.workspace input[type=checkbox] { width: auto; margin-right: 8px; }
+.workspace button:disabled { opacity: .45; cursor: not-allowed; }
+
+.workspace input[aria-invalid="true"], .workspace .show-validation input:invalid { border: 2px solid #b91c1c; background: #fff1f2; color: #111827; }
+.workspace .field-error { display: block; color: #b91c1c; font-weight: 600; margin: 6px 0; }
+
+.workspace progress { display: block; width: 100%; height: 18px; accent-color: #2563eb; margin: 10px 0; }
+.overall-progress, .running-sheet { padding: 18px; margin: 14px 0; border: 1px solid #cbd5e1; border-radius: 10px; }
+.activity-log { max-height: 360px; overflow-y: auto; padding: 0; list-style: none; }
+.activity-log li { padding: 10px 12px; border-bottom: 1px solid #cbd5e1; overflow-wrap: anywhere; }
+.activity-log time { display: inline-block; min-width: 100px; font-variant-numeric: tabular-nums; }
+
+.workspace-delete { margin-top: 24px; padding: 16px; border: 1px solid #c75b65; border-radius: 8px; }
+.workspace-delete .danger-button { background: #a72836; color: white; }
+.workspace-delete .danger-button:disabled { opacity: .45; }

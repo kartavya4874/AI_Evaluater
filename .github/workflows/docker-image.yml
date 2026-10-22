@@ -1,18 +1,35 @@
-name: Docker Image CI
-
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-
+name: Application checks
+on: [push, pull_request]
 jobs:
-
-  build:
-
+  backend:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v4
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install flask flask-cors pyjwt pymongo python-dotenv requests tenacity openpyxl pdf2image pillow numpy PyPDF2 -r backend/requirements-test.txt
+      - run: python -m unittest test_workspace test_workspace_api test_reliability test_course_processor test_app_security test_multiuser test_worker test_parallel_gate test_scaling test_api_contract test_gemini utils.test_pdf_processor_enhancements -v
+        working-directory: backend
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+        working-directory: frontend
+      - run: npm test -- --watchAll=false --runInBand
+        working-directory: frontend
+      - run: npm run build
+        working-directory: frontend
+        env:
+          CI: 'false'
+
+  container:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t evaluator-smoke ./backend
+      - run: docker run --rm -e APP_ENV=development evaluator-smoke python -c "import app, worker; assert '/api/workspace/uploads' in {str(r) for r in app.app.url_map.iter_rules()}"

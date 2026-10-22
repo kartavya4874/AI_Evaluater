@@ -36,3 +36,5 @@ backend/cache/
 backend/logs/
 backend/uploads/
 backend/batch_uploads/
+
+.test-deps/

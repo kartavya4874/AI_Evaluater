@@ -38,4 +38,4 @@ def clear_zero_evaluations():
         print(f"❌ Error talking to MongoDB: {e}")
 
 if __name__ == "__main__":
-    clear_zero_evaluations()
+    raise SystemExit('Disabled: zero is a valid score. Use migrate_evaluations.py for a non-destructive failure audit.')

@@ -131,7 +131,7 @@ const Evaluate = ({ setLoading }) => {
       evaluationData.max_marks = maxMarks;
       setResults(evaluationData);
       // Navigate to results page with evaluation data
-      navigate('/results/new', { state: { evaluation: evaluationData } });
+      navigate(`/results/${evaluationData.evaluation_id}`, { state: { evaluation: evaluationData } });
     } catch (err) {
       setError(err.response?.data?.error || err.message);
     } finally {

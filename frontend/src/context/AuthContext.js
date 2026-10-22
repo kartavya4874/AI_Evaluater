@@ -30,8 +30,8 @@ export const AuthProvider = ({ children }) => {
     checkAuth();
   }, [checkAuth]);
 
-  const login = async (email, password) => {
-    const response = await apiLogin(email, password);
+  const login = async (credential) => {
+    const response = await apiLogin(credential);
     localStorage.setItem('token', response.token);
     setUser(response.user);
     return response;

@@ -14,6 +14,7 @@ class CourseProcessor:
         self.root_directory = root_directory
         self.courses = {}
         self.max_marks = max_marks  # If provided from UI, skip config.json
+        self.discovery_errors = []
 
     def discover_courses(self):
         """
@@ -63,7 +64,7 @@ class CourseProcessor:
                 if not COURSE_CODE_PATTERN.match(item):
                     continue
                 
-                course_code = item
+                course_code = item.upper()
                 
                 # If we already processed this course code (e.g. nested MB3103/MB3103), skip
                 if course_code in self.courses:
@@ -80,7 +81,10 @@ class CourseProcessor:
                     )
 
         if not self.courses:
-            raise ValueError(f"No valid course folders found in {self.root_directory}")
+            details = '; '.join(self.discovery_errors) or 'Use a course folder such as FS3401_MSE containing an answer-key PDF and student PDFs.'
+            raise ValueError(f"No valid course folders found. {details}")
+        if self.discovery_errors:
+            raise ValueError('Some course folders are incomplete: ' + '; '.join(self.discovery_errors))
 
         logger.info(f"Total courses discovered: {len(self.courses)}")
         return self.courses, self.max_marks
@@ -97,6 +101,7 @@ class CourseProcessor:
                 folder_path = nested_path
 
         model_answer_path = None
+        question_paper_path = None
         student_sheets = []
 
         # Pattern to match model answers with ANY course-code-like prefix
@@ -119,9 +124,16 @@ class CourseProcessor:
 
             # Identify model answer (flexible naming)
             if model_answer_pattern.match(base_name):
+                if model_answer_path:
+                    self.discovery_errors.append(f'{course_code}: multiple answer keys; keep exactly one')
+                    return None
                 model_answer_path = file_path
                 logger.info(f"  [{course_code}] Model answer: {filename}")
             elif question_paper_pattern.match(base_name):
+                if question_paper_path:
+                    self.discovery_errors.append(f'{course_code}: multiple question papers; keep exactly one')
+                    return None
+                question_paper_path = file_path
                 logger.info(f"  [{course_code}] Skipping question paper: {filename}")
             else:
                 # Everything else is a student sheet — filename is roll number
@@ -133,10 +145,12 @@ class CourseProcessor:
                 })
 
         if not model_answer_path:
+            self.discovery_errors.append(f'{course_code}: missing model_answer.pdf or answer_key.pdf')
             logger.error(f"  [{course_code}] No model_answer.pdf found — skipping course")
             return None
 
         if not student_sheets:
+            self.discovery_errors.append(f'{course_code}: no student answer PDFs')
             logger.warning(f"  [{course_code}] No student answer sheets found — skipping course")
             return None
 
@@ -144,6 +158,7 @@ class CourseProcessor:
             'course_code': course_code,
             'folder_path': folder_path,
             'model_answer_path': model_answer_path,
+            'question_paper_path': question_paper_path,
             'max_marks': self.max_marks,
             'student_sheets': student_sheets
         }

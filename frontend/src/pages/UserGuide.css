@@ -1,0 +1,17 @@
+.user-guide { max-width: 920px; margin: 32px auto; padding: 32px; background: white; color: #172b42; border: 1px solid #dce3eb; border-radius: 12px; line-height: 1.55; }
+.user-guide h1 { margin: 0 0 8px; font-size: 2rem; }
+.user-guide h2 { margin: 22px 0 6px; font-size: 1.15rem; }
+.user-guide p { margin: 8px 0; }
+.user-guide a { color: #175ea8; text-decoration: underline; }
+.user-guide footer { border-top: 1px solid #dce3eb; margin-top: 22px; padding-top: 12px; font-size: .9rem; }
+.guide-print { padding: 8px 14px; margin-top: 8px; cursor: pointer; }
+@media (max-width: 600px) { .user-guide { margin: 12px; padding: 18px; } }
+@media print {
+  @page { size: A4; margin: 12mm; }
+  .nav, .guide-print { display: none !important; }
+  .user-guide { margin: 0; padding: 0; max-width: none; border: 0; font-size: 9pt; line-height: 1.3; }
+  .user-guide h1 { font-size: 19pt; }
+  .user-guide h2 { margin-top: 11px; font-size: 11pt; }
+  .user-guide section { break-inside: avoid; }
+  .user-guide footer { font-size: 8pt; margin-top: 10px; padding-top: 6px; }
+}

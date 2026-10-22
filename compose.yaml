@@ -1,0 +1,36 @@
+services:
+  api:
+    build: ./backend
+    restart: unless-stopped
+    env_file: ./backend/.env
+    environment:
+      APP_ENV: production
+      BATCH_UPLOAD_FOLDER: /data/batch_uploads
+      UPLOAD_FOLDER: /data/uploads
+    volumes:
+      - ./backend/batch_uploads:/data/batch_uploads
+      - ./backend/uploads:/data/uploads
+    ports:
+      - "127.0.0.1:7860:7860"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:7860/api/health', timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+  worker:
+    build: ./backend
+    command: ["python", "worker.py"]
+    restart: unless-stopped
+    stop_grace_period: 90s
+    env_file: ./backend/.env
+    environment:
+      APP_ENV: production
+      BATCH_UPLOAD_FOLDER: /data/batch_uploads
+      UPLOAD_FOLDER: /data/uploads
+    volumes:
+      - ./backend/batch_uploads:/data/batch_uploads
+      - ./backend/uploads:/data/uploads
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

@@ -1,0 +1,16 @@
+[Unit]
+Description=AI Evaluater durable processing worker
+After=network.target
+
+[Service]
+User=gthdgx
+WorkingDirectory=/home/gthdgx/project/ai-examer/AI_Evaluater/backend
+# Adjust only this interpreter path to match the application's virtual environment.
+ExecStart=/home/gthdgx/project/ai-examer/AI_Evaluater/backend/venv/bin/python worker.py
+Restart=always
+RestartSec=10
+TimeoutStopSec=90
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target

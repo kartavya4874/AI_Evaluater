@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams, useLocation } from 'react-router-dom';
 import './Results.css';
+import { getEvaluation } from '../services/api';
 
 const Results = () => {
   const { evaluationId } = useParams();
@@ -8,21 +9,24 @@ const Results = () => {
   const [evaluation, setEvaluation] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const [error, setError] = useState('');
+
   useEffect(() => {
-    // Get evaluation data from location state if available
-    if (location.state && location.state.evaluation) {
-      console.log('Received evaluation data:', location.state.evaluation);
-      setEvaluation(location.state.evaluation);
-      setLoading(false);
-    } else if (evaluationId) {
-      // TODO: Fetch evaluation from backend using evaluationId
-      console.log('No evaluation data in state, evaluationId:', evaluationId);
-      setLoading(false);
-    } else {
-      console.log('No evaluation data available');
-      setLoading(false);
-    }
-  }, [evaluationId, location]);
+    let active = true;
+    setLoading(true); setError(''); setEvaluation(null);
+    const load = async () => {
+      try {
+        const data = location.state?.evaluation || (await getEvaluation(evaluationId)).evaluation;
+        if (active) setEvaluation({ ...data, marks_awarded: data.marks_awarded ?? data.marks });
+      } catch (failure) {
+        if (active) setError(failure.response?.data?.error || 'Unable to load this evaluation.');
+      } finally {
+        if (active) setLoading(false);
+      }
+    };
+    load();
+    return () => { active = false; };
+  }, [evaluationId, location.state]);
 
   if (loading) {
     return (
@@ -39,8 +43,8 @@ const Results = () => {
       <div className="results-page">
         <div className="results-container">
           <div className="results-content">
-            <h1>Evaluation Complete!</h1>
-            <p className="results-message">Your evaluation has been successfully submitted and saved.</p>
+            <h1>Result unavailable</h1>
+            <p role="alert" className="results-message">{error || 'No saved evaluation was found.'}</p>
             
             <div className="action-buttons">
               <Link to="/evaluate" className="btn btn-primary btn-lg">

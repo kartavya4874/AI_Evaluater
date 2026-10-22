@@ -21,14 +21,14 @@ class DatabaseConnection:
         pass
     
     def connect(self):
-        """Establish database connection with graceful fallback"""
+        """Establish a durable database connection"""
         if self._connected and self._client is not None:
             return self._db
             
         try:
             logger.info("Attempting to connect to MongoDB...")
             mongo_uri = getattr(Config, 'MONGO_URI', None) or "mongodb://localhost:27017/"
-            logger.info(f"Using MongoDB URI: {mongo_uri[:50]}...")
+            logger.info('Connecting to configured MongoDB')
             
             # Use TLS/certifi only for remote Atlas connections
             is_remote = mongo_uri.startswith('mongodb+srv') or 'mongodb.net' in mongo_uri
@@ -36,6 +36,8 @@ class DatabaseConnection:
             client_kwargs = {
                 'serverSelectionTimeoutMS': 3000,
                 'connectTimeoutMS': 5000,
+                'socketTimeoutMS': 30000,
+                'waitQueueTimeoutMS': 10000,
             }
             if is_remote:
                 import certifi as _certifi
@@ -55,22 +57,8 @@ class DatabaseConnection:
             return self._db
             
         except (ConnectionFailure, Exception) as e:
-            logger.warning(f"MongoDB not reachable ({e}). Falling back to in-memory mongomock.")
-            return self._connect_mongomock()
-
-    def _connect_mongomock(self):
-        """Use mongomock as an in-memory fallback when real MongoDB is unavailable."""
-        try:
-            import mongomock
-            self._client = mongomock.MongoClient()
-            db_name = getattr(Config, 'MONGO_DB_NAME', 'ai_examiner') or 'ai_examiner'
-            self._db = self._client[db_name]
-            self._connected = True
-            logger.info("⚠️  Using in-memory mongomock database.")
-            self._create_indexes()
-            return self._db
-        except ImportError:
-            raise RuntimeError("MongoDB is not reachable and mongomock is not installed.")
+            self._connected = False
+            raise RuntimeError('MongoDB is unavailable; refusing to use nonpersistent storage') from e
 
     def _create_indexes(self):
         """Create indexes for better query performance"""
@@ -106,8 +94,13 @@ db_connection = DatabaseConnection()
 def get_database():
     return db_connection.get_db()
 
-db = None
-try:
-    db = db_connection.connect()
-except Exception as e:
-    logger.warning(f"Database not connected at startup: {e}")
+class LazyDatabase:
+    """Resolve the current durable database on use, never freeze a failed startup as None."""
+    def __getattr__(self, name):
+        return getattr(db_connection.get_db(), name)
+
+    def __getitem__(self, name):
+        return db_connection.get_db()[name]
+
+
+db = LazyDatabase()

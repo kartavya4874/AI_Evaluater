@@ -1,105 +1,45 @@
-import React, { useState } from 'react';
-import { useAuth } from '../../context/AuthContext';
+import React, { useEffect, useRef, useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import { FiLock, FiMail, FiArrowRight } from 'react-icons/fi';
+import { useAuth } from '../../context/AuthContext';
+import api from '../../services/api';
 import './Login.css';
 
-const Login = () => {
+export default function Login() {
   const { user, login } = useAuth();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const button = useRef(null);
+  const loginRef = useRef(login);
+  loginRef.current = login;
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-
-  if (user) {
-    return <Navigate to="/" replace />;
-  }
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!email.trim() || !password) {
-      setError('Please enter email and password');
-      return;
-    }
-    setError('');
-    setLoading(true);
-    try {
-      await login(email.trim(), password);
-    } catch (err) {
-      setError(err.response?.data?.error || 'Login failed. Check your credentials.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <div className="login-page">
-      <div className="login-container">
-        <div className="login-card">
-          <div className="login-header">
-            <div className="login-logo">
-              <FiLock size={24} />
-            </div>
-            <h1>AI Examiner</h1>
-            <p>Sign in to your account</p>
-          </div>
-
-          <form onSubmit={handleSubmit} className="login-form">
-            {error && (
-              <div className="login-error">
-                {error}
-              </div>
-            )}
-
-            <div className="login-field">
-              <label htmlFor="login-email">Email</label>
-              <div className="login-input-wrap">
-                <FiMail className="login-input-icon" />
-                <input
-                  id="login-email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@aiexaminer.com"
-                  autoComplete="email"
-                  autoFocus
-                />
-              </div>
-            </div>
-
-            <div className="login-field">
-              <label htmlFor="login-password">Password</label>
-              <div className="login-input-wrap">
-                <FiLock className="login-input-icon" />
-                <input
-                  id="login-password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  autoComplete="current-password"
-                />
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              className="login-btn"
-              disabled={loading}
-            >
-              {loading ? (
-                <span className="login-btn-loading" />
-              ) : (
-                <>
-                  Sign In <FiArrowRight />
-                </>
-              )}
-            </button>
-          </form>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default Login;
+  const [busy, setBusy] = useState(false);
+  useEffect(() => {
+    let alive = true;
+    const script = document.createElement('script');
+    script.src = 'https://accounts.google.com/gsi/client';
+    script.async = true;
+    script.onerror = () => alive && setError('Google could not load. Check your connection and reload this page.');
+    script.onload = async () => {
+      try {
+        const { data } = await api.get('/auth/config');
+        if (!alive) return;
+        if (!data.client_id) throw new Error('Google sign-in is awaiting administrator configuration.');
+        window.google.accounts.id.initialize({ client_id: data.client_id, callback: async ({ credential }) => {
+          setBusy(true); setError('');
+          try { await loginRef.current(credential); }
+          catch (e) { setError(e.response?.data?.error || 'Sign-in failed. Please try again.'); }
+          finally { if (alive) setBusy(false); }
+        }});
+        window.google.accounts.id.renderButton(button.current, { theme: 'outline', size: 'large', text: 'signin_with' });
+      } catch (e) { if (alive) setError(e.message); }
+    };
+    document.head.appendChild(script);
+    return () => { alive = false; script.remove(); };
+  }, []);
+  if (user) return <Navigate to="/" replace />;
+  return <main className="login-page"><div className="login-container"><div className="login-card">
+    <div className="login-header"><h1>AI Examiner</h1><p>Your examination workspace</p></div>
+    <p>Sign in with the Google email approved by your administrator.</p>
+    {error && <p role="alert" className="login-error">{error}</p>}
+    <div ref={button} />{busy && <p role="status">Checking your account…</p>}
+    <p>Administrators manage courses and assignments. Faculty see only their assigned courses.</p>
+  </div></div></main>;
+}

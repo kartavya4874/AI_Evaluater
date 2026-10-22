@@ -6,7 +6,7 @@ const API_BASE_URL = process.env.NODE_ENV === 'production'
 
 const api = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 0,
+  timeout: 60000,
 });
 
 // Request interceptor — attach JWT token
@@ -24,8 +24,9 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
-      if (window.location.pathname !== '/login') {
-        window.location.href = '/login';
+      const loginPath = `${process.env.REACT_APP_BASENAME || ''}/login`;
+      if (window.location.pathname !== loginPath) {
+        window.location.href = loginPath;
       }
     }
     return Promise.reject(error);
@@ -34,8 +35,8 @@ api.interceptors.response.use(
 
 // ==================== AUTH APIs ====================
 
-export const login = async (email, password) => {
-  const response = await api.post('/auth/login', { email, password });
+export const login = async (credential) => {
+  const response = await api.post('/auth/google', { credential });
   return response.data;
 };
 
@@ -107,7 +108,7 @@ export const getStudentStatistics = async (studentId) => {
 export const uploadModelAnswer = async (file) => {
   const formData = new FormData();
   formData.append('file', file);
-  const response = await api.post('/upload-model-answer', formData);
+  const response = await api.post('/upload-model-answer', formData, { timeout: 900000 });
   return response.data;
 };
 
@@ -125,6 +126,7 @@ export const evaluateAnswer = async (formDataOrFile, modelAnswer, maxMarks, ques
     if (studentId) formData.append('student_id', studentId);
   }
   const response = await api.post('/evaluate-answer', formData, {
+    timeout: 900000,
     headers: { 'Content-Type': 'multipart/form-data' }
   });
   return response.data;
@@ -163,7 +165,7 @@ export const deleteEvaluation = async (evaluationId) => {
 export const extractTextOnly = async (file) => {
   const formData = new FormData();
   formData.append('file', file);
-  const response = await api.post('/ocr-only', formData);
+  const response = await api.post('/ocr-only', formData, { timeout: 900000 });
   return response.data;
 };
 
@@ -193,27 +195,8 @@ export const batchProcessCourses = async (rootDirectory, parallel = true, maxWor
   return response.data;
 };
 
-export const subscribeToBatchStream = (onEvent) => {
-  const token = localStorage.getItem('token');
-  const url = `${API_BASE_URL}/batch/stream${token ? `?token=${token}` : ''}`;
-  const eventSource = new EventSource(url);
-  
-  eventSource.onmessage = (event) => {
-    try {
-      const data = JSON.parse(event.data);
-      if (data.type !== 'heartbeat') {
-        onEvent(data);
-      }
-    } catch (err) {
-      console.error('SSE parse error:', err);
-    }
-  };
-
-  eventSource.onerror = (err) => {
-    console.error('SSE connection error:', err);
-  };
-
-  return eventSource;
+export const subscribeToBatchStream = () => {
+  throw new Error('Legacy batch streaming is retired. Use Workspace & progress.');
 };
 
 export const stopBatchProcessing = async () => {
@@ -239,22 +222,45 @@ export const getBatchResultsByCourse = async (courseCode) => {
 // ==================== FOLDER UPLOAD ====================
 
 export const uploadBatchFolder = async (files, onProgress) => {
-  const formData = new FormData();
-  
+  const manifest = Array.from(files, file => ({ path: file.webkitRelativePath || file.name, size: file.size }));
+  const identity = JSON.stringify(manifest.map((item, index) => ({ ...item, modified: files[index].lastModified })));
+  const storageKey = 'pending-folder-upload';
+  let pending;
+  try { pending = JSON.parse(localStorage.getItem(storageKey)); } catch (_) { /* start fresh */ }
+  const sessionId = pending?.identity === identity ? pending.id : crypto.randomUUID().replaceAll('-', '');
+  localStorage.setItem(storageKey, JSON.stringify({ id: sessionId, identity }));
+  await api.post('/workspace/uploads', { session_id: sessionId, files: manifest });
+  const total = manifest.reduce((sum, file) => sum + file.size, 0);
+  let completed = 0;
   for (let i = 0; i < files.length; i++) {
     const file = files[i];
-    formData.append('files', file);
-    // Send the relative path so backend can reconstruct folder structure
-    formData.append(`path_${file.name}`, file.webkitRelativePath || file.name);
+    const completedBeforeFile = completed;
+    const hash = await crypto.subtle.digest('SHA-256', await file.arrayBuffer());
+    const checksum = Array.from(new Uint8Array(hash), b => b.toString(16).padStart(2, '0')).join('');
+    let lastError;
+    for (let retry = 0; retry < 3; retry++) {
+      try {
+        await api.put(`/workspace/uploads/${sessionId}/${i}`, file, {
+          timeout: 120000,
+          headers: { 'Content-Type': 'application/pdf', 'X-Content-SHA256': checksum },
+          onUploadProgress: event => onProgress?.(Math.round(100 * (completedBeforeFile + Math.min(event.loaded, file.size)) / total)),
+        });
+        lastError = null; break;
+      } catch (error) {
+        lastError = error;
+        if (error.response && error.response.status < 500 && error.response.status !== 429) {
+          if (/new (upload )?session/.test(error.response.data?.error || '')) localStorage.removeItem(storageKey);
+          throw error;
+        }
+        await new Promise(resolve => setTimeout(resolve, 1000 * (retry + 1)));
+      }
+    }
+    if (lastError) throw lastError;
+    completed += file.size;
+    onProgress?.(Math.round(100 * completed / total));
   }
-  
-  const response = await api.post('/batch/upload-folder', formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-    onUploadProgress: onProgress ? (progressEvent) => {
-      const pct = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-      onProgress(pct);
-    } : undefined
-  });
+  const response = await api.post(`/workspace/uploads/${sessionId}/complete`);
+  localStorage.removeItem(storageKey);
   return response.data;
 };
 

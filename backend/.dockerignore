@@ -50,3 +50,11 @@ docker-compose.yml
 # Other
 test_*.py
 tests/
+
+# Local runtimes and persisted data
+.test-deps/
+.audit-deps/
+.venv/
+batch_uploads/
+cache/
+logs/
