@@ -37,7 +37,7 @@ RUN pip install --upgrade pip && \
     rm -rf /root/.cache/pip
 
 # Copy application code (excluding unnecessary files)
-COPY app.py config.py access.py admin_api.py workspace_api.py upload_api.py worker.py migrate_evaluations.py Procfile ./
+COPY app.py config.py access.py admin_api.py workspace_api.py teacher_comparison_api.py upload_api.py worker.py migrate_evaluations.py Procfile ./
 COPY models/ ./models/
 COPY utils/ ./utils/
 

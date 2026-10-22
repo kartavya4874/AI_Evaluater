@@ -29,7 +29,9 @@ export default function Login() {
           finally { if (alive) setBusy(false); }
         }});
         window.google.accounts.id.renderButton(button.current, { theme: 'outline', size: 'large', text: 'signin_with' });
-      } catch (e) { if (alive) setError(e.message); }
+      } catch (e) { if (alive) setError(e.response?.data?.error || (e.response?.status === 503
+        ? 'The sign-in service is unavailable. Ask your administrator to check the deployed API address and backend, then reload this page.'
+        : e.message)); }
     };
     document.head.appendChild(script);
     return () => { alive = false; script.remove(); };
