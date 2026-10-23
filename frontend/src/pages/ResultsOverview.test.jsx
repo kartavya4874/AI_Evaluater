@@ -10,6 +10,19 @@ const fresh = { id: 'new', source: 'workspace', roll_number: '102', course_code:
 const data = { items: [old, fresh], total: 2, pending: 2, verified: 0, course_codes: ['FS3401'], examinations: [] };
 beforeEach(() => { jest.clearAllMocks(); api.get.mockResolvedValue({ data }); api.post.mockResolvedValue({ data: {} }); });
 const show = () => render(<MemoryRouter><ResultsOverview /></MemoryRouter>);
+
+test('needs review sheets without marks open their reason and cannot be verified', async () => {
+  const result = { status: 'needs_review', needs_review: true, marks: null, feedback: 'Missing allocations' };
+  api.get.mockImplementation(url => Promise.resolve({ data: url.includes('/sheets/')
+    ? { sheet: { active: null, job: { state: 'needs_review', error: 'Missing allocations' }, attempts: [] } }
+    : { ...data, items: [{ ...fresh, result }], total: 1, pending: 0, needs_review: 1 } }));
+  show();
+  await screen.findByText('Missing allocations');
+  expect(screen.getByRole('checkbox', { name: 'Select 102 workspace' })).toBeDisabled();
+  fireEvent.click(screen.getByRole('button', { name: 'View details' }));
+  expect(await screen.findByRole('dialog')).toHaveTextContent('Missing allocations');
+  expect(screen.queryByRole('button', { name: 'Mark this result verified' })).not.toBeInTheDocument();
+});
 test('one list and summary combines both stores without duplicate management sections', async () => {
   show();
   expect(await screen.findByText('76/100')).toBeInTheDocument();

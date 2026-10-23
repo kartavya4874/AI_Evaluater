@@ -61,3 +61,235 @@
 2026-10-22 20:13:24 [INFO] utils.gemini_service - Calling vLLM endpoint: https://dgx.geetauniversity.edu.in/v1/chat/completions (model=google/gemma-4-31B-it, max_tokens=3000, timeout=600s)...
 2026-10-22 20:23:10 [WARNING] utils.gemini_service - vLLM call failed: HTTPSConnectionPool(host='dgx.geetauniversity.edu.in', port=443): Read timed out. (read timeout=600)
 2026-10-22 20:23:11 [WARNING] utils.workspace - attempt=3d05b3d9b972452386adbfc7c294924c status=queued error_type=ReadTimeout
+2026-10-22 20:23:28 [WARNING] utils.gemini_service - vLLM call failed: HTTPSConnectionPool(host='dgx.geetauniversity.edu.in', port=443): Read timed out. (read timeout=600)
+2026-10-22 20:23:28 [WARNING] utils.pdf_processor - Error processing page 1: HTTPSConnectionPool(host='dgx.geetauniversity.edu.in', port=443): Read timed out. (read timeout=600)
+2026-10-22 20:23:28 [ERROR] utils.pdf_processor - Error extracting text via Gemini: HTTPSConnectionPool(host='dgx.geetauniversity.edu.in', port=443): Read timed out. (read timeout=600)
+2026-10-22 20:23:28 [WARNING] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e status=queued error_type=ReadTimeout
+2026-10-22 20:23:35 [INFO] utils.gemini_service - GeminiService initialised → vLLM endpoint: https://dgx.geetauniversity.edu.in/v1 | model: google/gemma-4-31B-it
+2026-10-22 20:23:39 [INFO] utils.workspace - attempt=3d05b3d9b972452386adbfc7c294924c sheet=1a14f64fcee4fab0d32e034304e393f47a564e77d65d851f10f12e8f210cf923 stage=checking_cache
+2026-10-22 20:23:48 [INFO] utils.workspace - attempt=3d05b3d9b972452386adbfc7c294924c sheet=1a14f64fcee4fab0d32e034304e393f47a564e77d65d851f10f12e8f210cf923 stage=grading
+2026-10-22 20:23:48 [INFO] utils.gemini_service - Calling vLLM endpoint: https://dgx.geetauniversity.edu.in/v1/chat/completions (model=google/gemma-4-31B-it, max_tokens=1500, timeout=600s)...
+2026-10-22 20:26:15 [INFO] utils.gemini_service - GeminiService initialised → vLLM endpoint: https://dgx.geetauniversity.edu.in/v1 | model: google/gemma-4-31B-it
+2026-10-22 20:26:15 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=checking_cache
+2026-10-22 20:26:16 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracting_student
+2026-10-22 20:26:17 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracting_student_page_1_of_27
+2026-10-22 20:26:17 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracted_student_page_1_of_27
+2026-10-22 20:26:18 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracting_student_page_2_of_27
+2026-10-22 20:26:19 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracted_student_page_2_of_27
+2026-10-22 20:26:20 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracting_student_page_3_of_27
+2026-10-22 20:26:20 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracted_student_page_3_of_27
+2026-10-22 20:26:21 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracting_student_page_4_of_27
+2026-10-22 20:26:22 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracted_student_page_4_of_27
+2026-10-22 20:26:22 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracting_student_page_5_of_27
+2026-10-22 20:26:23 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracted_student_page_5_of_27
+2026-10-22 20:26:23 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracting_student_page_6_of_27
+2026-10-22 20:26:25 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracted_student_page_6_of_27
+2026-10-22 20:26:25 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracting_student_page_7_of_27
+2026-10-22 20:26:26 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracted_student_page_7_of_27
+2026-10-22 20:26:26 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracting_student_page_8_of_27
+2026-10-22 20:26:26 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracted_student_page_8_of_27
+2026-10-22 20:26:27 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracting_student_page_9_of_27
+2026-10-22 20:26:27 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracted_student_page_9_of_27
+2026-10-22 20:26:27 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracting_student_page_10_of_27
+2026-10-22 20:26:29 [INFO] utils.pdf_processor - Extracting text from 1 images using Gemini vision...
+2026-10-22 20:26:29 [INFO] utils.pdf_processor - Processing page 1/1 with Gemini vision...
+2026-10-22 20:26:29 [INFO] utils.gemini_service - Calling vLLM endpoint: https://dgx.geetauniversity.edu.in/v1/chat/completions (model=google/gemma-4-31B-it, max_tokens=1500, timeout=600s)...
+2026-10-22 20:31:02 [INFO] utils.gemini_service - vLLM response status=200 duration=433.75s
+2026-10-22 20:31:02 [WARNING] utils.gemini_service - Truncated response; retrying with output budget 3000 (was 1500)
+2026-10-22 20:31:02 [INFO] utils.gemini_service - Calling vLLM endpoint: https://dgx.geetauniversity.edu.in/v1/chat/completions (model=google/gemma-4-31B-it, max_tokens=3000, timeout=600s)...
+2026-10-22 20:33:41 [INFO] utils.gemini_service - vLLM response status=200 duration=431.28s
+2026-10-22 20:33:41 [WARNING] utils.gemini_service - Truncated response; retrying with output budget 3000 (was 1500)
+2026-10-22 20:33:41 [INFO] utils.gemini_service - Calling vLLM endpoint: https://dgx.geetauniversity.edu.in/v1/chat/completions (model=google/gemma-4-31B-it, max_tokens=3000, timeout=600s)...
+2026-10-22 20:41:06 [WARNING] utils.gemini_service - vLLM call failed: HTTPSConnectionPool(host='dgx.geetauniversity.edu.in', port=443): Read timed out. (read timeout=600)
+2026-10-22 20:41:09 [INFO] utils.gemini_service - Calling vLLM endpoint: https://dgx.geetauniversity.edu.in/v1/chat/completions (model=google/gemma-4-31B-it, max_tokens=1500, timeout=600s)...
+2026-10-22 20:43:45 [WARNING] utils.gemini_service - vLLM call failed: HTTPSConnectionPool(host='dgx.geetauniversity.edu.in', port=443): Read timed out. (read timeout=600)
+2026-10-22 20:43:48 [INFO] utils.gemini_service - Calling vLLM endpoint: https://dgx.geetauniversity.edu.in/v1/chat/completions (model=google/gemma-4-31B-it, max_tokens=1500, timeout=600s)...
+2026-10-22 20:48:26 [INFO] utils.gemini_service - vLLM response status=200 duration=436.55s
+2026-10-22 20:48:26 [WARNING] utils.gemini_service - Truncated response; retrying with output budget 3000 (was 1500)
+2026-10-22 20:48:26 [INFO] utils.gemini_service - Calling vLLM endpoint: https://dgx.geetauniversity.edu.in/v1/chat/completions (model=google/gemma-4-31B-it, max_tokens=3000, timeout=600s)...
+2026-10-22 20:51:35 [INFO] utils.gemini_service - vLLM response status=200 duration=470.11s
+2026-10-22 20:51:35 [WARNING] utils.gemini_service - Truncated response; retrying with output budget 3000 (was 1500)
+2026-10-22 20:51:35 [INFO] utils.gemini_service - Calling vLLM endpoint: https://dgx.geetauniversity.edu.in/v1/chat/completions (model=google/gemma-4-31B-it, max_tokens=3000, timeout=600s)...
+2026-10-22 20:58:31 [INFO] utils.gemini_service - vLLM response status=504 duration=608.43s
+2026-10-22 20:58:31 [ERROR] utils.gemini_service - vLLM API returned HTTP 504
+2026-10-22 20:58:31 [WARNING] utils.gemini_service - vLLM call failed: vLLM temporarily unavailable: HTTP 504
+2026-10-22 20:58:31 [WARNING] utils.workspace - attempt=3d05b3d9b972452386adbfc7c294924c status=queued error_type=ConnectionError
+2026-10-22 21:01:39 [WARNING] utils.gemini_service - vLLM call failed: HTTPSConnectionPool(host='dgx.geetauniversity.edu.in', port=443): Read timed out. (read timeout=600)
+2026-10-22 21:01:39 [WARNING] utils.pdf_processor - Error processing page 1: HTTPSConnectionPool(host='dgx.geetauniversity.edu.in', port=443): Read timed out. (read timeout=600)
+2026-10-22 21:01:39 [ERROR] utils.pdf_processor - Error extracting text via Gemini: HTTPSConnectionPool(host='dgx.geetauniversity.edu.in', port=443): Read timed out. (read timeout=600)
+2026-10-22 21:01:40 [WARNING] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e status=queued error_type=ReadTimeout
+2026-10-22 21:01:41 [ERROR] worker - Worker interrupted; automatically recovering in 5 seconds
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\pool.py", line 403, in command
+    return command(
+        self,
+    ...<20 lines>...
+        write_concern=write_concern,
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\network.py", line 192, in command
+    sendall(conn.conn.get_conn, msg)
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\network_layer.py", line 239, in sendall
+    sock.sendall(buf)
+    ~~~~~~~~~~~~^^^^^
+  File "C:\Python314\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "C:\Python314\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionAbortedError: [WinError 10053] An established connection was aborted by the software in your host machine
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 122, in supervise
+    run(stopped)
+    ~~~^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 74, in run
+    job = workspace.claim(owner)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\workspace.py", line 325, in claim
+    job = self.db.jobs.find_one_and_update(eligible, {'$set': {
+        'state': 'processing', 'stage': 'starting', 'owner': owner, 'token': uuid.uuid4().hex, 'claimed_at': now(), 'updated_at': now()},
+        '$push': {'events': {'$each': [{'stage': 'starting', 'at': now()}], '$slice': -100}}},
+        sort=[('created_at', 1)], return_document=ReturnDocument.AFTER)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\collection.py", line 3680, in find_one_and_update
+    return self._find_and_modify(
+           ~~~~~~~~~~~~~~~~~~~~~^
+        filter,
+        ^^^^^^^
+    ...<8 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    )
+    ^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\collection.py", line 3321, in _find_and_modify
+    return self._database.client._retryable_write(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        write_concern.acknowledged,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+        operation=_Op.FIND_AND_MODIFY,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 2113, in _retryable_write
+    return self._retry_with_session(retryable, func, s, bulk, operation, operation_id)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 1986, in _retry_with_session
+    return self._retry_internal(
+           ~~~~~~~~~~~~~~~~~~~~^
+        func=func,
+        ^^^^^^^^^^
+    ...<4 lines>...
+        operation_id=operation_id,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\_csot.py", line 125, in csot_wrapper
+    return func(self, *args, **kwargs)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 2038, in _retry_internal
+    ).run()
+      ~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 2811, in run
+    res = self._read() if self._is_read else self._write()
+                                             ~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 3014, in _write
+    return self._func(self._session, conn, self._retryable)  # type: ignore
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\collection.py", line 3307, in _find_and_modify_helper
+    out = self._command(
+        conn,
+    ...<6 lines>...
+        user_fields=_FIND_AND_MODIFY_DOC_FIELDS,
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\collection.py", line 615, in _command
+    return conn.command(
+           ~~~~~~~~~~~~^
+        self._database.name,
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<12 lines>...
+        user_fields=user_fields,
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\helpers.py", line 53, in inner
+    return func(*args, **kwargs)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\pool.py", line 431, in command
+    self._raise_connection_failure(error)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\pool.py", line 633, in _raise_connection_failure
+    _raise_connection_failure(self.address, error, timeout_details=details)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\pool_shared.py", line 148, in _raise_connection_failure
+    raise AutoReconnect(msg) from error
+pymongo.errors.AutoReconnect: cluster0-shard-00-01.wwcan.mongodb.net:27017: [WinError 10053] An established connection was aborted by the software in your host machine (configured timeouts: socketTimeoutMS: 30000.0ms, connectTimeoutMS: 5000.0ms)
+2026-10-22 21:01:50 [INFO] worker - Evaluation worker ready: up to 5 sheets in parallel
+2026-10-22 21:01:53 [INFO] utils.gemini_service - GeminiService initialised → vLLM endpoint: https://dgx.geetauniversity.edu.in/v1 | model: google/gemma-4-31B-it
+2026-10-22 21:01:55 [INFO] utils.workspace - attempt=3d05b3d9b972452386adbfc7c294924c sheet=1a14f64fcee4fab0d32e034304e393f47a564e77d65d851f10f12e8f210cf923 stage=checking_cache
+2026-10-22 21:01:57 [INFO] utils.workspace - attempt=3d05b3d9b972452386adbfc7c294924c sheet=1a14f64fcee4fab0d32e034304e393f47a564e77d65d851f10f12e8f210cf923 stage=grading
+2026-10-22 21:01:57 [INFO] utils.gemini_service - Calling vLLM endpoint: https://dgx.geetauniversity.edu.in/v1/chat/completions (model=google/gemma-4-31B-it, max_tokens=1500, timeout=600s)...
+2026-10-22 21:06:47 [INFO] utils.gemini_service - GeminiService initialised → vLLM endpoint: https://dgx.geetauniversity.edu.in/v1 | model: google/gemma-4-31B-it
+2026-10-22 21:06:48 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=checking_cache
+2026-10-22 21:06:54 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracting_student
+2026-10-22 21:06:55 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracting_student_page_1_of_27
+2026-10-22 21:06:57 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracted_student_page_1_of_27
+2026-10-22 21:06:58 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracting_student_page_2_of_27
+2026-10-22 21:07:00 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracted_student_page_2_of_27
+2026-10-22 21:07:01 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracting_student_page_3_of_27
+2026-10-22 21:07:03 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracted_student_page_3_of_27
+2026-10-22 21:07:06 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracting_student_page_4_of_27
+2026-10-22 21:07:08 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracted_student_page_4_of_27
+2026-10-22 21:07:08 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracting_student_page_5_of_27
+2026-10-22 21:07:12 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracted_student_page_5_of_27
+2026-10-22 21:07:13 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracting_student_page_6_of_27
+2026-10-22 21:07:13 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracted_student_page_6_of_27
+2026-10-22 21:07:14 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracting_student_page_7_of_27
+2026-10-22 21:07:17 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracted_student_page_7_of_27
+2026-10-22 21:07:18 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracting_student_page_8_of_27
+2026-10-22 21:07:19 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracted_student_page_8_of_27
+2026-10-22 21:07:20 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracting_student_page_9_of_27
+2026-10-22 21:07:22 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracted_student_page_9_of_27
+2026-10-22 21:07:23 [INFO] utils.workspace - attempt=fd20458b8eca47ea9f34a06ca9f4714e sheet=778fab7f65cba7faf7680901a10376017312997eb03311fd19cab0ea6fa426d2 stage=extracting_student_page_10_of_27
+2026-10-22 21:07:25 [INFO] utils.pdf_processor - Extracting text from 1 images using Gemini vision...
+2026-10-22 21:07:25 [INFO] utils.pdf_processor - Processing page 1/1 with Gemini vision...
+2026-10-22 21:07:25 [INFO] utils.gemini_service - Calling vLLM endpoint: https://dgx.geetauniversity.edu.in/v1/chat/completions (model=google/gemma-4-31B-it, max_tokens=1500, timeout=600s)...
+2026-10-22 21:07:46 [WARNING] utils.gemini_service - vLLM call failed: ('Connection aborted.', TimeoutError('The write operation timed out'))
+2026-10-22 21:07:49 [INFO] utils.gemini_service - Calling vLLM endpoint: https://dgx.geetauniversity.edu.in/v1/chat/completions (model=google/gemma-4-31B-it, max_tokens=1500, timeout=600s)...
+2026-10-22 21:08:05 [INFO] werkzeug - 127.0.0.1 - - [22/Oct/2026 21:08:05] "GET /api/auth/config HTTP/1.1" 200 -
+2026-10-22 21:08:05 [INFO] werkzeug - 127.0.0.1 - - [22/Oct/2026 21:08:05] "GET /api/auth/config HTTP/1.1" 200 -
+2026-10-22 21:08:15 [INFO] werkzeug - 127.0.0.1 - - [22/Oct/2026 21:08:15] "OPTIONS /api/auth/google HTTP/1.1" 200 -
+C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\jwt\api_jwt.py:149: InsecureKeyLengthWarning: The HMAC key is 28 bytes long, which is below the minimum recommended length of 32 bytes for SHA256. See RFC 7518 Section 3.2.
+  return self._jws.encode(
+2026-10-22 21:08:17 [INFO] werkzeug - 127.0.0.1 - - [22/Oct/2026 21:08:17] "POST /api/auth/google HTTP/1.1" 200 -
+2026-10-22 21:08:18 [INFO] werkzeug - 127.0.0.1 - - [22/Oct/2026 21:08:18] "OPTIONS /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-22 21:08:18 [INFO] werkzeug - 127.0.0.1 - - [22/Oct/2026 21:08:18] "OPTIONS /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\jwt\api_jwt.py:370: InsecureKeyLengthWarning: The HMAC key is 28 bytes long, which is below the minimum recommended length of 32 bytes for SHA256. See RFC 7518 Section 3.2.
+  decoded = self.decode_complete(
+2026-10-22 21:08:24 [INFO] werkzeug - 127.0.0.1 - - [22/Oct/2026 21:08:24] "GET /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-22 21:08:24 [INFO] werkzeug - 127.0.0.1 - - [22/Oct/2026 21:08:24] "OPTIONS /api/access HTTP/1.1" 200 -
+2026-10-22 21:08:24 [INFO] werkzeug - 127.0.0.1 - - [22/Oct/2026 21:08:24] "GET /api/access HTTP/1.1" 200 -
+2026-10-22 21:08:29 [INFO] werkzeug - 127.0.0.1 - - [22/Oct/2026 21:08:29] "GET /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-22 21:08:32 [INFO] werkzeug - 127.0.0.1 - - [22/Oct/2026 21:08:32] "OPTIONS /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-22 21:08:36 [INFO] utils.gemini_service - vLLM response status=200 duration=398.51s
+2026-10-22 21:08:36 [WARNING] utils.gemini_service - Truncated response; retrying with output budget 3000 (was 1500)
+2026-10-22 21:08:36 [INFO] utils.gemini_service - Calling vLLM endpoint: https://dgx.geetauniversity.edu.in/v1/chat/completions (model=google/gemma-4-31B-it, max_tokens=3000, timeout=600s)...
+2026-10-22 21:08:36 [INFO] werkzeug - 127.0.0.1 - - [22/Oct/2026 21:08:36] "GET /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-22 21:08:38 [INFO] werkzeug - 127.0.0.1 - - [22/Oct/2026 21:08:38] "OPTIONS /api/workspace/results?page=1&page_size=50&view=all HTTP/1.1" 200 -
+2026-10-22 21:08:38 [INFO] werkzeug - 127.0.0.1 - - [22/Oct/2026 21:08:38] "OPTIONS /api/workspace/results?page=1&page_size=50&view=all HTTP/1.1" 200 -
+2026-10-22 21:08:40 [INFO] werkzeug - 127.0.0.1 - - [22/Oct/2026 21:08:40] "GET /api/workspace/results?page=1&page_size=50&view=all HTTP/1.1" 200 -
+2026-10-22 21:08:42 [INFO] werkzeug - 127.0.0.1 - - [22/Oct/2026 21:08:42] "GET /api/workspace/results?page=1&page_size=50&view=all HTTP/1.1" 200 -
+2026-10-22 21:08:47 [INFO] werkzeug - 127.0.0.1 - - [22/Oct/2026 21:08:47] "OPTIONS /api/workspace/inventory?page=1&page_size=50&source=all HTTP/1.1" 200 -
+2026-10-22 21:08:47 [INFO] werkzeug - 127.0.0.1 - - [22/Oct/2026 21:08:47] "OPTIONS /api/workspace/inventory?page=1&page_size=50&source=all HTTP/1.1" 200 -
+2026-10-22 21:08:51 [INFO] werkzeug - 127.0.0.1 - - [22/Oct/2026 21:08:51] "OPTIONS /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-22 21:08:51 [INFO] werkzeug - 127.0.0.1 - - [22/Oct/2026 21:08:51] "OPTIONS /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-22 21:08:53 [INFO] werkzeug - 127.0.0.1 - - [22/Oct/2026 21:08:53] "GET /api/workspace/inventory?page=1&page_size=50&source=all HTTP/1.1" 200 -
+2026-10-22 21:08:54 [INFO] werkzeug - 127.0.0.1 - - [22/Oct/2026 21:08:54] "GET /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-22 21:08:54 [INFO] werkzeug - 127.0.0.1 - - [22/Oct/2026 21:08:54] "OPTIONS /api/access HTTP/1.1" 200 -
+2026-10-22 21:08:55 [INFO] werkzeug - 127.0.0.1 - - [22/Oct/2026 21:08:55] "GET /api/access HTTP/1.1" 200 -
+2026-10-22 21:08:57 [INFO] werkzeug - 127.0.0.1 - - [22/Oct/2026 21:08:57] "GET /api/workspace/inventory?page=1&page_size=50&source=all HTTP/1.1" 200 -
+2026-10-22 21:08:59 [INFO] werkzeug - 127.0.0.1 - - [22/Oct/2026 21:08:59] "GET /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-22 21:09:02 [INFO] werkzeug - 127.0.0.1 - - [22/Oct/2026 21:09:02] "OPTIONS /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-22 21:09:05 [INFO] werkzeug - 127.0.0.1 - - [22/Oct/2026 21:09:05] "GET /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-22 21:09:08 [INFO] werkzeug - 127.0.0.1 - - [22/Oct/2026 21:09:08] "OPTIONS /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-22 21:09:13 [INFO] werkzeug - 127.0.0.1 - - [22/Oct/2026 21:09:13] "GET /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-22 21:09:16 [INFO] werkzeug - 127.0.0.1 - - [22/Oct/2026 21:09:16] "OPTIONS /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -

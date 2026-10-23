@@ -69,6 +69,25 @@ class ApiTests(unittest.TestCase):
         for path in ('prepare', 'evaluate', 'cancel', 'manage', 'result', 'verify'):
             self.assertEqual(self.client.post('/api/workspace/' + path, json={}).status_code, 401)
 
+    def test_needs_review_without_marks_is_visible_and_can_be_resolved_manually(self):
+        self.db.jobs.insert_one({'_id': 'sheet', 'attempt_id': 'failed', 'state': 'needs_review',
+                                 'error': 'Missing question allocations'})
+        for view in ('all', 'needs_review'):
+            response = self.client.get('/api/workspace/results?view=' + view, headers=self.headers)
+            self.assertEqual(response.status_code, 200)
+            data = response.get_json()
+            self.assertEqual(data['total'], 1)
+            self.assertEqual(data['needs_review'], 1)
+            self.assertEqual(data['pending'], 0)
+            self.assertIsNone(data['items'][0]['result']['marks'])
+            self.assertIn('Missing question', data['items'][0]['result']['feedback'])
+        pending = self.client.get('/api/workspace/results?view=pending', headers=self.headers).get_json()
+        self.assertEqual(pending['total'], 0)
+        response = self.client.post('/api/workspace/result', headers=self.headers,
+                                   json={'sheet_id': 'sheet', 'marks': 70, 'reason': 'Manually reviewed'})
+        self.assertEqual(response.status_code, 200, response.get_json())
+        self.assertEqual(self.client.get('/api/workspace/results?view=needs_review', headers=self.headers).get_json()['total'], 0)
+
     def test_inventory_includes_both_stores_and_sheets_without_marks(self):
         from bson import ObjectId
         saved_id = ObjectId()

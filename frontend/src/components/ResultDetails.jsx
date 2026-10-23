@@ -28,6 +28,7 @@ export default function ResultDetails({ result, maxMarks, onClose, onVerify, mod
     <header className="result-details-header"><div><h2>Result details</h2>{result.roll_number && <p>{result.roll_number}</p>}</div>
     <button onClick={onClose}>Close details</button></header>
     <p>Marks: {result.marks ?? '—'} / {maxMarks} · Grade: {result.grade || '—'}</p>
+    {result.rubric?.allocation_source && <p>Marking source: { { answer_key: 'Answer key', question_paper: 'Course question paper', admin_fallback: 'Administrator fallback scheme' }[result.rubric.allocation_source] || result.rubric.allocation_source }{result.rubric.scheme_exam_type && ` (${result.rubric.scheme_course} · ${result.rubric.scheme_exam_type === 'mst' ? 'MST' : 'End Sem'})`}</p>}
     <p>{result.verified ? `Verified by ${result.verified_by || 'reviewer'}` : 'Not verified'}</p>
     {!result.verified && onVerify && <button onClick={onVerify}>Mark this result verified</button>}
     <h3>Full feedback</h3><p style={{ whiteSpace: 'pre-wrap' }}>{result.feedback || result.error?.message || 'No feedback saved.'}</p>

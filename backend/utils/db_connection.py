@@ -2,6 +2,7 @@ from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure, OperationFailure
 from config import Config
 import logging
+import threading
 
 logger = logging.getLogger(__name__)
 
@@ -11,6 +12,7 @@ class DatabaseConnection:
     _client = None
     _db = None
     _connected = False
+    _connection_lock = threading.RLock()
     
     def __new__(cls):
         if cls._instance is None:
@@ -22,6 +24,10 @@ class DatabaseConnection:
     
     def connect(self):
         """Establish a durable database connection"""
+        with self._connection_lock:
+            return self._connect_locked()
+
+    def _connect_locked(self):
         if self._connected and self._client is not None:
             return self._db
             
@@ -34,10 +40,10 @@ class DatabaseConnection:
             is_remote = mongo_uri.startswith('mongodb+srv') or 'mongodb.net' in mongo_uri
             
             client_kwargs = {
-                'serverSelectionTimeoutMS': 3000,
-                'connectTimeoutMS': 5000,
-                'socketTimeoutMS': 30000,
-                'waitQueueTimeoutMS': 10000,
+                'serverSelectionTimeoutMS': Config.MONGO_SERVER_SELECTION_TIMEOUT_MS,
+                'connectTimeoutMS': Config.MONGO_CONNECT_TIMEOUT_MS,
+                'socketTimeoutMS': Config.MONGO_SOCKET_TIMEOUT_MS,
+                'waitQueueTimeoutMS': Config.MONGO_WAIT_QUEUE_TIMEOUT_MS,
             }
             if is_remote:
                 import certifi as _certifi
@@ -57,6 +63,10 @@ class DatabaseConnection:
             return self._db
             
         except (ConnectionFailure, Exception) as e:
+            if self._client is not None:
+                self._client.close()
+            self._client = None
+            self._db = None
             self._connected = False
             raise RuntimeError('MongoDB is unavailable; refusing to use nonpersistent storage') from e
 
@@ -83,8 +93,12 @@ class DatabaseConnection:
         return db[collection_name]
     
     def close(self):
-        if self._client:
-            self._client.close()
+        with self._connection_lock:
+            if self._client is not None:
+                self._client.close()
+            self._client = None
+            self._db = None
+            self._connected = False
             logger.info("Database connection closed")
 
 

@@ -128,6 +128,16 @@ export default function Workspace({ resultsOnly = false }) {
   const selectedSet = new Set(selected);
   const selectedRows = visible.filter(s => selectedSet.has(s._id));
   const canRun = selectedRows.length > 0 && selectedRows.every(s => allowed(s.course_code, 'uploaders'));
+  const canStop = sheet => ['queued', 'processing'].includes(sheet.job?.state) && !sheet.job.cancel_requested && allowed(sheet.course_code, 'uploaders');
+  const stoppableSelected = selectedRows.filter(canStop);
+  const stopSheets = rows => action(async () => {
+    const ids = rows.filter(canStop).map(s => s._id);
+    if (!ids.length) return;
+    await api.post('/workspace/cancel', { sheet_ids: ids });
+    setNotice(`Stop requested for ${ids.length} sheet${ids.length === 1 ? '' : 's'}. Queued work is cancelled; running work stops after its current request returns.`);
+  });
+  const stopControl = sheet => allowed(sheet.course_code, 'uploaders') && ['queued', 'processing'].includes(sheet.job?.state) &&
+    <button className="stop-button" aria-label={`${sheet.job.cancel_requested ? 'Stopping' : 'Stop'} ${sheet.roll_number}`} disabled={busy || !canStop(sheet)} onClick={() => stopSheets([sheet])}>{sheet.job.cancel_requested ? 'Stopping…' : 'Stop'}</button>;
   const selectedBusy = selectedRows.some(s => ['queued', 'processing', 'managing'].includes(s.job?.state));
   const deleteDescription = { cache: 'Clear cached OCR and AI responses for the selected sheets. Saved marks and history remain.', records: 'Delete all marks, verification and attempt history for the selected sheets. Cached work and sheet records remain.', both: 'Delete all marks, verification, history and cached work. Sheet records remain for evaluation.', sheet: 'Remove the selected sheet records, marks, verification, history and cached work.' }[scope];
   const canReview = selectedRows.length > 0 && selectedRows.every(s => allowed(s.course_code, 'reviewers') && s.active);
@@ -185,7 +195,7 @@ export default function Workspace({ resultsOnly = false }) {
         <small>Failures are not counted as successful completion. Counts follow the selected course, examination and tab.</small>
       </div>
       {visible.filter(s => s.job?.state === 'processing').map(s => <article className="running-sheet" key={s._id}>
-        <strong>{s.course_code} / {s.roll_number}</strong><p>{stageLabel(s.job.stage)}</p>
+        <strong>{s.course_code} / {s.roll_number}</strong> {stopControl(s)}<p>{s.job.cancel_requested ? 'Stopping — waiting for the current request to return' : stageLabel(s.job.stage)}</p>
         <progress aria-label={`Progress for ${s.roll_number}`} max={s.job.progress?.total || 1} value={s.job.progress ? s.job.progress.completed : undefined} />
         <p>{s.job.progress ? `${s.job.progress.completed} / ${s.job.progress.total} pages read in this document` : 'Working — this stage has no measurable percentage yet.'}</p>
         <small>{s.job.updated_at ? `Current stage started ${Math.max(0, Math.floor(((updated || new Date()) - new Date(s.job.updated_at)) / 1000))} seconds ago. ` : ''}Waiting for the worker or AI response; updates appear when the stage changes.</small>
@@ -204,7 +214,7 @@ export default function Workspace({ resultsOnly = false }) {
       </article>)}</section>}
     {!resultsOnly && canUpload && <section ref={uploadPanel} className="workspace-panel"><h2>1. Upload course answer sheets</h2>
       <button disabled={busy} onClick={() => { setCorrectionMode(value => !value); setFiles(null); }}>{correctionMode ? 'Return to normal upload' : 'Upload corrected folders separately'}</button>
-      {correctionMode && <p>Choose only the corrected course folders. Keep the original examination ID and student filenames to update those same sheets. Include the model answers and question paper with explicit marks. Other courses remain unchanged; running sheets must finish before replacement.</p>}
+      {correctionMode && <p>Choose only the corrected course folders. Keep the original examination ID and student filenames to update those same sheets. Include the answer key; missing marking rules fall back to the course question paper, then the administrator scheme for this course and examination type. Other courses remain unchanged; running sheets must finish before replacement.</p>}
       <p>Use course folders, for example FS3401/model_answer.pdf and FS3401/101.pdf. Administrators can upload any course; faculty can upload only their registered, assigned courses.</p>
       <label>Examination / session ID *<input aria-invalid={showValidation && !!missing.exam} aria-describedby="exam-error" value={exam} onChange={e => setExam(e.target.value)} placeholder="2026-October-MSE" />{showValidation && missing.exam && <small id="exam-error" className="field-error">{missing.exam}</small>}</label>
       <label>Marking scheme<select value={type} onChange={e => { setType(e.target.value); setMarks(e.target.value === 'mst' ? 50 : 100); }}><option value="end_sem">End semester</option><option value="mst">Mid semester</option></select></label>
@@ -226,13 +236,15 @@ export default function Workspace({ resultsOnly = false }) {
         {!resultsOnly && <><button disabled={busy || !canRun} onClick={() => evaluate(false)}>Evaluate / use existing</button>
         <button disabled={busy || !canRun} onClick={() => evaluate(true)}>Re-evaluate selected</button></>}
         {resultsOnly && <button disabled={busy || !canReview} onClick={() => verify(selectedRows)}>Mark selected verified</button>}
-        {!resultsOnly && <button disabled={busy || !canRun} onClick={() => action(() => api.post('/workspace/cancel', { sheet_ids: selected }))}>Cancel selected</button>}
+        {!resultsOnly && <><button disabled={busy || !visible.some(canStop)} onClick={() => setSelected(visible.filter(canStop).map(s => s._id))}>Select running / queued on this page</button>
+        <button className="stop-button" disabled={busy || !stoppableSelected.length} onClick={() => stopSheets(stoppableSelected)}>Stop selected ({stoppableSelected.length})</button></>}
       </div>
       <p>{!resultsOnly && 'To evaluate one sheet, select only its checkbox, then choose Evaluate / use existing. '}{selected.length} selected. {admin ? 'Administrator access: you can evaluate, revise and verify any course.' : 'Upload assignments allow evaluation; review assignments allow revising and verifying results.'}</p>
+      {!resultsOnly && <p>Use Stop beside a sheet, or select multiple running / queued sheets and choose Stop selected. Queued sheets are cancelled immediately; running sheets stop after the current request returns. Saved results remain available.</p>}
       <div className="workspace-scroll"><table><thead><tr><th>Select</th><th>Exam / course</th><th>Student</th><th>{resultsOnly ? 'Verification' : 'Current work'}</th>{resultsOnly && <><th>Active result</th><th>History</th></>}</tr></thead><tbody>
         {visible.map(s => <tr key={s._id}><td><input type="checkbox" aria-label={`Select ${s.roll_number}`} checked={selectedSet.has(s._id)} onChange={e => setSelected(old => e.target.checked ? [...old, s._id] : old.filter(id => id !== s._id))} /></td>
           <td>{s.exam_id}<br />{s.course_code}</td><td>{s.roll_number}</td>
-          <td>{resultsOnly ? (s.active.verified ? 'Verified' : 'Awaiting verification') : <>{s.job?.cancel_requested && s.job.state === 'processing' ? 'Cancelling after current request' : stageLabel(s.job?.stage || s.job?.state)}{s.job?.error && <small className="workspace-error">{s.job.error}</small>}</>}</td>
+          <td>{resultsOnly ? (s.active.verified ? 'Verified' : 'Awaiting verification') : <>{s.job?.cancel_requested && s.job.state === 'processing' ? 'Stopping — waiting for the current request to return' : stageLabel(s.job?.stage || s.job?.state)}{s.job?.error && <small className="workspace-error">{s.job.error}</small>} {stopControl(s)}</>}</td>
           {resultsOnly && <><td>{s.active ? <><span>{`${s.active.marks}/${s.max_marks} (${s.active.percentage}%)`}</span><br />{s.active.verified ? 'Verified' : 'Not verified'} <button onClick={() => showDetails(s)}>View details</button></> : '—'}</td>
           <td><button onClick={() => showDetails(s, true)}>Attempt history</button></td></>}</tr>)}
       </tbody></table></div>

@@ -33,3 +33,4 @@
 .workspace-delete { margin-top: 24px; padding: 16px; border: 1px solid #c75b65; border-radius: 8px; }
 .workspace-delete .danger-button { background: #a72836; color: white; }
 .workspace-delete .danger-button:disabled { opacity: .45; }
+.workspace .stop-button { background: #a72836; color: white; }

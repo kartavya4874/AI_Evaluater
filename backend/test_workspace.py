@@ -115,6 +115,13 @@ class WorkspaceTests(unittest.TestCase):
         two = self.service.enqueue(self.sheet_id, 'admin', True)
         self.assertEqual(one['attempt_id'], two['attempt_id'])
 
+    def test_retry_claim_clears_previous_error(self):
+        self.service.enqueue(self.sheet_id, 'admin')
+        self.db.jobs.update_one({'_id': self.sheet_id}, {'$set': {'error': 'Old upload timeout'}})
+        job = self.service.claim('worker')
+        self.assertEqual(job['state'], 'processing')
+        self.assertIsNone(job['error'])
+
     def test_concurrent_enqueue_has_one_job(self):
         with ThreadPoolExecutor(max_workers=8) as executor:
             jobs = list(executor.map(lambda _: self.service.enqueue(self.sheet_id, 'admin', True), range(20)))
@@ -145,6 +152,17 @@ class WorkspaceTests(unittest.TestCase):
         self.service.process(job, self.pdf, self.llm, 'worker')
         self.llm.evaluate_answer.assert_not_called()
         self.assertEqual(self.db.jobs.find_one() ['state'], 'cancelled')
+
+    def test_stop_during_grading_prevents_further_subrequests_and_result(self):
+        def evaluate(*args, **kwargs):
+            self.db.jobs.update_one({'_id': self.sheet_id}, {'$set': {'cancel_requested': True}})
+            self.llm.check_cancelled()
+            self.fail('Grading continued after cancellation')
+        self.llm.evaluate_answer.side_effect = evaluate
+        sheet = self.process()
+        self.assertEqual(sheet['job']['state'], 'cancelled')
+        self.assertIsNone(sheet['active'])
+        self.assertEqual(self.db.attempts.find_one()['status'], 'cancelled')
 
     def test_expired_worker_cannot_publish(self):
         from utils.workspace import now

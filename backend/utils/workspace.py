@@ -207,7 +207,9 @@ class Workspace:
             {'$unwind': {'path': '$_job', 'preserveNullAndEmptyArrays': True}},
             {'$project': {'_job.events': 0, '_job.sheet_snapshot': 0, '_active.question_scores': 0, '_active.feedback': 0, '_active.rubric': 0, '_active.strengths': 0, '_active.missing_points': 0}},
             {'$addFields': {'_valid': {'$and': [{'$eq': ['$_active.status', 'completed']}, {'$eq': ['$_active.config', '$config']}]}}}]
-        if results_only or view in ('existing', 'pending', 'verified'):
+        if results_only and view in ('all', 'needs_review'):
+            pipeline.append({'$match': {'$or': [{'_valid': True}, {'_job.state': 'needs_review'}]}})
+        elif results_only or view in ('existing', 'pending', 'verified'):
             pipeline.append({'$match': {'_valid': True}})
         elif view == 'ungraded':
             pipeline.append({'$match': {'_valid': {'$ne': True}}})
@@ -217,8 +219,12 @@ class Workspace:
             pipeline.append({'$match': {'_active.verified': True}})
         elif view == 'failed':
             pipeline.append({'$match': {'_job.state': {'$in': ['error', 'needs_review']}}})
+        elif view == 'needs_review':
+            pipeline.append({'$match': {'_job.state': 'needs_review'}})
+        if results_only and view in ('pending', 'verified'):
+            pipeline.append({'$match': {'_job.state': {'$ne': 'needs_review'}}})
         pipeline.extend([{'$addFields': {'_state': {'$cond': [
-            {'$in': ['$_job.state', [] if results_only else ['queued', 'processing', 'error', 'cancelled', 'needs_review']]}, '$_job.state',
+            {'$in': ['$_job.state', ['needs_review'] if results_only else ['queued', 'processing', 'error', 'cancelled', 'needs_review']]}, '$_job.state',
             {'$cond': ['$_valid', {'$cond': ['$_active.verified', 'verified', 'review']}, 'ready']}]}}},
             {'$facet': {
                 'rows': [{'$sort': {'created_at': -1, '_id': 1}}, {'$skip': (page - 1) * size}, {'$limit': size}, {'$project': {'_id': 1}}],
@@ -323,7 +329,7 @@ class Workspace:
             eligible['sheet_snapshot.course_code'] = course
             self.last_served[course] = time.monotonic()
         job = self.db.jobs.find_one_and_update(eligible, {'$set': {
-            'state': 'processing', 'stage': 'starting', 'owner': owner, 'token': uuid.uuid4().hex, 'claimed_at': now(), 'updated_at': now()},
+            'state': 'processing', 'stage': 'starting', 'error': None, 'owner': owner, 'token': uuid.uuid4().hex, 'claimed_at': now(), 'updated_at': now()},
             '$push': {'events': {'$each': [{'stage': 'starting', 'at': now()}], '$slice': -100}}},
             sort=[('created_at', 1)], return_document=ReturnDocument.AFTER)
         if job:
@@ -424,7 +430,7 @@ class Workspace:
                    'model_path': sheet['model_path']}
         self.db.attempts.update_one({'_id': attempt_id}, {'$setOnInsert': attempt}, upsert=True)
 
-        def stage(name, progress=None):
+        def check_cancelled():
             if now() - job.get('claimed_at', now()) > timedelta(hours=24):
                 raise ReviewRequired('This attempt exceeded its 24-hour processing window; inspect and retry')
             lease = self.db.worker_leases.find_one({'_id': 'inference'})
@@ -434,6 +440,11 @@ class Workspace:
             if (not current or current.get('owner') != owner or current.get('cancel_requested')
                     or current.get('state') != 'processing' or current.get('attempt_id') != attempt_id):
                 raise InterruptedError('Evaluation cancelled')
+
+        llm.check_cancelled = check_cancelled
+
+        def stage(name, progress=None):
+            check_cancelled()
             self.db.jobs.update_one({'_id': sheet['_id'], 'owner': owner, 'token': job['token'], 'attempt_id': attempt_id, 'state': 'processing'},
                 {'$set': {'stage': name, 'updated_at': now(), 'progress': progress},
                  '$push': {'events': {'$each': [{'stage': name, 'at': now()}], '$slice': -100}}})
@@ -512,10 +523,12 @@ class Workspace:
                     or sheet['config']['prompt'] != current_prompt):
                 raise ValueError('Grading configuration changed after preparation; prepare this exam again')
             if (file_hash(sheet['file_path']) != sheet['config']['content_hash']
-                    or file_hash(sheet['model_path']) != sheet['config']['key']
-                    or (sheet.get('question_path') and file_hash(sheet['question_path']) != sheet['config'].get('question_paper'))):
+                    or file_hash(sheet['model_path']) != sheet['config']['key']):
                 raise ValueError('Source files changed after preparation; upload and prepare again')
-            grade_key = digest([sheet['_id'], 'grade-structured-v1', sheet.get('cache_generation'), sheet['config']])
+            from utils.marking_schemes import scheme_id
+            marking_scheme = self.db.marking_schemes.find_one({'_id': scheme_id(sheet['course_code'], sheet['exam_type'])})
+            grade_key = digest([sheet['_id'], 'grade-marking-fallback-v1', sheet.get('cache_generation'), sheet['config'],
+                                marking_scheme.get('revision') if marking_scheme else None])
             cached = None if job['force'] else cache_read(grade_key)
             if cached:
                 metrics['result_cache_hit'] = True
@@ -524,11 +537,11 @@ class Workspace:
                 extraction_started = time.monotonic()
                 model_text = extract(sheet['model_path'], 'answer_key')
                 student_text = extract(sheet['file_path'], 'student')
-                question_text = extract(sheet['question_path'], 'question_paper') if sheet.get('question_path') else None
                 metrics['extraction_seconds'] = round(time.monotonic() - extraction_started, 3)
                 stage('grading')
                 grading_started = time.monotonic()
                 def structured_cache(prompt, value=None):
+                    check_cancelled()
                     cache_id = digest(['structured-v1', sheet.get('cache_generation'), sheet['exam_id'], sheet['course_code'], sheet['config']['model'], prompt])
                     if value is None:
                         # Force fresh scores, retaining reusable OCR and mapping.
@@ -538,8 +551,23 @@ class Workspace:
                         return saved.get('json') if saved else None
                     cache_write(cache_id, {'json': value})
                 llm.structured_cache = structured_cache
+                llm.marking_scheme = marking_scheme if marking_scheme and marking_scheme.get('questions') else None
+                def load_question_paper():
+                    path = (marking_scheme or {}).get('question_path') or sheet.get('question_path')
+                    if not path:
+                        # Older prepared sheets did not retain the paper path.
+                        # Search only their own course folder, never another course.
+                        import re
+                        candidates = [p for p in Path(sheet['model_path']).parent.glob('*.pdf')
+                                      if re.fullmatch(r'(?:[a-z0-9][a-z0-9_ -]*?[_ -]?)?question[_\s]?paper', p.stem.lower())]
+                        if len(candidates) == 1:
+                            path = str(candidates[0])
+                    if not path or not Path(path).is_file():
+                        return None
+                    return extract(path, 'question_paper')
+                llm.question_paper_loader = load_question_paper
                 result = validate_result(llm.evaluate_answer(student_text, model_text, sheet['max_marks'],
-                                         question=question_text, exam_type=sheet['exam_type']), sheet['max_marks'])
+                                         question=None, exam_type=sheet['exam_type']), sheet['max_marks'])
                 metrics['grading_seconds'] = round(time.monotonic() - grading_started, 3)
                 cache_write(grade_key, {'result': result})
             stage('saving')

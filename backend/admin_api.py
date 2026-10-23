@@ -7,6 +7,10 @@ from utils.db_connection import db_connection
 from utils.runtime_settings import parallelism, MAX_PARALLELISM
 from utils.workspace import now
 from access import is_admin, codes, course_code
+from utils.marking_schemes import validate_scheme, scheme_id
+from io import BytesIO
+from pathlib import Path
+import uuid
 
 
 def create_admin_api(require_auth):
@@ -34,6 +38,100 @@ def create_admin_api(require_auth):
         query = {} if is_admin() else {'_id': {'$in': codes(db)}}
         return jsonify(bootstrap_admin=Config.ADMIN_EMAIL.strip().lower() if is_admin() else None, parallelism=parallelism(db), courses=list(db.courses.find(query)),
                        faculty=list(db.faculty.find({}, {'google_sub': 0})) if is_admin() else [])
+
+    @api.get('/marking-scheme')
+    def get_marking_scheme():
+        if not is_admin():
+            raise Forbidden('Administrator access required')
+        if request.args.get('exam_type') not in ('mst', 'end_sem'):
+            raise ValueError('Choose MST or End Sem')
+        identifier = scheme_id(request.args.get('course_code', ''), request.args.get('exam_type', ''))
+        row = db_connection.get_db().marking_schemes.find_one({'_id': identifier}) or {}
+        row['has_question_paper'] = bool(row.pop('question_path', None))
+        return jsonify(scheme=row)
+
+    @api.post('/marking-scheme')
+    def save_marking_scheme():
+        scheme = validate_scheme(json_object())
+        db = db_connection.get_db()
+        identifier = scheme_id(scheme['course_code'], scheme['exam_type'])
+        scheme.update(updated_by=g.user_email, updated_at=now(), revision=uuid.uuid4().hex)
+        db.marking_schemes.update_one({'_id': identifier}, {'$set': scheme}, upsert=True)
+        db.audit.insert_one({'actor': g.user_email, 'action': 'save_marking_scheme', 'scheme_id': identifier,
+                             'revision': scheme['revision'], 'at': now()})
+        return jsonify(success=True)
+
+    @api.post('/marking-scheme/import')
+    def preview_marking_import():
+        from zipfile import ZipFile, BadZipFile
+        upload = request.files.get('file')
+        if not upload or not upload.filename.lower().endswith('.xlsx'):
+            raise ValueError('Upload an .xlsx workbook')
+        raw = upload.read(2 * 1024 * 1024 + 1)
+        if len(raw) > 2 * 1024 * 1024:
+            raise ValueError('Workbook must be smaller than 2 MB')
+        try:
+            with ZipFile(BytesIO(raw)) as archive:
+                if sum(i.file_size for i in archive.infolist()) > 20 * 1024 * 1024:
+                    raise ValueError('Expanded workbook is too large')
+            workbook = load_workbook(BytesIO(raw), read_only=True, data_only=False)
+            try:
+                rows = list(workbook.active.iter_rows(min_row=1, max_row=202, max_col=5, values_only=True))
+            finally:
+                workbook.close()
+        except (BadZipFile, KeyError, OSError) as exc:
+            raise ValueError('Invalid workbook') from exc
+        headers = ('question_id', 'max_marks', 'group', 'choose', 'selection')
+        if not rows or tuple(rows[0]) != headers:
+            raise ValueError('Columns must be: question_id, max_marks, group, choose, selection')
+        questions = []
+        for values in rows[1:]:
+            if all(v is None for v in values):
+                continue
+            if any(isinstance(v, str) and v.startswith('=') for v in values):
+                raise ValueError('Use literal values, not Excel formulas')
+            row = dict(zip(headers, values))
+            if row['selection'] is None:
+                row['selection'] = 'exact'
+            questions.append(row)
+        maximum = request.form.get('max_marks', '')
+        try:
+            maximum = float(maximum)
+        except ValueError:
+            raise ValueError('Enter maximum marks before importing') from None
+        scheme = validate_scheme({'course_code': request.form.get('course_code'),
+            'exam_type': request.form.get('exam_type'), 'max_marks': maximum, 'questions': questions})
+        return jsonify(scheme=scheme)
+
+    @api.post('/marking-scheme/paper')
+    def save_default_paper():
+        from PyPDF2 import PdfReader
+        code, exam_type = course_code(request.form.get('course_code', '')), request.form.get('exam_type')
+        if exam_type not in ('mst', 'end_sem'):
+            raise ValueError('Choose MST or End Sem')
+        upload = request.files.get('file')
+        if not upload or not upload.filename.lower().endswith('.pdf'):
+            raise ValueError('Upload a PDF question paper')
+        raw = upload.read(20 * 1024 * 1024 + 1)
+        if len(raw) > 20 * 1024 * 1024:
+            raise ValueError('Question paper must be smaller than 20 MB')
+        try:
+            if not 1 <= len(PdfReader(BytesIO(raw)).pages) <= 200:
+                raise ValueError('Invalid page count')
+        except Exception as exc:
+            raise ValueError('Upload a readable PDF with 1 to 200 pages') from exc
+        root = Path(__file__).resolve().parent / Config.UPLOAD_FOLDER / 'marking_papers'
+        root.mkdir(parents=True, exist_ok=True)
+        path = root / (uuid.uuid4().hex + '.pdf')
+        path.write_bytes(raw)
+        db = db_connection.get_db()
+        revision = uuid.uuid4().hex
+        db.marking_schemes.update_one({'_id': scheme_id(code, exam_type)}, {'$set': {
+            'course_code': code, 'exam_type': exam_type, 'question_path': str(path),
+            'revision': revision, 'updated_at': now(), 'updated_by': g.user_email}}, upsert=True)
+        db.audit.insert_one({'actor': g.user_email, 'action': 'save_default_question_paper',
+                            'scheme_id': scheme_id(code, exam_type), 'revision': revision, 'at': now()})
+        return jsonify(success=True)
 
     @api.post('/settings')
     def settings():

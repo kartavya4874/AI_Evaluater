@@ -1,0 +1,195 @@
+2026-10-23 09:44:03 [INFO] root - Logger initialized. Persistent audit logs are enabled.
+2026-10-23 09:44:03 [INFO] utils.gemini_service - GeminiService initialised → vLLM endpoint: https://dgx.geetauniversity.edu.in/v1 | model: google/gemma-4-31B-it
+2026-10-23 09:44:03 [INFO] root - Testing database connection...
+2026-10-23 09:44:03 [INFO] utils.db_connection - Attempting to connect to MongoDB...
+2026-10-23 09:44:03 [INFO] utils.db_connection - Connecting to configured MongoDB
+2026-10-23 09:44:08 [WARNING] root - Database unavailable at startup; the worker will reconnect automatically
+2026-10-23 09:44:08 [INFO] utils.db_connection - Attempting to connect to MongoDB...
+2026-10-23 09:44:08 [INFO] utils.db_connection - Connecting to configured MongoDB
+2026-10-23 09:44:08 [INFO] worker - Evaluation worker started automatically
+2026-10-23 09:44:08 [INFO] werkzeug - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://10.240.100.73:5000
+2026-10-23 09:44:08 [INFO] werkzeug - [33mPress CTRL+C to quit[0m
+2026-10-23 09:44:11 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:44:11] "OPTIONS /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\jwt\api_jwt.py:370: InsecureKeyLengthWarning: The HMAC key is 28 bytes long, which is below the minimum recommended length of 32 bytes for SHA256. See RFC 7518 Section 3.2.
+  decoded = self.decode_complete(
+2026-10-23 09:44:11 [INFO] utils.db_connection - Attempting to connect to MongoDB...
+2026-10-23 09:44:11 [INFO] utils.db_connection - Connecting to configured MongoDB
+2026-10-23 09:44:13 [ERROR] worker - Worker interrupted; automatically recovering in 5 seconds
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 108, in _resolve_uri
+    results = _resolve(
+        "_" + self.__srv + "._tcp." + self.__fqdn, "SRV", lifetime=self.__connect_timeout
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 53, in _resolve
+    return resolver.resolve(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1572, in resolve
+    return get_default_resolver().resolve(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        qname,
+        ^^^^^^
+    ...<7 lines>...
+        search,
+        ^^^^^^^
+    )
+    ^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1328, in resolve
+    timeout = self._compute_timeout(start, lifetime, resolution.errors)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\dns\resolver.py", line 1084, in _compute_timeout
+    raise LifetimeTimeout(timeout=duration, errors=errors)
+dns.resolver.LifetimeTimeout: The resolution lifetime expired after 5.420 seconds: Server Do53:10.240.100.157@53 answered The DNS operation timed out.; Server Do53:10.240.100.157@53 answered The DNS operation timed out.; Server Do53:10.240.100.157@53 answered The DNS operation timed out.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 46, in connect
+    self._client = MongoClient(mongo_uri, **client_kwargs)
+                   ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 908, in __init__
+    self._get_topology()  # type: ignore[unused-coroutine]
+    ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 1776, in _get_topology
+    self._resolve_srv()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\mongo_client.py", line 927, in _resolve_srv
+    res = uri_parser._parse_srv(
+        entity,
+    ...<6 lines>...
+        srv_max_hosts=srv_max_hosts,
+    )
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\uri_parser.py", line 168, in _parse_srv
+    nodes = dns_resolver.get_hosts()
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 148, in get_hosts
+    _, nodes = self._get_srv_response_and_hosts(True)
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 122, in _get_srv_response_and_hosts
+    results = self._resolve_uri(encapsulate_errors)
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\pymongo\synchronous\srv_resolver.py", line 116, in _resolve_uri
+    raise ConfigurationError(str(exc)) from exc
+pymongo.errors.ConfigurationError: The resolution lifetime expired after 5.420 seconds: Server Do53:10.240.100.157@53 answered The DNS operation timed out.; Server Do53:10.240.100.157@53 answered The DNS operation timed out.; Server Do53:10.240.100.157@53 answered The DNS operation timed out.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 122, in supervise
+    run(stopped)
+    ~~~^^^^^^^^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\worker.py", line 19, in run
+    db = db_connection.get_db()
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 78, in get_db
+    return self.connect()
+           ~~~~~~~~~~~~^^
+  File "C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\utils\db_connection.py", line 61, in connect
+    raise RuntimeError('MongoDB is unavailable; refusing to use nonpersistent storage') from e
+RuntimeError: MongoDB is unavailable; refusing to use nonpersistent storage
+2026-10-23 09:44:18 [INFO] utils.db_connection - Successfully connected to MongoDB database: ai_examiner
+2026-10-23 09:44:19 [INFO] utils.db_connection - Database indexes created successfully
+2026-10-23 09:44:21 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:44:21] "GET /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:44:21 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:44:21] "OPTIONS /api/access HTTP/1.1" 200 -
+2026-10-23 09:44:21 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:44:21] "GET /api/access HTTP/1.1" 200 -
+2026-10-23 09:44:24 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:44:24] "OPTIONS /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:44:25 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:44:25] "GET /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:44:29 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:44:29] "GET /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:44:34 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:44:34] "OPTIONS /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:44:47 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:44:47] "GET /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:44:50 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:44:50] "OPTIONS /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:44:52 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:44:52] "GET /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:44:56 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:44:56] "OPTIONS /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:44:57 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:44:57] "GET /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:45:02 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:45:02] "GET /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:45:06 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:45:06] "OPTIONS /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:45:18 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:45:18] "GET /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:45:22 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:45:22] "OPTIONS /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:45:25 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:45:25] "GET /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:45:25 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:45:25] "OPTIONS /api/access HTTP/1.1" 200 -
+2026-10-23 09:45:25 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:45:25] "GET /api/access HTTP/1.1" 200 -
+2026-10-23 09:45:28 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:45:28] "OPTIONS /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:45:29 [INFO] worker - Evaluation worker ready: up to 5 sheets in parallel
+2026-10-23 09:45:30 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:45:30] "GET /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:45:30 [INFO] utils.gemini_service - GeminiService initialised → vLLM endpoint: https://dgx.geetauniversity.edu.in/v1 | model: google/gemma-4-31B-it
+2026-10-23 09:45:30 [INFO] utils.workspace - attempt=ad12db1ae10c422684510b8d2051e640 sheet=0ee45f1d219138ef6686264bbabfed05abfb050c030677328479edfc0986240e stage=checking_cache
+2026-10-23 09:45:30 [INFO] utils.gemini_service - GeminiService initialised → vLLM endpoint: https://dgx.geetauniversity.edu.in/v1 | model: google/gemma-4-31B-it
+2026-10-23 09:45:31 [INFO] utils.workspace - attempt=ad12db1ae10c422684510b8d2051e640 sheet=0ee45f1d219138ef6686264bbabfed05abfb050c030677328479edfc0986240e stage=extracting_answer_key
+2026-10-23 09:45:31 [INFO] utils.workspace - attempt=931fdbef2cd24cacab18acbb50dbba2e sheet=b8f5e158fcbc49864dd852320e2c47c30117f02bd5e159faaf02353fc2b2d7f1 stage=checking_cache
+2026-10-23 09:45:31 [INFO] utils.workspace - attempt=ad12db1ae10c422684510b8d2051e640 sheet=0ee45f1d219138ef6686264bbabfed05abfb050c030677328479edfc0986240e stage=extracting_answer_key_page_1_of_6
+2026-10-23 09:45:31 [INFO] utils.workspace - attempt=931fdbef2cd24cacab18acbb50dbba2e sheet=b8f5e158fcbc49864dd852320e2c47c30117f02bd5e159faaf02353fc2b2d7f1 stage=extracting_answer_key
+2026-10-23 09:45:31 [INFO] utils.workspace - attempt=931fdbef2cd24cacab18acbb50dbba2e sheet=b8f5e158fcbc49864dd852320e2c47c30117f02bd5e159faaf02353fc2b2d7f1 stage=extracting_answer_key_page_1_of_8
+2026-10-23 09:45:31 [INFO] utils.pdf_processor - Extracting text from 1 images using Gemini vision...
+2026-10-23 09:45:31 [INFO] utils.pdf_processor - Processing page 1/1 with Gemini vision...
+2026-10-23 09:45:31 [INFO] utils.gemini_service - GeminiService initialised → vLLM endpoint: https://dgx.geetauniversity.edu.in/v1 | model: google/gemma-4-31B-it
+2026-10-23 09:45:32 [INFO] utils.gemini_service - Calling vLLM endpoint: https://dgx.geetauniversity.edu.in/v1/chat/completions (model=google/gemma-4-31B-it, max_tokens=1500, timeout=600s)...
+2026-10-23 09:45:32 [INFO] utils.pdf_processor - Extracting text from 1 images using Gemini vision...
+2026-10-23 09:45:32 [INFO] utils.pdf_processor - Processing page 1/1 with Gemini vision...
+2026-10-23 09:45:32 [INFO] utils.workspace - attempt=8b5a7786391749b3b2ea595502884ae2 sheet=659c9605f970391a9e7e02bbd53fa6153ae3b37be5efae59653ce38627122cd8 stage=checking_cache
+2026-10-23 09:45:32 [INFO] utils.gemini_service - GeminiService initialised → vLLM endpoint: https://dgx.geetauniversity.edu.in/v1 | model: google/gemma-4-31B-it
+2026-10-23 09:45:32 [INFO] utils.workspace - attempt=d1e1e7ef72df458ea69bacd3f5090d27 sheet=93468de55ae4668a1ae743544b004f5c410007c723c74e612f883a6d8039f034 stage=checking_cache
+2026-10-23 09:45:32 [INFO] utils.gemini_service - GeminiService initialised → vLLM endpoint: https://dgx.geetauniversity.edu.in/v1 | model: google/gemma-4-31B-it
+2026-10-23 09:45:33 [INFO] utils.gemini_service - Calling vLLM endpoint: https://dgx.geetauniversity.edu.in/v1/chat/completions (model=google/gemma-4-31B-it, max_tokens=1500, timeout=600s)...
+2026-10-23 09:45:33 [INFO] utils.workspace - attempt=718322d0d8d44af781516cb854b35c61 sheet=81485e179498224ac28b2ddd107ec5ee54b77e5a2d6c3ae7559f9fa99a38d35f stage=checking_cache
+2026-10-23 09:45:33 [INFO] utils.gemini_service - AI request upload_bytes=253995 connect/write_timeout=60s read_timeout=600s
+2026-10-23 09:45:34 [INFO] utils.gemini_service - AI request upload_bytes=394691 connect/write_timeout=60s read_timeout=600s
+2026-10-23 09:45:34 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:45:34] "GET /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:45:37 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:45:37] "OPTIONS /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:45:48 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:45:48] "GET /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:45:52 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:45:52] "OPTIONS /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:46:06 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:46:06] "GET /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:46:09 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:46:09] "OPTIONS /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:46:11 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:46:11] "GET /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:46:15 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:46:15] "OPTIONS /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:46:16 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:46:16] "GET /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:46:21 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:46:21] "GET /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:46:24 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:46:24] "OPTIONS /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:46:25 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:46:25] "GET /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:46:25 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:46:25] "OPTIONS /api/access HTTP/1.1" 200 -
+2026-10-23 09:46:25 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:46:25] "GET /api/access HTTP/1.1" 200 -
+2026-10-23 09:46:37 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:46:37] "GET /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:46:41 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:46:41] "OPTIONS /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:46:42 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:46:42] "GET /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:46:57 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:46:57] "GET /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:47:00 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:47:00] "OPTIONS /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:47:02 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:47:02] "GET /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:47:06 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:47:06] "GET /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:47:09 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:47:09] "OPTIONS /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:47:18 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:47:18] "GET /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:47:21 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:47:21] "OPTIONS /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:47:22 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:47:22] "GET /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:47:26 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:47:26] "GET /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:47:26 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:47:26] "OPTIONS /api/access HTTP/1.1" 200 -
+2026-10-23 09:47:26 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:47:26] "GET /api/access HTTP/1.1" 200 -
+2026-10-23 09:47:29 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:47:29] "OPTIONS /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:47:30 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:47:30] "GET /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:47:43 [INFO] utils.gemini_service - vLLM response status=200 duration=131.23s
+2026-10-23 09:47:43 [INFO] utils.pdf_processor - Gemini vision extraction completed
+2026-10-23 09:47:43 [INFO] utils.workspace - attempt=ad12db1ae10c422684510b8d2051e640 sheet=0ee45f1d219138ef6686264bbabfed05abfb050c030677328479edfc0986240e stage=extracted_answer_key_page_1_of_6
+2026-10-23 09:47:43 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:47:43] "GET /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:47:43 [INFO] utils.workspace - attempt=ad12db1ae10c422684510b8d2051e640 sheet=0ee45f1d219138ef6686264bbabfed05abfb050c030677328479edfc0986240e stage=extracting_answer_key_page_2_of_6
+2026-10-23 09:47:44 [INFO] utils.pdf_processor - Extracting text from 1 images using Gemini vision...
+2026-10-23 09:47:44 [INFO] utils.pdf_processor - Processing page 1/1 with Gemini vision...
+2026-10-23 09:47:44 [INFO] utils.gemini_service - Calling vLLM endpoint: https://dgx.geetauniversity.edu.in/v1/chat/completions (model=google/gemma-4-31B-it, max_tokens=1500, timeout=600s)...
+2026-10-23 09:47:45 [INFO] utils.gemini_service - AI request upload_bytes=532635 connect/write_timeout=60s read_timeout=600s
+2026-10-23 09:47:47 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:47:47] "OPTIONS /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:48:00 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:48:00] "GET /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:48:03 [INFO] utils.gemini_service - vLLM response status=200 duration=150.64s
+2026-10-23 09:48:03 [INFO] utils.pdf_processor - Gemini vision extraction completed
+2026-10-23 09:48:04 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:48:04] "OPTIONS /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:48:05 [INFO] utils.workspace - attempt=931fdbef2cd24cacab18acbb50dbba2e sheet=b8f5e158fcbc49864dd852320e2c47c30117f02bd5e159faaf02353fc2b2d7f1 stage=extracted_answer_key_page_1_of_8
+2026-10-23 09:48:06 [INFO] utils.workspace - attempt=931fdbef2cd24cacab18acbb50dbba2e sheet=b8f5e158fcbc49864dd852320e2c47c30117f02bd5e159faaf02353fc2b2d7f1 stage=extracting_answer_key_page_2_of_8
+2026-10-23 09:48:06 [INFO] utils.pdf_processor - Extracting text from 1 images using Gemini vision...
+2026-10-23 09:48:06 [INFO] utils.pdf_processor - Processing page 1/1 with Gemini vision...
+2026-10-23 09:48:06 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:48:06] "GET /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:48:08 [INFO] utils.gemini_service - Calling vLLM endpoint: https://dgx.geetauniversity.edu.in/v1/chat/completions (model=google/gemma-4-31B-it, max_tokens=1500, timeout=600s)...
+2026-10-23 09:48:09 [INFO] utils.gemini_service - AI request upload_bytes=454127 connect/write_timeout=60s read_timeout=600s
+2026-10-23 09:48:10 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:48:10] "OPTIONS /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:48:15 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:48:15] "GET /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:48:18 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:48:18] "OPTIONS /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:48:30 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:48:30] "GET /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:48:30 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:48:30] "OPTIONS /api/access HTTP/1.1" 200 -
+2026-10-23 09:48:31 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:48:31] "GET /api/access HTTP/1.1" 200 -
+2026-10-23 09:48:34 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:48:34] "OPTIONS /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:48:35 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:48:35] "GET /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:48:39 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:48:39] "GET /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:48:42 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:48:42] "OPTIONS /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -
+2026-10-23 09:48:43 [INFO] werkzeug - 127.0.0.1 - - [23/Oct/2026 09:48:43] "GET /api/workspace/sheets?page=1&page_size=50&view=all&results_only=false HTTP/1.1" 200 -

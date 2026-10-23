@@ -21,11 +21,13 @@ export default function ManageResults() {
   const [notice, setNotice] = useState('');
   const [detail, setDetail] = useState(null);
   const key = row => `${row.source}:${row.id}`;
+  const loadInventory = useCallback(() => api.get('/workspace/inventory', { params: { page, page_size: 50, source, course_code: course || undefined, ...(exam ? { exam_id: exam } : {}), ...(status !== 'all' ? { status } : {}), ...(search ? { q: search } : {}) } }), [page, source, course, exam, status, search]);
   const refresh = useCallback(async () => {
-    const response = await api.get('/workspace/inventory', { params: { page, page_size: 50, source, course_code: course || undefined, ...(exam ? { exam_id: exam } : {}), ...(status !== 'all' ? { status } : {}), ...(search ? { q: search } : {}) } });
-    setData(response.data); setSelected([]);
+    const response = await loadInventory();
+    setData(response.data);
+    setSelected(old => old.filter(id => response.data.items.some(row => `${row.source}:${row.id}` === id)));
     if (page > 1 && !response.data.items.length) setPage(Math.max(1, Math.ceil(response.data.total / 50)));
-  }, [page, source, course, exam, status, search]);
+  }, [page, loadInventory]);
   useEffect(() => {
     let active = true;
     setLoading(true); setError(''); setSelected([]);
@@ -40,6 +42,23 @@ export default function ManageResults() {
   const saved = chosen.filter(row => row.source === 'legacy');
   const workspace = chosen.filter(row => row.source === 'workspace');
   const running = workspace.some(row => ['queued', 'processing', 'managing'].includes(row.status));
+  const stoppable = workspace.filter(row => ['queued', 'processing'].includes(row.status));
+  useEffect(() => {
+    if (!running || busy || loading) return;
+    let active = true;
+    let timer;
+    const poll = async () => {
+      try {
+        const response = await loadInventory();
+        if (active) setData(response.data);
+      } catch (e) {
+        if (active) setError(`Unable to refresh processing status: ${e.response?.data?.error || e.message}`);
+      }
+      if (active) timer = setTimeout(poll, 3000);
+    };
+    timer = setTimeout(poll, 3000);
+    return () => { active = false; clearTimeout(timer); };
+  }, [running, busy, loading, loadInventory]);
   const description = { records: 'Delete marks and attempt history; retain workspace sheets and cache.', cache: 'Clear workspace cache; retain sheets, marks and history.', both: 'Delete marks, history and cache; retain workspace sheets.', sheet: 'Delete workspace sheet records, marks, history and cache.' }[scope];
   const run = async operation => {
     setBusy(true); setError(''); setNotice('');
@@ -61,6 +80,7 @@ export default function ManageResults() {
         for (const row of saved) { await deleteEvaluation(row.id); removed++; }
       } catch (e) { failure = e; }
       await refresh();
+      setSelected([]);
       setNotice(`Management action completed for ${removed} selected record(s).`);
       if (failure) throw new Error(`Action stopped: ${failure.response?.data?.error || failure.message}. Review the refreshed list before retrying.`);
     });
@@ -104,7 +124,12 @@ export default function ManageResults() {
       <label>Action<select disabled={busy} value={scope} onChange={e => setScope(e.target.value)}><option value="records">Delete marks and history</option><option value="cache">Clear cache only (workspace sheets)</option><option value="both">Delete marks, history and cache</option><option value="sheet">Delete complete records</option></select></label>
       <p>{description} Original uploaded PDFs are retained.</p>
       {saved.length > 0 && <p>Selected saved evaluations are standalone records: deleting their marks deletes the evaluation and feedback. Cache-only actions are unavailable for these records.</p>}
-      {running && <p>Cancel queued or running evaluations in Evaluate → Batch, then refresh here before deleting.</p>}
+      {running && <p role="status">Apply is unavailable while selected sheets are running, queued or being managed. Stop active sheets below, or deselect them. Status refreshes automatically every 3 seconds; Apply becomes available when all selected sheets are idle.</p>}
+      {stoppable.length > 0 && <button className="stop-button" disabled={busy || loading} onClick={() => run(async () => {
+        await api.post('/workspace/cancel', { sheet_ids: stoppable.map(row => row.id) });
+        setNotice('Stop requested. Running sheets stop after the current request returns. Your selection is retained; apply the deletion once the sheets are idle.');
+        await refresh();
+      })}>Stop selected active sheets ({stoppable.length})</button>}
       <button disabled={busy || loading || !chosen.length || running || (scope === 'cache' && saved.length > 0)} onClick={remove}>Apply to selected ({chosen.length})…</button>
     </section>
     {detail && <ResultDetails modal result={detail.active || { marks: null, feedback: detail.job?.error || detail.attempts?.[0]?.error?.message || 'No saved result yet.' }} maxMarks={detail.max_marks} onClose={() => setDetail(null)}>

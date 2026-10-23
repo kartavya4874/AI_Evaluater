@@ -121,8 +121,8 @@ def supervise(stopped):
         try:
             run(stopped)
         except Exception:
-            logging.getLogger(__name__).exception('Worker interrupted; automatically recovering in 5 seconds')
-        stopped.wait(5)
+            logging.getLogger(__name__).exception('Worker interrupted; automatically recovering in %s seconds', Config.WORKER_RECOVERY_SECONDS)
+        stopped.wait(Config.WORKER_RECOVERY_SECONDS)
 
 
 if __name__ == '__main__':

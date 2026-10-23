@@ -12,7 +12,9 @@ from utils.db_connection import db_connection
 
 
 @contextmanager
-def inference_slot(timeout):
+def inference_slot(timeout, check_cancelled=None):
+    if check_cancelled:
+        check_cancelled()
     collection = db_connection.get_collection('inference_slots')
     owner = uuid.uuid4().hex
     deadline = time.monotonic() + timeout
@@ -24,6 +26,8 @@ def inference_slot(timeout):
             pass
     acquired = None
     while acquired is None:
+        if check_cancelled:
+            check_cancelled()
         limit = parallelism(collection.database)
         # A reduced limit drains requests in retired slots before admitting more.
         retiring = collection.count_documents({'_id': {'$in': slot_ids[limit:]},

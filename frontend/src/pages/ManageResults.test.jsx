@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { act, render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import ManageResults from './ManageResults';
 import api, { deleteEvaluation } from '../services/api';
@@ -39,6 +39,45 @@ test('cache-only selection cannot silently delete a saved evaluation', async () 
   fireEvent.click(await screen.findByRole('checkbox', { name: 'Select 102 legacy' }));
   fireEvent.change(screen.getByLabelText('Action'), { target: { value: 'cache' } });
   expect(screen.getByRole('button', { name: 'Apply to selected (1)…' })).toBeDisabled();
+});
+
+test('stopping selected active workspace sheets retains mixed selection and enables Apply when idle', async () => {
+  const activeItems = [{ ...items[0], status: 'processing' }, items[1]];
+  api.get.mockResolvedValue({ data: { items: activeItems, total: 2, counts: { workspace: 1, legacy: 1 } } });
+  render(<MemoryRouter><ManageResults /></MemoryRouter>);
+  fireEvent.click(await screen.findByRole('button', { name: 'Select all on this page' }));
+  expect(screen.getByRole('button', { name: 'Apply to selected (2)…' })).toBeDisabled();
+  api.get.mockResolvedValue({ data: { items, total: 2, counts: { workspace: 1, legacy: 1 } } });
+  fireEvent.click(screen.getByRole('button', { name: 'Stop selected active sheets (1)' }));
+  await waitFor(() => expect(screen.getByRole('button', { name: 'Apply to selected (2)…' })).toBeEnabled());
+  expect(api.post).toHaveBeenCalledWith('/workspace/cancel', { sheet_ids: ['same'] });
+  expect(deleteEvaluation).not.toHaveBeenCalled();
+  expect(screen.getByRole('checkbox', { name: 'Select 101 workspace' })).toBeChecked();
+  expect(screen.getByRole('checkbox', { name: 'Select 102 legacy' })).toBeChecked();
+});
+
+test('active selection refreshes automatically and remains selected after work stops', async () => {
+  jest.useFakeTimers();
+  try {
+    api.get.mockResolvedValue({ data: { items: [{ ...items[0], status: 'processing' }], total: 1, counts: { workspace: 1, legacy: 0 } } });
+    render(<MemoryRouter><ManageResults /></MemoryRouter>);
+    fireEvent.click(await screen.findByRole('button', { name: 'Select all on this page' }));
+    expect(screen.getByRole('button', { name: 'Apply to selected (1)…' })).toBeDisabled();
+    api.get.mockResolvedValue({ data: { items: [items[0]], total: 1, counts: { workspace: 1, legacy: 0 } } });
+    await act(async () => { jest.advanceTimersByTime(3000); });
+    expect(screen.getByRole('button', { name: 'Apply to selected (1)…' })).toBeEnabled();
+  } finally { jest.useRealTimers(); }
+});
+
+test('failed stop requests keep deletion blocked and display the error', async () => {
+  api.get.mockResolvedValue({ data: { items: [{ ...items[0], status: 'queued' }], total: 1, counts: { workspace: 1, legacy: 0 } } });
+  api.post.mockRejectedValueOnce(new Error('Stop failed'));
+  render(<MemoryRouter><ManageResults /></MemoryRouter>);
+  fireEvent.click(await screen.findByRole('button', { name: 'Select all on this page' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Stop selected active sheets (1)' }));
+  expect(await screen.findByRole('alert')).toHaveTextContent('Stop failed');
+  expect(screen.getByRole('button', { name: 'Apply to selected (1)…' })).toBeDisabled();
+  expect(screen.getByRole('button', { name: 'Stop selected active sheets (1)' })).toBeEnabled();
 });
 
 test('management search and status filters query all pages and clear stale selections', async () => {

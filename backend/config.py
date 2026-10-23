@@ -9,6 +9,16 @@ else:
     # In production, environment variables should be set directly
     load_dotenv()
 
+def positive_int(name, default):
+    try:
+        value = int(os.getenv(name, str(default)))
+    except (TypeError, ValueError):
+        raise ValueError(f'{name} must be a positive integer') from None
+    if value <= 0:
+        raise ValueError(f'{name} must be a positive integer')
+    return value
+
+
 class Config:
     APP_ENV = os.getenv('APP_ENV', 'development')
     # Read comma separated list of keys (fallback to single key if that's what's currently there)
@@ -24,6 +34,19 @@ class Config:
     # MongoDB Configuration
     MONGO_URI = os.getenv('MONGO_URI')
     MONGO_DB_NAME = os.getenv('MONGO_DB_NAME', 'ai_examiner')  
+    MONGO_SERVER_SELECTION_TIMEOUT_MS = positive_int('MONGO_SERVER_SELECTION_TIMEOUT_MS', 3000)
+    MONGO_CONNECT_TIMEOUT_MS = positive_int('MONGO_CONNECT_TIMEOUT_MS', 5000)
+    MONGO_SOCKET_TIMEOUT_MS = positive_int('MONGO_SOCKET_TIMEOUT_MS', 30000)
+    MONGO_WAIT_QUEUE_TIMEOUT_MS = positive_int('MONGO_WAIT_QUEUE_TIMEOUT_MS', 10000)
+    VLLM_TIMEOUT_SECONDS = positive_int('VLLM_TIMEOUT_SECONDS', 600)
+    VLLM_CONNECT_TIMEOUT_SECONDS = positive_int('VLLM_CONNECT_TIMEOUT_SECONDS', 60)
+    VLLM_TOKENIZE_TIMEOUT_SECONDS = positive_int('VLLM_TOKENIZE_TIMEOUT_SECONDS', 30)
+    VLLM_REQUEST_ATTEMPTS = positive_int('VLLM_REQUEST_ATTEMPTS', 2)
+    VLLM_RETRY_MIN_SECONDS = positive_int('VLLM_RETRY_MIN_SECONDS', 3)
+    VLLM_RETRY_MAX_SECONDS = positive_int('VLLM_RETRY_MAX_SECONDS', 15)
+    WORKER_RECOVERY_SECONDS = positive_int('WORKER_RECOVERY_SECONDS', 5)
+    if VLLM_RETRY_MAX_SECONDS < VLLM_RETRY_MIN_SECONDS:
+        raise ValueError('VLLM_RETRY_MAX_SECONDS must be at least VLLM_RETRY_MIN_SECONDS')
     
     # Batch processing configuration
     BATCH_PROCESSING_MAX_WORKERS = int(os.getenv('BATCH_PROCESSING_MAX_WORKERS', '3'))

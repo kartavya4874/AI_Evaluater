@@ -142,7 +142,7 @@ def create_workspace_api(require_auth, upload_root):
         service = workspace()
         page, size = int(request.args.get('page', 1)), int(request.args.get('page_size', 50))
         view = request.args.get('view', 'all')
-        if page < 1 or not 1 <= size <= 100 or view not in ('all', 'pending', 'verified'):
+        if page < 1 or not 1 <= size <= 100 or view not in ('all', 'pending', 'verified', 'needs_review'):
             raise ValueError('Invalid results page or filter')
         filters = record_filters()
         source = request.args.get('source', 'all')
@@ -151,16 +151,24 @@ def create_workspace_api(require_auth, upload_root):
         query = scope(service.db, filters, 'reviewers')
         workspace_page = service.page(query, page, size, view, results_only=True) if source != 'legacy' else {'total': 0, 'counts': {}, 'sheets': []}
         legacy_filter = dict(filters)
-        if view != 'all':
+        legacy_review_filter = {'$or': [{'needs_review': True}, {'status': 'needs_review'}]}
+        if view == 'needs_review':
+            legacy_filter['$and'] = [legacy_review_filter]
+        elif view != 'all':
             legacy_filter['verified'] = True if view == 'verified' else {'$ne': True}
+            legacy_filter['$nor'] = [legacy_review_filter]
         legacy_query = scope(service.db, legacy_filter, 'reviewers')
         if source == 'workspace':
             legacy_query = {'$and': [legacy_query, {'_id': {'$in': []}}]}
         legacy_count = service.db.evaluations.count_documents(legacy_query)
-        legacy_verified = service.db.evaluations.count_documents({'$and': [legacy_query, {'verified': True}]})
+        legacy_verified = service.db.evaluations.count_documents({'$and': [legacy_query, {'verified': True}, {'$nor': [legacy_review_filter]}]})
+        legacy_review_count = service.db.evaluations.count_documents({'$and': [legacy_query, legacy_review_filter]})
         rows = [{'id': s['_id'], 'source': 'workspace', 'course_code': s.get('course_code'),
             'exam_id': s.get('exam_id'), 'roll_number': s.get('roll_number'), 'max_marks': s.get('max_marks'),
-            'result': s['active'], 'can_edit': True} for s in workspace_page['sheets']]
+            'result': ({'status': 'needs_review', 'needs_review': True, 'marks': None, 'verified': False,
+                        'feedback': (s.get('job') or {}).get('error') or 'Marking scheme needs review'}
+                       if (s.get('job') or {}).get('state') == 'needs_review' else s['active']),
+            'can_edit': True} for s in workspace_page['sheets']]
         if len(rows) < size:
             offset = max(0, (page - 1) * size - workspace_page['total'])
             for record in service.db.evaluations.find(legacy_query, {'model_answer': 0, 'student_answer': 0, 'extracted_text': 0}).sort([('created_at', -1), ('_id', 1)]).skip(offset).limit(size - len(rows)):
@@ -173,7 +181,8 @@ def create_workspace_api(require_auth, upload_root):
                     'max_marks': record.get('max_marks'), 'result': result, 'can_edit': is_admin()})
         verified = workspace_page['counts'].get('verified', 0) + legacy_verified
         total = workspace_page['total'] + legacy_count
-        return jsonify(items=rows, total=total, verified=verified, pending=total - verified,
+        needs_review = workspace_page['counts'].get('needs_review', 0) + legacy_review_count
+        return jsonify(items=rows, total=total, verified=verified, pending=total - verified - needs_review, needs_review=needs_review,
             course_codes=sorted(set(filter(None, service.db.sheets.distinct('course_code', scope(service.db, {}, 'reviewers')) + service.db.evaluations.distinct('course_code', scope(service.db, {}, 'reviewers'))))),
             examinations=sorted(set(filter(None, service.db.sheets.distinct('exam_id', scope(service.db, {}, 'reviewers')) + service.db.evaluations.distinct('exam_id', scope(service.db, {}, 'reviewers'))))))
 
@@ -325,7 +334,7 @@ def create_workspace_api(require_auth, upload_root):
         if not sheet:
             raise ValueError('Sheet not found')
         authorize(service.db, sheet['course_code'], 'reviewers')
-        with service.reserve([sheet['_id']]):
+        with service.reserve([sheet['_id']]) as reserved:
             if 'marks' in data:
                 reason = data.get('reason', '')
                 if not isinstance(reason, str) or not reason.strip():
@@ -344,6 +353,9 @@ def create_workspace_api(require_auth, upload_root):
                 if not service.db.attempts.find_one({'_id': attempt_id, 'sheet_id': sheet['_id'], 'status': 'completed', 'config': sheet['config']}):
                     raise ValueError('Choose a successful attempt')
             service.db.sheets.update_one({'_id': sheet['_id']}, {'$set': {'active_attempt': attempt_id, 'active_pinned': True}})
+            for _, previous_job in reserved:
+                if previous_job and previous_job.get('state') == 'needs_review':
+                    previous_job.update(state='completed', stage='completed', error=None)
             service.audit(g.user_email, 'select_result', sheet_id=sheet['_id'], attempt_id=attempt_id)
         return jsonify(success=True)
 

@@ -140,13 +140,22 @@ class RecoveryTests(unittest.TestCase):
         self.assertIsNone(self.db.sheets.find_one()['active_attempt'])
         self.assertEqual(self.db.jobs.find_one()['state'], 'cancelled')
 
-    def test_changed_question_paper_is_rejected_before_grading(self):
+    def test_question_paper_is_not_a_grading_input(self):
         paper = Path(self.temp.name) / 'FS3401_MSE/question_paper.pdf'
         paper.write_bytes(b'original')
         self.service.prepare(self.temp.name, 'exam-1', 'mst', 100, 'admin')
         paper.write_bytes(b'changed')
-        self.assertEqual(self.process()['job']['state'], 'error')
-        self.llm.evaluate_answer.assert_not_called()
+        self.assertEqual(self.process()['job']['state'], 'completed')
+        self.assertIsNone(self.llm.evaluate_answer.call_args.kwargs['question'])
+        self.assertFalse(any(call.args[0] == str(paper) for call in self.pdf.extract_text_from_pdf.call_args_list))
+
+    def test_previously_prepared_question_paper_is_ignored_even_if_missing(self):
+        self.db.sheets.update_one({'_id': self.sheet_id}, {'$set': {
+            'question_path': str(Path(self.temp.name) / 'missing-paper.pdf'),
+            'config.question_paper': 'old-paper-hash'}})
+        self.assertEqual(self.process()['job']['state'], 'completed')
+        self.assertEqual(self.pdf.extract_text_from_pdf.call_count, 2)
+        self.assertIsNone(self.llm.evaluate_answer.call_args.kwargs['question'])
 
     def test_shared_key_is_reused_and_deleting_one_sheet_preserves_other_cache(self):
         (Path(self.temp.name) / 'FS3401_MSE/102.pdf').write_bytes(b'second')

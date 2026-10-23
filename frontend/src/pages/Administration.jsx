@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Navigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
+import MarkingSchemeEditor from '../components/MarkingSchemeEditor';
 import './Workspace.css';
 
 export default function Administration() {
@@ -61,5 +62,6 @@ export default function Administration() {
         {data.courses.map(c => <tr key={c._id}><td>{c._id}<br />{c.name}</td><td>{c.uploaders.join(', ') || 'Administrator'}</td><td>{c.reviewers.join(', ') || 'Administrator'}</td><td><button onClick={() => { setCourse({ code: c._id, name: c.name, uploaders: c.uploaders, reviewers: c.reviewers }); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>Edit assignments</button></td></tr>)}
       </tbody></table></div>
     </section>
+    <MarkingSchemeEditor />
   </main>;
 }

@@ -24,6 +24,48 @@ beforeEach(() => {
   api.post.mockResolvedValue({ data: {} });
 });
 
+const activeRows = [
+  { ...rows[0], job: { state: 'processing', stage: 'grading' } },
+  { ...rows[1], job: { state: 'queued', stage: 'queued' } },
+  { ...rows[0], _id: 'done', roll_number: '103' },
+];
+
+test('stops a single running sheet and shows the pending stop state', async () => {
+  api.get.mockResolvedValue({ data: { sheets: activeRows, courses: [], worker_online: true } });
+  render(<Workspace />);
+  await screen.findByText('101');
+  api.get.mockResolvedValue({ data: { sheets: activeRows.map(s => s._id === 'one' ? { ...s, job: { ...s.job, cancel_requested: true } } : s), courses: [], worker_online: true } });
+  fireEvent.click(screen.getAllByRole('button', { name: 'Stop 101' })[0]);
+  await waitFor(() => expect(api.post).toHaveBeenCalledWith('/workspace/cancel', { sheet_ids: ['one'] }));
+  await screen.findByText(/Stop requested for 1 sheet\./);
+  await waitFor(() => screen.getAllByRole('button', { name: 'Stopping 101' }).forEach(button => expect(button).toBeDisabled()));
+  expect(screen.queryByRole('button', { name: 'Stop 103' })).not.toBeInTheDocument();
+});
+
+test('bulk stop sends only selected active sheets and leaves completed results alone', async () => {
+  api.get.mockResolvedValue({ data: { sheets: activeRows, courses: [], worker_online: true } });
+  render(<Workspace />);
+  await screen.findByText('101');
+  expect(screen.getByRole('button', { name: 'Stop selected (0)' })).toBeDisabled();
+  fireEvent.click(screen.getByRole('button', { name: 'Select running / queued on this page' }));
+  expect(screen.getByRole('checkbox', { name: 'Select 103' })).not.toBeChecked();
+  fireEvent.click(screen.getByRole('checkbox', { name: 'Select 103' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Stop selected (2)' }));
+  await waitFor(() => expect(api.post).toHaveBeenCalledWith('/workspace/cancel', { sheet_ids: ['one', 'two'] }));
+  await screen.findByText(/Stop requested for 2 sheets\./);
+});
+
+test('failed stop requests display the error and allow retrying', async () => {
+  api.get.mockResolvedValue({ data: { sheets: activeRows, courses: [], worker_online: true } });
+  api.post.mockRejectedValueOnce({ response: { data: { error: 'Unable to stop work' } } });
+  render(<Workspace />);
+  await screen.findByText('102');
+  fireEvent.click(screen.getByRole('button', { name: 'Stop 102' }));
+  await screen.findByText('Unable to stop work');
+  expect(screen.getByRole('button', { name: 'Stop 102' })).not.toBeDisabled();
+  expect(screen.queryByText(/Stop requested for/)).not.toBeInTheDocument();
+});
+
 test('batch restores progress without duplicating result management', async () => {
   render(<Workspace />);
   await screen.findByText('101');

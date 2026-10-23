@@ -1,0 +1,533 @@
+
+> ai-examiner@0.1.0 test
+> react-scripts test --watchAll=false --runInBand ResultsOverview.test.jsx MarkingSchemeEditor.test.jsx Workspace.test.jsx
+
+PASS src/components/MarkingSchemeEditor.test.jsx (20.615 s)
+  ● Console
+
+    console.error
+      Warning: `ReactDOMTestUtils.act` is deprecated in favor of `React.act`. Import `act` from `react` instead of `react-dom/test-utils`. See https://react.dev/warnings/react-dom-test-utils for more info.
+
+       7 |
+       8 | test('admin enters a scheme and switching exam type clears it before loading', async () => {
+    >  9 |   render(<MarkingSchemeEditor />);
+         |         ^
+      10 |   fireEvent.change(screen.getByLabelText('Marking course code'), { target: { value: 'FS3401' } });
+      11 |   fireEvent.click(screen.getByRole('button', { name: 'Load course scheme' }));
+      12 |   await screen.findByLabelText('Scheme maximum marks');
+
+      at printWarning (node_modules/react-dom/cjs/react-dom-test-utils.development.js:71:30)
+      at error (node_modules/react-dom/cjs/react-dom-test-utils.development.js:45:7)
+      at actWithWarning (node_modules/react-dom/cjs/react-dom-test-utils.development.js:1736:7)
+      at node_modules/@testing-library/react/dist/act-compat.js:63:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:159:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:246:10)
+      at Object.<anonymous> (src/components/MarkingSchemeEditor.test.jsx:9:9)
+
+PASS src/pages/Workspace.test.jsx
+  ● Console
+
+    console.error
+      Warning: `ReactDOMTestUtils.act` is deprecated in favor of `React.act`. Import `act` from `react` instead of `react-dom/test-utils`. See https://react.dev/warnings/react-dom-test-utils for more info.
+
+      33 | test('stops a single running sheet and shows the pending stop state', async () => {
+      34 |   api.get.mockResolvedValue({ data: { sheets: activeRows, courses: [], worker_online: true } });
+    > 35 |   render(<Workspace />);
+         |         ^
+      36 |   await screen.findByText('101');
+      37 |   api.get.mockResolvedValue({ data: { sheets: activeRows.map(s => s._id === 'one' ? { ...s, job: { ...s.job, cancel_requested: true } } : s), courses: [], worker_online: true } });
+      38 |   fireEvent.click(screen.getAllByRole('button', { name: 'Stop 101' })[0]);
+
+      at printWarning (node_modules/react-dom/cjs/react-dom-test-utils.development.js:71:30)
+      at error (node_modules/react-dom/cjs/react-dom-test-utils.development.js:45:7)
+      at actWithWarning (node_modules/react-dom/cjs/react-dom-test-utils.development.js:1736:7)
+      at node_modules/@testing-library/react/dist/act-compat.js:63:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:159:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:246:10)
+      at Object.<anonymous> (src/pages/Workspace.test.jsx:35:9)
+
+    console.error
+      Warning: An update to Workspace inside a test was not wrapped in act(...).
+      
+      When testing, code that causes React state updates should be wrapped into act(...):
+      
+      act(() => {
+        /* fire events that update state */
+      });
+      /* assert on the output */
+      
+      This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+          at Workspace (C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\frontend\src\pages\Workspace.jsx:16:37)
+
+      63 |     if (version !== requestVersion.current.value) return;
+      64 |     const access = accessCache.current.data;
+    > 65 |     setSheets(response.data.sheets); setCourses(access.courses); setParallelism(access.parallelism ?? 3);
+         |     ^
+      66 |     setPageInfo(response.data.total === undefined ? null : response.data);
+      67 |     setPreparations(response.data.preparations || []);
+      68 |     setCapabilities(response.data.capabilities || {});
+
+      at printWarning (node_modules/react-dom/cjs/react-dom.development.js:86:30)
+      at error (node_modules/react-dom/cjs/react-dom.development.js:60:7)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-dom/cjs/react-dom.development.js:27628:9)
+      at scheduleUpdateOnFiber (node_modules/react-dom/cjs/react-dom.development.js:25547:5)
+      at setSheets (node_modules/react-dom/cjs/react-dom.development.js:16708:7)
+      at src/pages/Workspace.jsx:65:5
+      at poll (src/pages/Workspace.jsx:76:13)
+
+    console.error
+      Warning: An update to Workspace inside a test was not wrapped in act(...).
+      
+      When testing, code that causes React state updates should be wrapped into act(...):
+      
+      act(() => {
+        /* fire events that update state */
+      });
+      /* assert on the output */
+      
+      This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+          at Workspace (C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\frontend\src\pages\Workspace.jsx:16:37)
+
+      63 |     if (version !== requestVersion.current.value) return;
+      64 |     const access = accessCache.current.data;
+    > 65 |     setSheets(response.data.sheets); setCourses(access.courses); setParallelism(access.parallelism ?? 3);
+         |                                      ^
+      66 |     setPageInfo(response.data.total === undefined ? null : response.data);
+      67 |     setPreparations(response.data.preparations || []);
+      68 |     setCapabilities(response.data.capabilities || {});
+
+      at printWarning (node_modules/react-dom/cjs/react-dom.development.js:86:30)
+      at error (node_modules/react-dom/cjs/react-dom.development.js:60:7)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-dom/cjs/react-dom.development.js:27628:9)
+      at scheduleUpdateOnFiber (node_modules/react-dom/cjs/react-dom.development.js:25547:5)
+      at setCourses (node_modules/react-dom/cjs/react-dom.development.js:16708:7)
+      at src/pages/Workspace.jsx:65:38
+      at poll (src/pages/Workspace.jsx:76:13)
+
+    console.error
+      Warning: An update to Workspace inside a test was not wrapped in act(...).
+      
+      When testing, code that causes React state updates should be wrapped into act(...):
+      
+      act(() => {
+        /* fire events that update state */
+      });
+      /* assert on the output */
+      
+      This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+          at Workspace (C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\frontend\src\pages\Workspace.jsx:16:37)
+
+      63 |     if (version !== requestVersion.current.value) return;
+      64 |     const access = accessCache.current.data;
+    > 65 |     setSheets(response.data.sheets); setCourses(access.courses); setParallelism(access.parallelism ?? 3);
+         |                                                                  ^
+      66 |     setPageInfo(response.data.total === undefined ? null : response.data);
+      67 |     setPreparations(response.data.preparations || []);
+      68 |     setCapabilities(response.data.capabilities || {});
+
+      at printWarning (node_modules/react-dom/cjs/react-dom.development.js:86:30)
+      at error (node_modules/react-dom/cjs/react-dom.development.js:60:7)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-dom/cjs/react-dom.development.js:27628:9)
+      at scheduleUpdateOnFiber (node_modules/react-dom/cjs/react-dom.development.js:25547:5)
+      at setParallelism (node_modules/react-dom/cjs/react-dom.development.js:16708:7)
+      at src/pages/Workspace.jsx:65:66
+      at poll (src/pages/Workspace.jsx:76:13)
+
+    console.error
+      Warning: An update to Workspace inside a test was not wrapped in act(...).
+      
+      When testing, code that causes React state updates should be wrapped into act(...):
+      
+      act(() => {
+        /* fire events that update state */
+      });
+      /* assert on the output */
+      
+      This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+          at Workspace (C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\frontend\src\pages\Workspace.jsx:16:37)
+
+      64 |     const access = accessCache.current.data;
+      65 |     setSheets(response.data.sheets); setCourses(access.courses); setParallelism(access.parallelism ?? 3);
+    > 66 |     setPageInfo(response.data.total === undefined ? null : response.data);
+         |     ^
+      67 |     setPreparations(response.data.preparations || []);
+      68 |     setCapabilities(response.data.capabilities || {});
+      69 |     setCapacity(response.data.worker_capacity ?? null);
+
+      at printWarning (node_modules/react-dom/cjs/react-dom.development.js:86:30)
+      at error (node_modules/react-dom/cjs/react-dom.development.js:60:7)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-dom/cjs/react-dom.development.js:27628:9)
+      at scheduleUpdateOnFiber (node_modules/react-dom/cjs/react-dom.development.js:25547:5)
+      at setPageInfo (node_modules/react-dom/cjs/react-dom.development.js:16708:7)
+      at src/pages/Workspace.jsx:66:5
+      at poll (src/pages/Workspace.jsx:76:13)
+
+    console.error
+      Warning: An update to Workspace inside a test was not wrapped in act(...).
+      
+      When testing, code that causes React state updates should be wrapped into act(...):
+      
+      act(() => {
+        /* fire events that update state */
+      });
+      /* assert on the output */
+      
+      This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+          at Workspace (C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\frontend\src\pages\Workspace.jsx:16:37)
+
+      65 |     setSheets(response.data.sheets); setCourses(access.courses); setParallelism(access.parallelism ?? 3);
+      66 |     setPageInfo(response.data.total === undefined ? null : response.data);
+    > 67 |     setPreparations(response.data.preparations || []);
+         |     ^
+      68 |     setCapabilities(response.data.capabilities || {});
+      69 |     setCapacity(response.data.worker_capacity ?? null);
+      70 |     setWorkerOnline(response.data.worker_online); setUpdated(new Date()); setConnectionError('');
+
+      at printWarning (node_modules/react-dom/cjs/react-dom.development.js:86:30)
+      at error (node_modules/react-dom/cjs/react-dom.development.js:60:7)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-dom/cjs/react-dom.development.js:27628:9)
+      at scheduleUpdateOnFiber (node_modules/react-dom/cjs/react-dom.development.js:25547:5)
+      at setPreparations (node_modules/react-dom/cjs/react-dom.development.js:16708:7)
+      at src/pages/Workspace.jsx:67:5
+      at poll (src/pages/Workspace.jsx:76:13)
+
+    console.error
+      Warning: An update to Workspace inside a test was not wrapped in act(...).
+      
+      When testing, code that causes React state updates should be wrapped into act(...):
+      
+      act(() => {
+        /* fire events that update state */
+      });
+      /* assert on the output */
+      
+      This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+          at Workspace (C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\frontend\src\pages\Workspace.jsx:16:37)
+
+      66 |     setPageInfo(response.data.total === undefined ? null : response.data);
+      67 |     setPreparations(response.data.preparations || []);
+    > 68 |     setCapabilities(response.data.capabilities || {});
+         |     ^
+      69 |     setCapacity(response.data.worker_capacity ?? null);
+      70 |     setWorkerOnline(response.data.worker_online); setUpdated(new Date()); setConnectionError('');
+      71 |   }, [page, filter, courseFilter, tab, resultsOnly]);
+
+      at printWarning (node_modules/react-dom/cjs/react-dom.development.js:86:30)
+      at error (node_modules/react-dom/cjs/react-dom.development.js:60:7)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-dom/cjs/react-dom.development.js:27628:9)
+      at scheduleUpdateOnFiber (node_modules/react-dom/cjs/react-dom.development.js:25547:5)
+      at setCapabilities (node_modules/react-dom/cjs/react-dom.development.js:16708:7)
+      at src/pages/Workspace.jsx:68:5
+      at poll (src/pages/Workspace.jsx:76:13)
+
+    console.error
+      Warning: An update to Workspace inside a test was not wrapped in act(...).
+      
+      When testing, code that causes React state updates should be wrapped into act(...):
+      
+      act(() => {
+        /* fire events that update state */
+      });
+      /* assert on the output */
+      
+      This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+          at Workspace (C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\frontend\src\pages\Workspace.jsx:16:37)
+
+      67 |     setPreparations(response.data.preparations || []);
+      68 |     setCapabilities(response.data.capabilities || {});
+    > 69 |     setCapacity(response.data.worker_capacity ?? null);
+         |     ^
+      70 |     setWorkerOnline(response.data.worker_online); setUpdated(new Date()); setConnectionError('');
+      71 |   }, [page, filter, courseFilter, tab, resultsOnly]);
+      72 |   useEffect(() => {
+
+      at printWarning (node_modules/react-dom/cjs/react-dom.development.js:86:30)
+      at error (node_modules/react-dom/cjs/react-dom.development.js:60:7)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-dom/cjs/react-dom.development.js:27628:9)
+      at scheduleUpdateOnFiber (node_modules/react-dom/cjs/react-dom.development.js:25547:5)
+      at setCapacity (node_modules/react-dom/cjs/react-dom.development.js:16708:7)
+      at src/pages/Workspace.jsx:69:5
+      at poll (src/pages/Workspace.jsx:76:13)
+
+    console.error
+      Warning: An update to Workspace inside a test was not wrapped in act(...).
+      
+      When testing, code that causes React state updates should be wrapped into act(...):
+      
+      act(() => {
+        /* fire events that update state */
+      });
+      /* assert on the output */
+      
+      This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+          at Workspace (C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\frontend\src\pages\Workspace.jsx:16:37)
+
+      68 |     setCapabilities(response.data.capabilities || {});
+      69 |     setCapacity(response.data.worker_capacity ?? null);
+    > 70 |     setWorkerOnline(response.data.worker_online); setUpdated(new Date()); setConnectionError('');
+         |     ^
+      71 |   }, [page, filter, courseFilter, tab, resultsOnly]);
+      72 |   useEffect(() => {
+      73 |     let stopped = false; let timer;
+
+      at printWarning (node_modules/react-dom/cjs/react-dom.development.js:86:30)
+      at error (node_modules/react-dom/cjs/react-dom.development.js:60:7)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-dom/cjs/react-dom.development.js:27628:9)
+      at scheduleUpdateOnFiber (node_modules/react-dom/cjs/react-dom.development.js:25547:5)
+      at setWorkerOnline (node_modules/react-dom/cjs/react-dom.development.js:16708:7)
+      at src/pages/Workspace.jsx:70:5
+      at poll (src/pages/Workspace.jsx:76:13)
+
+    console.error
+      Warning: An update to Workspace inside a test was not wrapped in act(...).
+      
+      When testing, code that causes React state updates should be wrapped into act(...):
+      
+      act(() => {
+        /* fire events that update state */
+      });
+      /* assert on the output */
+      
+      This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+          at Workspace (C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\frontend\src\pages\Workspace.jsx:16:37)
+
+      68 |     setCapabilities(response.data.capabilities || {});
+      69 |     setCapacity(response.data.worker_capacity ?? null);
+    > 70 |     setWorkerOnline(response.data.worker_online); setUpdated(new Date()); setConnectionError('');
+         |                                                   ^
+      71 |   }, [page, filter, courseFilter, tab, resultsOnly]);
+      72 |   useEffect(() => {
+      73 |     let stopped = false; let timer;
+
+      at printWarning (node_modules/react-dom/cjs/react-dom.development.js:86:30)
+      at error (node_modules/react-dom/cjs/react-dom.development.js:60:7)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-dom/cjs/react-dom.development.js:27628:9)
+      at scheduleUpdateOnFiber (node_modules/react-dom/cjs/react-dom.development.js:25547:5)
+      at setUpdated (node_modules/react-dom/cjs/react-dom.development.js:16708:7)
+      at src/pages/Workspace.jsx:70:51
+      at poll (src/pages/Workspace.jsx:76:13)
+
+    console.error
+      Warning: An update to Workspace inside a test was not wrapped in act(...).
+      
+      When testing, code that causes React state updates should be wrapped into act(...):
+      
+      act(() => {
+        /* fire events that update state */
+      });
+      /* assert on the output */
+      
+      This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+          at Workspace (C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\frontend\src\pages\Workspace.jsx:16:37)
+
+      68 |     setCapabilities(response.data.capabilities || {});
+      69 |     setCapacity(response.data.worker_capacity ?? null);
+    > 70 |     setWorkerOnline(response.data.worker_online); setUpdated(new Date()); setConnectionError('');
+         |                                                                           ^
+      71 |   }, [page, filter, courseFilter, tab, resultsOnly]);
+      72 |   useEffect(() => {
+      73 |     let stopped = false; let timer;
+
+      at printWarning (node_modules/react-dom/cjs/react-dom.development.js:86:30)
+      at error (node_modules/react-dom/cjs/react-dom.development.js:60:7)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-dom/cjs/react-dom.development.js:27628:9)
+      at scheduleUpdateOnFiber (node_modules/react-dom/cjs/react-dom.development.js:25547:5)
+      at setConnectionError (node_modules/react-dom/cjs/react-dom.development.js:16708:7)
+      at src/pages/Workspace.jsx:70:75
+      at poll (src/pages/Workspace.jsx:76:13)
+
+PASS src/pages/ResultsOverview.test.jsx
+  ● Console
+
+    console.error
+      Warning: `ReactDOMTestUtils.act` is deprecated in favor of `React.act`. Import `act` from `react` instead of `react-dom/test-utils`. See https://react.dev/warnings/react-dom-test-utils for more info.
+
+      10 | const data = { items: [old, fresh], total: 2, pending: 2, verified: 0, course_codes: ['FS3401'], examinations: [] };
+      11 | beforeEach(() => { jest.clearAllMocks(); api.get.mockResolvedValue({ data }); api.post.mockResolvedValue({ data: {} }); });
+    > 12 | const show = () => render(<MemoryRouter><ResultsOverview /></MemoryRouter>);
+         |                          ^
+      13 |
+      14 | test('needs review sheets without marks open their reason and cannot be verified', async () => {
+      15 |   const result = { status: 'needs_review', needs_review: true, marks: null, feedback: 'Missing allocations' };
+
+      at printWarning (node_modules/react-dom/cjs/react-dom-test-utils.development.js:71:30)
+      at error (node_modules/react-dom/cjs/react-dom-test-utils.development.js:45:7)
+      at actWithWarning (node_modules/react-dom/cjs/react-dom-test-utils.development.js:1736:7)
+      at node_modules/@testing-library/react/dist/act-compat.js:63:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:159:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:246:10)
+      at show (src/pages/ResultsOverview.test.jsx:12:26)
+      at Object.<anonymous> (src/pages/ResultsOverview.test.jsx:19:3)
+      at TestScheduler.scheduleTests (node_modules/@jest/core/build/TestScheduler.js:333:13)
+      at runJest (node_modules/@jest/core/build/runJest.js:404:19)
+      at _run10000 (node_modules/@jest/core/build/cli/index.js:320:7)
+      at runCLI (node_modules/@jest/core/build/cli/index.js:173:3)
+
+    console.warn
+      ⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+
+      10 | const data = { items: [old, fresh], total: 2, pending: 2, verified: 0, course_codes: ['FS3401'], examinations: [] };
+      11 | beforeEach(() => { jest.clearAllMocks(); api.get.mockResolvedValue({ data }); api.post.mockResolvedValue({ data: {} }); });
+    > 12 | const show = () => render(<MemoryRouter><ResultsOverview /></MemoryRouter>);
+         |                          ^
+      13 |
+      14 | test('needs review sheets without marks open their reason and cannot be verified', async () => {
+      15 |   const result = { status: 'needs_review', needs_review: true, marks: null, feedback: 'Missing allocations' };
+
+      at warnOnce (node_modules/react-router/lib/deprecations.ts:9:13)
+      at logDeprecation (node_modules/react-router/lib/deprecations.ts:14:3)
+      at logV6DeprecationWarnings (node_modules/react-router/lib/deprecations.ts:26:5)
+      at node_modules/react-router/lib/components.tsx:257:25
+      at commitHookEffectListMount (node_modules/react-dom/cjs/react-dom.development.js:23189:26)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom.development.js:24970:11)
+      at commitPassiveMountEffects_complete (node_modules/react-dom/cjs/react-dom.development.js:24930:9)
+      at commitPassiveMountEffects_begin (node_modules/react-dom/cjs/react-dom.development.js:24917:7)
+      at commitPassiveMountEffects (node_modules/react-dom/cjs/react-dom.development.js:24905:3)
+      at flushPassiveEffectsImpl (node_modules/react-dom/cjs/react-dom.development.js:27078:3)
+      at flushPassiveEffects (node_modules/react-dom/cjs/react-dom.development.js:27023:14)
+      at node_modules/react-dom/cjs/react-dom.development.js:26808:9
+      at flushActQueue (node_modules/react/cjs/react.development.js:2667:24)
+      at act (node_modules/react/cjs/react.development.js:2582:11)
+      at actWithWarning (node_modules/react-dom/cjs/react-dom-test-utils.development.js:1740:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:63:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:159:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:246:10)
+      at show (src/pages/ResultsOverview.test.jsx:12:26)
+      at Object.<anonymous> (src/pages/ResultsOverview.test.jsx:19:3)
+      at TestScheduler.scheduleTests (node_modules/@jest/core/build/TestScheduler.js:333:13)
+      at runJest (node_modules/@jest/core/build/runJest.js:404:19)
+      at _run10000 (node_modules/@jest/core/build/cli/index.js:320:7)
+      at runCLI (node_modules/@jest/core/build/cli/index.js:173:3)
+
+    console.warn
+      ⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+
+      10 | const data = { items: [old, fresh], total: 2, pending: 2, verified: 0, course_codes: ['FS3401'], examinations: [] };
+      11 | beforeEach(() => { jest.clearAllMocks(); api.get.mockResolvedValue({ data }); api.post.mockResolvedValue({ data: {} }); });
+    > 12 | const show = () => render(<MemoryRouter><ResultsOverview /></MemoryRouter>);
+         |                          ^
+      13 |
+      14 | test('needs review sheets without marks open their reason and cannot be verified', async () => {
+      15 |   const result = { status: 'needs_review', needs_review: true, marks: null, feedback: 'Missing allocations' };
+
+      at warnOnce (node_modules/react-router/lib/deprecations.ts:9:13)
+      at logDeprecation (node_modules/react-router/lib/deprecations.ts:14:3)
+      at logV6DeprecationWarnings (node_modules/react-router/lib/deprecations.ts:37:5)
+      at node_modules/react-router/lib/components.tsx:257:25
+      at commitHookEffectListMount (node_modules/react-dom/cjs/react-dom.development.js:23189:26)
+      at commitPassiveMountOnFiber (node_modules/react-dom/cjs/react-dom.development.js:24970:11)
+      at commitPassiveMountEffects_complete (node_modules/react-dom/cjs/react-dom.development.js:24930:9)
+      at commitPassiveMountEffects_begin (node_modules/react-dom/cjs/react-dom.development.js:24917:7)
+      at commitPassiveMountEffects (node_modules/react-dom/cjs/react-dom.development.js:24905:3)
+      at flushPassiveEffectsImpl (node_modules/react-dom/cjs/react-dom.development.js:27078:3)
+      at flushPassiveEffects (node_modules/react-dom/cjs/react-dom.development.js:27023:14)
+      at node_modules/react-dom/cjs/react-dom.development.js:26808:9
+      at flushActQueue (node_modules/react/cjs/react.development.js:2667:24)
+      at act (node_modules/react/cjs/react.development.js:2582:11)
+      at actWithWarning (node_modules/react-dom/cjs/react-dom-test-utils.development.js:1740:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:63:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:159:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:246:10)
+      at show (src/pages/ResultsOverview.test.jsx:12:26)
+      at Object.<anonymous> (src/pages/ResultsOverview.test.jsx:19:3)
+      at TestScheduler.scheduleTests (node_modules/@jest/core/build/TestScheduler.js:333:13)
+      at runJest (node_modules/@jest/core/build/runJest.js:404:19)
+      at _run10000 (node_modules/@jest/core/build/cli/index.js:320:7)
+      at runCLI (node_modules/@jest/core/build/cli/index.js:173:3)
+
+    console.error
+      Warning: An update to ResultsOverview inside a test was not wrapped in act(...).
+      
+      When testing, code that causes React state updates should be wrapped into act(...):
+      
+      act(() => {
+        /* fire events that update state */
+      });
+      /* assert on the output */
+      
+      This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+          at ResultsOverview (C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\frontend\src\pages\ResultsOverview.jsx:11:35)
+          at Router (C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\frontend\node_modules\react-router\lib\components.tsx:421:13)
+          at MemoryRouter (C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\frontend\node_modules\react-router\lib\components.tsx:225:3)
+
+      36 |       } })
+      37 |       .catch(e => { if (active) { setData(null); setError(e.response?.data?.error || e.message); } })
+    > 38 |       .finally(() => { if (active) setLoading(false); });
+         |                                    ^
+      39 |     return () => { active = false; };
+      40 |   }, [page, view, course, exam, source, search, reload]);
+      41 |   useEffect(() => { setError(''); }, [page, view, course, exam, source, search]);
+
+      at printWarning (node_modules/react-dom/cjs/react-dom.development.js:86:30)
+      at error (node_modules/react-dom/cjs/react-dom.development.js:60:7)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-dom/cjs/react-dom.development.js:27628:9)
+      at scheduleUpdateOnFiber (node_modules/react-dom/cjs/react-dom.development.js:25547:5)
+      at setLoading (node_modules/react-dom/cjs/react-dom.development.js:16708:7)
+      at src/pages/ResultsOverview.jsx:38:36
+
+    console.error
+      Warning: An update to ResultsOverview inside a test was not wrapped in act(...).
+      
+      When testing, code that causes React state updates should be wrapped into act(...):
+      
+      act(() => {
+        /* fire events that update state */
+      });
+      /* assert on the output */
+      
+      This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+          at ResultsOverview (C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\frontend\src\pages\ResultsOverview.jsx:11:35)
+          at Router (C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\frontend\node_modules\react-router\lib\components.tsx:421:13)
+          at MemoryRouter (C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\frontend\node_modules\react-router\lib\components.tsx:225:3)
+
+      36 |       } })
+      37 |       .catch(e => { if (active) { setData(null); setError(e.response?.data?.error || e.message); } })
+    > 38 |       .finally(() => { if (active) setLoading(false); });
+         |                                    ^
+      39 |     return () => { active = false; };
+      40 |   }, [page, view, course, exam, source, search, reload]);
+      41 |   useEffect(() => { setError(''); }, [page, view, course, exam, source, search]);
+
+      at printWarning (node_modules/react-dom/cjs/react-dom.development.js:86:30)
+      at error (node_modules/react-dom/cjs/react-dom.development.js:60:7)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-dom/cjs/react-dom.development.js:27628:9)
+      at scheduleUpdateOnFiber (node_modules/react-dom/cjs/react-dom.development.js:25547:5)
+      at setLoading (node_modules/react-dom/cjs/react-dom.development.js:16708:7)
+      at src/pages/ResultsOverview.jsx:38:36
+
+    console.error
+      Warning: An update to ResultsOverview inside a test was not wrapped in act(...).
+      
+      When testing, code that causes React state updates should be wrapped into act(...):
+      
+      act(() => {
+        /* fire events that update state */
+      });
+      /* assert on the output */
+      
+      This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+          at ResultsOverview (C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\frontend\src\pages\ResultsOverview.jsx:11:35)
+          at Router (C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\frontend\node_modules\react-router\lib\components.tsx:421:13)
+          at MemoryRouter (C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\frontend\node_modules\react-router\lib\components.tsx:225:3)
+
+      36 |       } })
+      37 |       .catch(e => { if (active) { setData(null); setError(e.response?.data?.error || e.message); } })
+    > 38 |       .finally(() => { if (active) setLoading(false); });
+         |                                    ^
+      39 |     return () => { active = false; };
+      40 |   }, [page, view, course, exam, source, search, reload]);
+      41 |   useEffect(() => { setError(''); }, [page, view, course, exam, source, search]);
+
+      at printWarning (node_modules/react-dom/cjs/react-dom.development.js:86:30)
+      at error (node_modules/react-dom/cjs/react-dom.development.js:60:7)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-dom/cjs/react-dom.development.js:27628:9)
+      at scheduleUpdateOnFiber (node_modules/react-dom/cjs/react-dom.development.js:25547:5)
+      at setLoading (node_modules/react-dom/cjs/react-dom.development.js:16708:7)
+      at src/pages/ResultsOverview.jsx:38:36
+
+
+Test Suites: 3 passed, 3 total
+Tests:       26 passed, 26 total
+Snapshots:   0 total
+Time:        43.521 s
+Ran all test suites matching /ResultsOverview.test.jsx|MarkingSchemeEditor.test.jsx|Workspace.test.jsx/i.

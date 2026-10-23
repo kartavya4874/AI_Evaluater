@@ -4,6 +4,7 @@ import re
 import logging
 import requests
 import time
+from config import Config
 from utils.result_validation import ReviewRequired
 from utils.inference_gate import inference_slot
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
@@ -14,7 +15,8 @@ logger = logging.getLogger(__name__)
 VLLM_BASE_URL = os.getenv("VLLM_BASE_URL", "http://localhost:8000/v1")
 VLLM_MODEL = os.getenv("VLLM_MODEL", "google/gemma-4-31B-it")
 VLLM_API_KEY = os.getenv("VLLM_API_KEY", "EMPTY")
-VLLM_TIMEOUT_SECONDS = int(os.getenv("VLLM_TIMEOUT_SECONDS", "600"))
+VLLM_TIMEOUT_SECONDS = Config.VLLM_TIMEOUT_SECONDS
+VLLM_CONNECT_TIMEOUT_SECONDS = Config.VLLM_CONNECT_TIMEOUT_SECONDS
 VLLM_MAX_MODEL_LEN = int(os.getenv('VLLM_MAX_MODEL_LEN', '8192'))
 VLLM_TOKENIZE_URL = os.getenv('VLLM_TOKENIZE_URL', '')
 VLLM_MAX_OUTPUT_TOKENS = int(os.getenv('VLLM_MAX_OUTPUT_TOKENS', '6000'))
@@ -24,6 +26,8 @@ if VLLM_MAX_OUTPUT_TOKENS < 1500:
     raise ValueError('VLLM_MAX_OUTPUT_TOKENS must be at least 1500')
 if VLLM_TIMEOUT_SECONDS <= 0:
     raise ValueError("VLLM_TIMEOUT_SECONDS must be a positive integer")
+if VLLM_CONNECT_TIMEOUT_SECONDS <= 0:
+    raise ValueError('VLLM_CONNECT_TIMEOUT_SECONDS must be a positive integer')
 
 
 # ==================== PROMPT TEMPLATES ====================
@@ -74,10 +78,12 @@ class _DummyResponse:
 
 
 def _call_vllm(messages: list, *, max_tokens: int = 1500, temperature: float = 0.0,
-               require_json: bool = False, timeout: int = VLLM_TIMEOUT_SECONDS) -> _DummyResponse:
+               require_json: bool = False, timeout: int = VLLM_TIMEOUT_SECONDS, check_cancelled=None) -> _DummyResponse:
     """
     Call the vLLM OpenAI-compatible endpoint with a configurable response timeout.
     """
+    if check_cancelled:
+        check_cancelled()
     url = f"{VLLM_BASE_URL}/chat/completions"
     payload = {
         "model": VLLM_MODEL,
@@ -95,7 +101,7 @@ def _call_vllm(messages: list, *, max_tokens: int = 1500, temperature: float = 0
     if VLLM_TOKENIZE_URL:
         token_response = requests.post(VLLM_TOKENIZE_URL, json={
             'model': VLLM_MODEL, 'messages': messages, 'add_generation_prompt': True},
-            headers=headers, timeout=(10, 30))
+            headers=headers, timeout=(VLLM_CONNECT_TIMEOUT_SECONDS, Config.VLLM_TOKENIZE_TIMEOUT_SECONDS))
         if token_response.status_code == 429 or token_response.status_code >= 500:
             raise requests.exceptions.ConnectionError('Tokenizer temporarily unavailable')
         token_response.raise_for_status()
@@ -108,8 +114,16 @@ def _call_vllm(messages: list, *, max_tokens: int = 1500, temperature: float = 0
     logger.info(f"Calling vLLM endpoint: {url} (model={VLLM_MODEL}, max_tokens={max_tokens}, timeout={timeout}s)...")
     
     started = time.monotonic()
-    with inference_slot(timeout):
-        resp = requests.post(url, json=payload, headers=headers, timeout=(10, timeout))
+    with inference_slot(timeout, check_cancelled=check_cancelled):
+        if check_cancelled:
+            check_cancelled()
+        # urllib3 sends the request body before switching to the read timeout.
+        # The first value therefore also bounds stalled image-upload writes.
+        logger.info('AI request upload_bytes=%s connect/write_timeout=%ss read_timeout=%ss',
+                    len(json.dumps(payload).encode('utf-8')), VLLM_CONNECT_TIMEOUT_SECONDS, timeout)
+        resp = requests.post(url, json=payload, headers=headers, timeout=(VLLM_CONNECT_TIMEOUT_SECONDS, timeout))
+    if check_cancelled:
+        check_cancelled()
     logger.info('vLLM response status=%s duration=%.2fs', resp.status_code, time.monotonic() - started)
     if resp.status_code != 200:
         logger.error('vLLM API returned HTTP %s', resp.status_code)
@@ -137,12 +151,14 @@ class GeminiService:
     question_workers = max(1, min(5, int(os.getenv('QUESTION_GRADING_WORKERS', '3'))))
 
     def __init__(self, api_keys=None, deepseek_api_key=None):
+        self.check_cancelled = None
         logger.info(f"GeminiService initialised â†’ vLLM endpoint: {VLLM_BASE_URL} | model: {VLLM_MODEL}")
 
     @retry(
         retry=retry_if_exception_type((requests.exceptions.ConnectionError, requests.exceptions.Timeout)),
-        stop=stop_after_attempt(2),
-        wait=wait_exponential(multiplier=2, min=3, max=15),
+        stop=stop_after_attempt(Config.VLLM_REQUEST_ATTEMPTS),
+        wait=wait_exponential(multiplier=Config.VLLM_RETRY_MIN_SECONDS,
+                              min=Config.VLLM_RETRY_MIN_SECONDS, max=Config.VLLM_RETRY_MAX_SECONDS),
         reraise=True
     )
     def _generate_with_retry(self, prompt, require_json=False, use_pro=False):
@@ -150,6 +166,8 @@ class GeminiService:
         Generate completion via vLLM with retry logic.
         Handles both text prompts and multimodal list prompts [str, {mime_type, data}].
         """
+        if self.check_cancelled:
+            self.check_cancelled()
         messages = []
 
         if isinstance(prompt, list):
@@ -175,7 +193,8 @@ class GeminiService:
             ceiling = min(VLLM_MAX_OUTPUT_TOKENS, VLLM_MAX_MODEL_LEN - 1)
             for attempt in range(3):
                 try:
-                    return _call_vllm(messages, max_tokens=budget, temperature=0.0, require_json=require_json)
+                    return _call_vllm(messages, max_tokens=budget, temperature=0.0, require_json=require_json,
+                                      check_cancelled=self.check_cancelled)
                 except TruncatedResponseError as exc:
                     if isinstance(exc.prompt_tokens, int) and exc.prompt_tokens >= 0:
                         ceiling = min(ceiling, VLLM_MAX_MODEL_LEN - exc.prompt_tokens)
@@ -190,5 +209,21 @@ class GeminiService:
 
     def evaluate_answer(self, student_answer, model_answer, max_marks,
                         question=None, exam_type='end_sem', grading_context=None):
-        from utils.structured_grading import evaluate
-        return evaluate(self, student_answer, model_answer, max_marks, question)
+        from utils.structured_grading import evaluate, extract_rubric, NeedsReview
+        paper = question
+        try:
+            rubric = extract_rubric(self, model_answer, max_marks)
+        except NeedsReview:
+            loader = getattr(self, 'question_paper_loader', None)
+            if not paper and loader:
+                paper = loader()
+            try:
+                if not paper:
+                    raise NeedsReview('No matching course question paper is available')
+                rubric = extract_rubric(self, model_answer, max_marks, paper)
+            except NeedsReview:
+                fallback = getattr(self, 'marking_scheme', None)
+                if not fallback:
+                    raise NeedsReview('Mark allocations are incomplete. An administrator must configure a marking scheme for this course and exam type.')
+                rubric = extract_rubric(self, model_answer, max_marks, paper, allocations=fallback)
+        return evaluate(self, student_answer, model_answer, max_marks, rubric=rubric)
