@@ -79,7 +79,7 @@ class SchemeTests(unittest.TestCase):
         mapped = {'segments': [{'question_id': '1', 'text': 'student answer'}]}
         score = {'marks_awarded': 7, 'feedback': 'Checked', 'strengths': [], 'missing_points': [],
                  'question_scores': [{'question_id': '1', 'max_marks': 10, 'marks_awarded': 7}]}
-        responses = [Mock(text=json.dumps(value)) for value in (key, key, mapped, score)]
+        responses = [Mock(text=json.dumps(value)) for value in (key, mapped, score)]
         with patch.object(provider, '_generate_with_retry', side_effect=responses):
             result = provider.evaluate_answer('student answer', 'Q1 Answer', 10)
         self.assertEqual(result['marks_awarded'], 7)

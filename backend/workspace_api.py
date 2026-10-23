@@ -92,7 +92,7 @@ def create_workspace_api(require_auth, upload_root):
             if status == 'unverified':
                 legacy_query['marks'] = {'$ne': None}
         elif status == 'failed':
-            legacy_query = {'$and': [query, {'$or': [{'status': {'$in': ['error', 'needs_review']}}, {'needs_review': True}, {'batch_mode': True, 'status': {'$exists': False}}]}]}
+            legacy_query = {'$and': [query, {'$or': [{'status': {'$in': ['error', 'paused', 'needs_review']}}, {'needs_review': True}, {'batch_mode': True, 'status': {'$exists': False}}]}]}
         elif status == 'no_marks':
             legacy_query = {'$and': [query, {'$or': [{'marks': None}, {'status': 'error'}, {'feedback': {'$regex': '^(Error during evaluation:|Evaluation error)'}}]}]}
         saved_count = service.db.evaluations.count_documents(legacy_query) if source != 'workspace' else 0
@@ -279,7 +279,7 @@ def create_workspace_api(require_auth, upload_root):
             raise ValueError('Invalid filter')
         service = workspace()
         if data.get('view') == 'failed':
-            query['_id'] = {'$in': service.db.jobs.distinct('_id', {'state': {'$in': ['error', 'needs_review']}})}
+            query['_id'] = {'$in': service.db.jobs.distinct('_id', {'state': {'$in': ['error', 'paused', 'needs_review']}})}
         elif data.get('view') == 'existing':
             query['active_attempt'] = {'$ne': None}
         elif data.get('view', 'all') != 'all':

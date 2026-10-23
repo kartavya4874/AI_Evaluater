@@ -12,9 +12,16 @@ the same marks, choose count, and selection (`exact`, `best`, or `first`).
 Excel imports are previews; Save marking scheme persists the validated form.
 All totals must equal the configured examination maximum after choice rules.
 
-The evaluator first validates the answer-key rubric, reads the matching course
-paper only if that rubric is incomplete, then fills missing allocations from the
-administrator scheme. It never divides marks equally by default. Question IDs and
+Before student OCR, the evaluator prepares one shared marking scheme for each
+course, examination session, and exam type. It first validates the answer-key
+rubric, reads the matching course paper only if that rubric is incomplete, then
+fills missing allocations from the administrator scheme. Extracted key answers
+are retained while adding question-paper marks. Other sheets wait for this course
+preparation; they do not start student OCR before the scheme passes. An unresolved
+scheme blocks the course without repeating AI work for every sheet. Source changes,
+administrator scheme revisions, or explicitly cleared cache trigger a new check.
+Temporary connection failures are retried rather than cached as an invalid scheme.
+It never divides marks equally by default. Question IDs and
 exam maximum must match, and conflicting source allocations remain review errors.
 Saved attempts record the allocation source and administrator scheme revision.
 Existing results are retained; retry affected sheets after updating a scheme.
@@ -47,3 +54,28 @@ Run regression checks before loading changes:
 cd backend
 .\venv\Scripts\python.exe -m unittest discover -p "test_*.py"
 ```
+
+
+Stabilization run policy (2026-10-23): course preparation is persisted in MongoDB
+`course_runs`. One sheet prepares the shared scheme; other sheets remain queued
+without taking worker slots. Student OCR starts only after that prerequisite is
+ready. Marks follow answer key, then the course question paper, then an explicit
+administrator scheme for that course and exam type. No numeric fallback is invented.
+
+`EVALUATION_RUN_TIMEOUT_SECONDS` (default 3600) is persisted at submission, includes
+queue time, and survives recovery. `EVALUATION_MAX_RETRIES` (default 5) limits durable
+retries and worker recoveries. Exhausted runs pause until an explicit user retry;
+existing OCR is retained. `AI_JSON_REPAIR_ATTEMPTS`, `AI_TRUNCATION_ATTEMPTS`, and
+`AI_INITIAL_OUTPUT_TOKENS` bound generation work. See `.env.example` for settings.
+Pin `VLLM_MODEL_REVISION` and `VLLM_TOKENIZER_REVISION` to your deployed artifacts.
+Cache identities include these values and a fingerprint of grading/OCR source code.
+Changing the fingerprint deliberately recomputes old cached work on the next run.
+
+Deadlines are checked between stages and constrain capacity waits and HTTP socket
+timeouts. They cannot forcibly interrupt an already executing native PDF operation,
+a slow-drip HTTP response, or guarantee cancellation of GPU work on the vLLM server.
+A confirmed Stop prevents publication; its current blocking request can still take
+time to return. Process isolation/server cancellation is a later hardening step.
+
+Read `../docs/STABILIZATION_RELEASE_2026-10-23.md` before DGX rollout. This release
+has local failure-recovery tests; it is not a teacher-calibrated accuracy benchmark.

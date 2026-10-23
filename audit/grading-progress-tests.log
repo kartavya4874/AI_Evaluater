@@ -1,0 +1,609 @@
+2026-10-23 16:26:28 [INFO] root - Logger initialized. Persistent audit logs are enabled.
+2026-10-23 16:26:28 [INFO] utils.gemini_service - GeminiService initialised → vLLM endpoint: https://dgx.geetauniversity.edu.in/v1 | model: google/gemma-4-31B-it
+C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\jwt\api_jwt.py:149: InsecureKeyLengthWarning: The HMAC key is 28 bytes long, which is below the minimum recommended length of 32 bytes for SHA256. See RFC 7518 Section 3.2.
+  return self._jws.encode(
+C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\jwt\api_jwt.py:370: InsecureKeyLengthWarning: The HMAC key is 28 bytes long, which is below the minimum recommended length of 32 bytes for SHA256. See RFC 7518 Section 3.2.
+  decoded = self.decode_complete(
+.........C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\models\teacher.py:18: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  'created_at': datetime.utcnow(),
+C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\models\teacher.py:19: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  'updated_at': datetime.utcnow()
+C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\models\student.py:19: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  'created_at': datetime.utcnow(),
+C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\models\student.py:20: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  'updated_at': datetime.utcnow()
+...2026-10-23 16:26:31 [INFO] root - Evaluation cache MISS for hash 61a35be60c8c... Running Gemini grading.
+2026-10-23 16:26:31 [INFO] root - Cached evaluation result to C:\Users\karta\AppData\Local\Temp\tmpvrlv7evj\eval_61a35be60c8cfd2326abf9de4d1c9fb34f0fbb6ee56809eb0eb69497a3437578.json
+C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\models\evaluation.py:38: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  'created_at': datetime.utcnow(),
+C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\models\evaluation.py:39: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  'updated_at': datetime.utcnow()
+.2026-10-23 16:26:31 [ERROR] root - Storage operation unavailable: RuntimeError
+2026-10-23 16:26:31 [ERROR] root - Storage operation unavailable: RuntimeError
+..2026-10-23 16:26:31 [INFO] utils.course_processor - Using UI-provided config: max_marks=10
+2026-10-23 16:26:31 [INFO] utils.course_processor -   [MB3204] Model answer: model_answer.pdf
+2026-10-23 16:26:31 [INFO] utils.course_processor - Discovered course MB3204: 1 student sheets
+2026-10-23 16:26:31 [INFO] utils.course_processor - Total courses discovered: 1
+2026-10-23 16:26:31 [INFO] utils.course_processor - Using UI-provided config: max_marks=10
+2026-10-23 16:26:31 [INFO] utils.course_processor -   [MB3204] Model answer: model_answer.pdf
+2026-10-23 16:26:31 [INFO] utils.course_processor - Discovered course MB3204: 1 student sheets
+2026-10-23 16:26:31 [INFO] utils.course_processor - Total courses discovered: 1
+2026-10-23 16:26:31 [INFO] utils.course_processor - Using UI-provided config: max_marks=10
+2026-10-23 16:26:31 [INFO] utils.course_processor -   [MB3204] Model answer: model_answer.pdf
+2026-10-23 16:26:31 [INFO] utils.course_processor - Discovered course MB3204: 1 student sheets
+2026-10-23 16:26:31 [INFO] utils.course_processor - Total courses discovered: 1
+...2026-10-23 16:26:31 [INFO] root - Folder upload: received 1 files, 1 path fields
+2026-10-23 16:26:31 [INFO] root - Sample paths from browser: ['XX1234/101.pdf']
+2026-10-23 16:26:31 [INFO] root -   File: 101.pdf -> relative_path: XX1234/101.pdf
+2026-10-23 16:26:31 [INFO] root - batch_q0xwiby9/
+2026-10-23 16:26:31 [INFO] root -   XX1234/
+2026-10-23 16:26:31 [INFO] root -     101.pdf
+2026-10-23 16:26:31 [INFO] root - Folder upload: saved 1 files to C:\Users\karta\AppData\Local\Temp\tmpukqdsz_w\batch_q0xwiby9
+..C:\Users\karta\OneDrive\Desktop\AI_Evaluater\AI_Evaluater\backend\venv\Lib\site-packages\mongomock\helpers.py:73: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  return datetime.utcnow()
+.....2026-10-23 16:26:31 [INFO] root - Folder upload: received 2 files, 2 path fields
+2026-10-23 16:26:31 [INFO] root - Sample paths from browser: ['FS3401/101.pdf', 'MB3103/101.pdf']
+2026-10-23 16:26:31 [INFO] root -   File: 101.pdf -> relative_path: FS3401/101.pdf
+2026-10-23 16:26:31 [INFO] root -   File: 101.pdf -> relative_path: MB3103/101.pdf
+2026-10-23 16:26:31 [INFO] root - batch_mz9h1jwz/
+2026-10-23 16:26:31 [INFO] root -   FS3401/
+2026-10-23 16:26:31 [INFO] root -     101.pdf
+2026-10-23 16:26:31 [INFO] root -   MB3103/
+2026-10-23 16:26:31 [INFO] root -     101.pdf
+2026-10-23 16:26:31 [INFO] root - Folder upload: saved 2 files to C:\Users\karta\AppData\Local\Temp\tmp5hzdm3th\batch_mz9h1jwz
+...2026-10-23 16:26:31 [INFO] utils.db_connection - Attempting to connect to MongoDB...
+2026-10-23 16:26:31 [INFO] utils.db_connection - Connecting to configured MongoDB
+2026-10-23 16:26:31 [INFO] utils.db_connection - Successfully connected to MongoDB database: ai_examiner
+2026-10-23 16:26:31 [INFO] utils.db_connection - Database connection closed
+2026-10-23 16:26:31 [INFO] utils.db_connection - Attempting to connect to MongoDB...
+2026-10-23 16:26:31 [INFO] utils.db_connection - Connecting to configured MongoDB
+2026-10-23 16:26:31 [INFO] utils.db_connection - Successfully connected to MongoDB database: ai_examiner
+.2026-10-23 16:26:31 [INFO] utils.db_connection - Attempting to connect to MongoDB...
+2026-10-23 16:26:31 [INFO] utils.db_connection - Connecting to configured MongoDB
+2026-10-23 16:26:31 [INFO] utils.db_connection - Successfully connected to MongoDB database: ai_examiner
+.2026-10-23 16:26:31 [INFO] utils.db_connection - Attempting to connect to MongoDB...
+2026-10-23 16:26:31 [INFO] utils.db_connection - Connecting to configured MongoDB
+2026-10-23 16:26:31 [INFO] utils.db_connection - Attempting to connect to MongoDB...
+2026-10-23 16:26:31 [INFO] utils.db_connection - Connecting to configured MongoDB
+2026-10-23 16:26:31 [INFO] utils.db_connection - Successfully connected to MongoDB database: ai_examiner
+..2026-10-23 16:26:31 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:31 [INFO] utils.course_processor -   [23BCA1] Model answer: 23BCA1_answer_key.pdf
+2026-10-23 16:26:31 [INFO] utils.course_processor -   [23BCA1] Skipping question paper: 23BCA1_question_paper.pdf
+2026-10-23 16:26:31 [INFO] utils.course_processor - Discovered course 23BCA1: 1 student sheets
+2026-10-23 16:26:31 [INFO] utils.course_processor -   [CS101A] Model answer: CS101A_answer_key.pdf
+2026-10-23 16:26:31 [INFO] utils.course_processor -   [CS101A] Skipping question paper: CS101A_question_paper.pdf
+2026-10-23 16:26:31 [INFO] utils.course_processor - Discovered course CS101A: 1 student sheets
+2026-10-23 16:26:31 [ERROR] utils.course_processor -   [CS102B] No model_answer.pdf found � skipping course
+2026-10-23 16:26:31 [INFO] utils.course_processor -   [ENG] Model answer: ENG_answer_key.pdf
+2026-10-23 16:26:31 [INFO] utils.course_processor -   [ENG] Skipping question paper: ENG_question_paper.pdf
+2026-10-23 16:26:31 [INFO] utils.course_processor - Discovered course ENG: 1 student sheets
+2026-10-23 16:26:31 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: FS3401_MSE_answer_key.pdf
+2026-10-23 16:26:31 [INFO] utils.course_processor -   [FS3401_MSE] Skipping question paper: FS3401_MSE_question_paper.pdf
+2026-10-23 16:26:31 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:31 [WARNING] utils.course_processor - Skipped course folders: CS102B: missing model_answer.pdf or answer_key.pdf
+2026-10-23 16:26:31 [INFO] utils.course_processor - Total courses discovered: 4
+.2026-10-23 16:26:31 [INFO] utils.course_processor - Using UI-provided config: max_marks=50
+2026-10-23 16:26:31 [INFO] utils.course_processor -   [FS3401] Model answer: model_answer.pdf
+2026-10-23 16:26:31 [INFO] utils.course_processor - Discovered course FS3401: 1 student sheets
+2026-10-23 16:26:31 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:31 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:31 [INFO] utils.course_processor - Total courses discovered: 2
+.2026-10-23 16:26:31 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:31 [INFO] utils.course_processor -   [FS3401] Model answer: answer_key.pdf
+2026-10-23 16:26:31 [INFO] utils.course_processor -   [FS3401] Skipping question paper: question paper.pdf
+2026-10-23 16:26:31 [WARNING] utils.course_processor -   [FS3401] No student answer sheets found � skipping course
+.2026-10-23 16:26:31 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:31 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: FS3401_answerkey.pdf
+2026-10-23 16:26:31 [INFO] utils.course_processor -   [FS3401_MSE] Skipping question paper: FS3401_questionpaper.pdf
+2026-10-23 16:26:31 [INFO] utils.course_processor - Discovered course FS3401_MSE: 6 student sheets
+2026-10-23 16:26:31 [INFO] utils.course_processor - Total courses discovered: 1
+.2026-10-23 16:26:31 [INFO] utils.gemini_service - GeminiService initialised → vLLM endpoint: https://dgx.geetauniversity.edu.in/v1 | model: google/gemma-4-31B-it
+2026-10-23 16:26:31 [INFO] utils.gemini_service - AI request=4feed2cf9954407ea28fe1743a45ed67  waiting for capacity model=google/gemma-4-31B-it max_tokens=1500 timeout=600s
+2026-10-23 16:26:31 [INFO] utils.gemini_service - AI request=4feed2cf9954407ea28fe1743a45ed67  upload_bytes=126 queue_seconds=0.00 connect/write_timeout=60s read_timeout=600s
+2026-10-23 16:26:31 [WARNING] utils.gemini_service - vLLM call failed: Evaluation cancelled
+.2026-10-23 16:26:31 [INFO] utils.gemini_service - GeminiService initialised → vLLM endpoint: https://dgx.geetauniversity.edu.in/v1 | model: google/gemma-4-31B-it
+..2026-10-23 16:26:31 [INFO] utils.gemini_service - AI request=2c8f8d91d968423f8251a4f06293688b  waiting for capacity model=google/gemma-4-31B-it max_tokens=1500 timeout=600s
+2026-10-23 16:26:31 [INFO] utils.gemini_service - AI request=2c8f8d91d968423f8251a4f06293688b  upload_bytes=90 queue_seconds=0.00 connect/write_timeout=60s read_timeout=600s
+2026-10-23 16:26:31 [INFO] utils.gemini_service - AI request=2c8f8d91d968423f8251a4f06293688b  response status=200 queue_seconds=0.00 request_seconds=0.00 total_seconds=0.00
+.2026-10-23 16:26:31 [INFO] utils.gemini_service - AI request=441dbb4f54c8479bb0f316e22afeccf2  waiting for capacity model=google/gemma-4-31B-it max_tokens=1500 timeout=17s
+2026-10-23 16:26:31 [INFO] utils.gemini_service - AI request=441dbb4f54c8479bb0f316e22afeccf2  upload_bytes=134 queue_seconds=0.00 connect/write_timeout=60s read_timeout=17s
+2026-10-23 16:26:31 [INFO] utils.gemini_service - AI request=441dbb4f54c8479bb0f316e22afeccf2  response status=200 queue_seconds=0.00 request_seconds=0.00 total_seconds=0.00
+......2026-10-23 16:26:31 [INFO] utils.gemini_service - GeminiService initialised → vLLM endpoint: https://dgx.geetauniversity.edu.in/v1 | model: google/gemma-4-31B-it
+...2026-10-23 16:26:31 [INFO] utils.gemini_service - GeminiService initialised → vLLM endpoint: https://dgx.geetauniversity.edu.in/v1 | model: google/gemma-4-31B-it
+...2026-10-23 16:26:31 [INFO] utils.gemini_service - GeminiService initialised → vLLM endpoint: https://dgx.geetauniversity.edu.in/v1 | model: google/gemma-4-31B-it
+..2026-10-23 16:26:31 [INFO] utils.gemini_service - GeminiService initialised → vLLM endpoint: https://dgx.geetauniversity.edu.in/v1 | model: google/gemma-4-31B-it
+..................2026-10-23 16:26:32 [INFO] utils.gemini_service - GeminiService initialised → vLLM endpoint: https://dgx.geetauniversity.edu.in/v1 | model: google/gemma-4-31B-it
+.2026-10-23 16:26:32 [INFO] utils.gemini_service - GeminiService initialised → vLLM endpoint: https://dgx.geetauniversity.edu.in/v1 | model: google/gemma-4-31B-it
+2026-10-23 16:26:32 [WARNING] utils.gemini_service - vLLM call failed: too long
+..2026-10-23 16:26:32 [INFO] utils.gemini_service - GeminiService initialised → vLLM endpoint: https://dgx.geetauniversity.edu.in/v1 | model: google/gemma-4-31B-it
+2026-10-23 16:26:32 [WARNING] utils.gemini_service - Truncated response; retrying with output budget 3000 (was 1500)
+2026-10-23 16:26:32 [WARNING] utils.gemini_service - Truncated response; retrying with output budget 6000 (was 3000)
+2026-10-23 16:26:32 [WARNING] utils.gemini_service - vLLM call failed: Model response was truncated; reduce the evaluation scope or increase the supported output budget
+..2026-10-23 16:26:32 [INFO] utils.gemini_service - GeminiService initialised → vLLM endpoint: https://dgx.geetauniversity.edu.in/v1 | model: google/gemma-4-31B-it
+2026-10-23 16:26:32 [WARNING] utils.gemini_service - vLLM call failed: timeout
+2026-10-23 16:26:32 [WARNING] utils.gemini_service - vLLM call failed: timeout
+.2026-10-23 16:26:32 [INFO] utils.gemini_service - Grading prompt tokens=8000 output_budget=1500
+.2026-10-23 16:26:32 [INFO] utils.gemini_service - AI request=1e9d77a2cdb645ed95c952e510ffc68f  waiting for capacity model=google/gemma-4-31B-it max_tokens=1500 timeout=600s
+2026-10-23 16:26:32 [INFO] utils.gemini_service - AI request=1e9d77a2cdb645ed95c952e510ffc68f  upload_bytes=90 queue_seconds=0.00 connect/write_timeout=60s read_timeout=600s
+2026-10-23 16:26:32 [INFO] utils.gemini_service - AI request=1e9d77a2cdb645ed95c952e510ffc68f  response status=200 queue_seconds=0.00 request_seconds=0.00 total_seconds=0.00
+.2026-10-23 16:26:32 [INFO] utils.gemini_service - GeminiService initialised → vLLM endpoint: https://dgx.geetauniversity.edu.in/v1 | model: google/gemma-4-31B-it
+2026-10-23 16:26:32 [WARNING] utils.gemini_service - Truncated response; retrying with output budget 2192 (was 1500)
+.2026-10-23 16:26:32 [INFO] utils.gemini_service - GeminiService initialised → vLLM endpoint: https://dgx.geetauniversity.edu.in/v1 | model: google/gemma-4-31B-it
+2026-10-23 16:26:32 [WARNING] utils.gemini_service - vLLM call failed: Model response was truncated; reduce the evaluation scope or increase the supported output budget
+.2026-10-23 16:26:32 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:32 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:32 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:32 [INFO] utils.course_processor - Total courses discovered: 1
+.2026-10-23 16:26:32 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:32 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:32 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:32 [INFO] utils.course_processor - Total courses discovered: 1
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=efcbb82cccef49438c7c5c9713abf5e4 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=checking_cache
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=efcbb82cccef49438c7c5c9713abf5e4 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_answer_key
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=efcbb82cccef49438c7c5c9713abf5e4 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_student
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=efcbb82cccef49438c7c5c9713abf5e4 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=grading
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=efcbb82cccef49438c7c5c9713abf5e4 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=saving
+.2026-10-23 16:26:32 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:32 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:32 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:32 [INFO] utils.course_processor - Total courses discovered: 1
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=f3b3dd2c180e4532b850995854f25a45 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=checking_cache
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=f3b3dd2c180e4532b850995854f25a45 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_answer_key
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=f3b3dd2c180e4532b850995854f25a45 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_student
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=f3b3dd2c180e4532b850995854f25a45 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=grading
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=f3b3dd2c180e4532b850995854f25a45 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=saving
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=f3b3dd2c180e4532b850995854f25a45 completed and persisted
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=2a817515b3964ac79efd9f9317766000 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=checking_cache
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=2a817515b3964ac79efd9f9317766000 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_answer_key
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=2a817515b3964ac79efd9f9317766000 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_student
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=2a817515b3964ac79efd9f9317766000 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=grading
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=2a817515b3964ac79efd9f9317766000 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=saving
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=2a817515b3964ac79efd9f9317766000 completed and persisted
+.2026-10-23 16:26:32 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:32 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:32 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:32 [INFO] utils.course_processor - Total courses discovered: 1
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=eebd53206bf4476fae60aa134b3cee10 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=checking_cache
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=eebd53206bf4476fae60aa134b3cee10 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_answer_key
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=eebd53206bf4476fae60aa134b3cee10 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_student
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=eebd53206bf4476fae60aa134b3cee10 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=grading
+2026-10-23 16:26:32 [WARNING] utils.workspace - attempt=eebd53206bf4476fae60aa134b3cee10 status=queued error_type=ConnectionError
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=eebd53206bf4476fae60aa134b3cee10 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=checking_cache
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=eebd53206bf4476fae60aa134b3cee10 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=grading
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=eebd53206bf4476fae60aa134b3cee10 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=saving
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=eebd53206bf4476fae60aa134b3cee10 completed and persisted
+.2026-10-23 16:26:32 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:32 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:32 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:32 [INFO] utils.course_processor - Total courses discovered: 1
+2026-10-23 16:26:32 [WARNING] utils.workspace - attempt=40136e85586e478bb15b5c4f41aa9144 status=queued error_type=LeaseLost
+.2026-10-23 16:26:32 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:32 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:32 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:32 [INFO] utils.course_processor - Total courses discovered: 1
+.2026-10-23 16:26:32 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:32 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:32 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:32 [INFO] utils.course_processor - Total courses discovered: 1
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=adeafc1d04a84ab4a7a3f6d35fe1fa0c sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=checking_cache
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=adeafc1d04a84ab4a7a3f6d35fe1fa0c sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_answer_key
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=adeafc1d04a84ab4a7a3f6d35fe1fa0c sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_student
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=adeafc1d04a84ab4a7a3f6d35fe1fa0c sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=grading
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=adeafc1d04a84ab4a7a3f6d35fe1fa0c sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=saving
+.2026-10-23 16:26:32 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:32 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:32 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:32 [INFO] utils.course_processor - Total courses discovered: 1
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=8ecb6266fdee4dbda3353ff58fb01776 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=checking_cache
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=8ecb6266fdee4dbda3353ff58fb01776 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_answer_key
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=8ecb6266fdee4dbda3353ff58fb01776 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_student
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=8ecb6266fdee4dbda3353ff58fb01776 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=grading
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=8ecb6266fdee4dbda3353ff58fb01776 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=saving
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=8ecb6266fdee4dbda3353ff58fb01776 completed and persisted
+.2026-10-23 16:26:32 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:32 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:32 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:32 [INFO] utils.course_processor - Total courses discovered: 1
+2026-10-23 16:26:32 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:32 [ERROR] utils.course_processor -   [CS101A] No model_answer.pdf found � skipping course
+2026-10-23 16:26:32 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:32 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:32 [WARNING] utils.course_processor - Skipped course folders: CS101A: missing model_answer.pdf or answer_key.pdf
+2026-10-23 16:26:32 [INFO] utils.course_processor - Total courses discovered: 1
+2026-10-23 16:26:32 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:32 [INFO] utils.course_processor -   [CS101A] Model answer: model_answer.pdf
+2026-10-23 16:26:32 [INFO] utils.course_processor - Discovered course CS101A: 1 student sheets
+2026-10-23 16:26:32 [INFO] utils.course_processor - Total courses discovered: 1
+2026-10-23 16:26:32 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:32 [INFO] utils.course_processor -   [CS101A] Model answer: model_answer.pdf
+2026-10-23 16:26:32 [INFO] utils.course_processor - Discovered course CS101A: 1 student sheets
+2026-10-23 16:26:32 [INFO] utils.course_processor - Total courses discovered: 1
+.2026-10-23 16:26:32 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:32 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:32 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:32 [INFO] utils.course_processor - Total courses discovered: 1
+2026-10-23 16:26:32 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:32 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:32 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:32 [INFO] utils.course_processor - Total courses discovered: 1
+.2026-10-23 16:26:32 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:32 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:32 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:32 [INFO] utils.course_processor - Total courses discovered: 1
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=6022e43b70e940beb09a35f205c1b009 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=checking_cache
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=6022e43b70e940beb09a35f205c1b009 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_answer_key
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=6022e43b70e940beb09a35f205c1b009 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_student
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=6022e43b70e940beb09a35f205c1b009 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=grading
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=6022e43b70e940beb09a35f205c1b009 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=saving
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=6022e43b70e940beb09a35f205c1b009 completed and persisted
+.2026-10-23 16:26:32 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:32 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:32 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:32 [INFO] utils.course_processor - Total courses discovered: 1
+2026-10-23 16:26:32 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:32 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:32 [INFO] utils.course_processor -   [FS3401_MSE] Skipping question paper: question_paper.pdf
+2026-10-23 16:26:32 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:32 [INFO] utils.course_processor - Total courses discovered: 1
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=64d913c700c54838b5810c0b1c1fa23d sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=checking_cache
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=64d913c700c54838b5810c0b1c1fa23d sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_answer_key
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=64d913c700c54838b5810c0b1c1fa23d sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_student
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=64d913c700c54838b5810c0b1c1fa23d sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=grading
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=64d913c700c54838b5810c0b1c1fa23d sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=saving
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=64d913c700c54838b5810c0b1c1fa23d completed and persisted
+.2026-10-23 16:26:32 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:32 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:32 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:32 [INFO] utils.course_processor - Total courses discovered: 1
+.2026-10-23 16:26:32 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:32 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:32 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:32 [INFO] utils.course_processor - Total courses discovered: 1
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=f9b088bb5bb7499dae18d07c352629e9 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=checking_cache
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=f9b088bb5bb7499dae18d07c352629e9 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_answer_key
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=f9b088bb5bb7499dae18d07c352629e9 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_answer_key_page_1_of_2
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=f9b088bb5bb7499dae18d07c352629e9 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracted_answer_key_page_1_of_2
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=f9b088bb5bb7499dae18d07c352629e9 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_answer_key_page_2_of_2
+2026-10-23 16:26:32 [WARNING] utils.workspace - attempt=f9b088bb5bb7499dae18d07c352629e9 status=queued error_type=TimeoutError
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=f9b088bb5bb7499dae18d07c352629e9 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=checking_cache
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=f9b088bb5bb7499dae18d07c352629e9 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_answer_key
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=f9b088bb5bb7499dae18d07c352629e9 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_answer_key_page_1_of_2
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=f9b088bb5bb7499dae18d07c352629e9 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracted_answer_key_page_1_of_2
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=f9b088bb5bb7499dae18d07c352629e9 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_answer_key_page_2_of_2
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=f9b088bb5bb7499dae18d07c352629e9 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracted_answer_key_page_2_of_2
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=f9b088bb5bb7499dae18d07c352629e9 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_student
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=f9b088bb5bb7499dae18d07c352629e9 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_student_page_1_of_2
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=f9b088bb5bb7499dae18d07c352629e9 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracted_student_page_1_of_2
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=f9b088bb5bb7499dae18d07c352629e9 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_student_page_2_of_2
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=f9b088bb5bb7499dae18d07c352629e9 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracted_student_page_2_of_2
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=f9b088bb5bb7499dae18d07c352629e9 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=grading
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=f9b088bb5bb7499dae18d07c352629e9 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=saving
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=f9b088bb5bb7499dae18d07c352629e9 completed and persisted
+.2026-10-23 16:26:32 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:32 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:32 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:32 [INFO] utils.course_processor - Total courses discovered: 1
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=2a8e9d19ecc24f7ea6d16d4a3a5bf627 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=checking_cache
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=2a8e9d19ecc24f7ea6d16d4a3a5bf627 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_answer_key
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=2a8e9d19ecc24f7ea6d16d4a3a5bf627 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_student
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=2a8e9d19ecc24f7ea6d16d4a3a5bf627 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=grading
+2026-10-23 16:26:32 [WARNING] utils.workspace - attempt=2a8e9d19ecc24f7ea6d16d4a3a5bf627 status=error error_type=TimeoutError
+.2026-10-23 16:26:32 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:32 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:32 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:32 [INFO] utils.course_processor - Total courses discovered: 1
+2026-10-23 16:26:32 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:32 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:32 [INFO] utils.course_processor - Discovered course FS3401_MSE: 2 student sheets
+2026-10-23 16:26:32 [INFO] utils.course_processor - Total courses discovered: 1
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=ffeaf82e480d427eb4f7a7b352ac745a sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=checking_cache
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=ffeaf82e480d427eb4f7a7b352ac745a sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_answer_key
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=ffeaf82e480d427eb4f7a7b352ac745a sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_student
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=ffeaf82e480d427eb4f7a7b352ac745a sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=grading
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=ffeaf82e480d427eb4f7a7b352ac745a sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=saving
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=ffeaf82e480d427eb4f7a7b352ac745a completed and persisted
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=3cad917b4e114c1d80264dc4500f7426 sheet=406d1a2c7c0785c419e02106af89a89622b181f3bf53f1b6cc551dfaadefeda1 stage=checking_cache
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=3cad917b4e114c1d80264dc4500f7426 sheet=406d1a2c7c0785c419e02106af89a89622b181f3bf53f1b6cc551dfaadefeda1 stage=extracting_student
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=3cad917b4e114c1d80264dc4500f7426 sheet=406d1a2c7c0785c419e02106af89a89622b181f3bf53f1b6cc551dfaadefeda1 stage=grading
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=3cad917b4e114c1d80264dc4500f7426 sheet=406d1a2c7c0785c419e02106af89a89622b181f3bf53f1b6cc551dfaadefeda1 stage=saving
+2026-10-23 16:26:32 [INFO] utils.workspace - attempt=3cad917b4e114c1d80264dc4500f7426 completed and persisted
+.2026-10-23 16:26:32 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:32 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:32 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:32 [INFO] utils.course_processor - Total courses discovered: 1
+.2026-10-23 16:26:32 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:32 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:32 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:32 [INFO] utils.course_processor - Total courses discovered: 1
+2026-10-23 16:26:33 [INFO] utils.workspace - attempt=889e9e45bc6a441cbd5edf26deab9549 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=checking_cache
+2026-10-23 16:26:33 [INFO] utils.workspace - attempt=889e9e45bc6a441cbd5edf26deab9549 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_answer_key
+2026-10-23 16:26:33 [INFO] utils.workspace - attempt=889e9e45bc6a441cbd5edf26deab9549 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_student
+2026-10-23 16:26:33 [INFO] utils.workspace - attempt=889e9e45bc6a441cbd5edf26deab9549 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=grading
+2026-10-23 16:26:33 [WARNING] utils.workspace - attempt=889e9e45bc6a441cbd5edf26deab9549 status=queued error_type=TimeoutError
+2026-10-23 16:26:33 [INFO] utils.workspace - attempt=889e9e45bc6a441cbd5edf26deab9549 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=checking_cache
+2026-10-23 16:26:33 [INFO] utils.workspace - attempt=889e9e45bc6a441cbd5edf26deab9549 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=grading
+2026-10-23 16:26:33 [INFO] utils.workspace - attempt=889e9e45bc6a441cbd5edf26deab9549 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=saving
+2026-10-23 16:26:33 [INFO] utils.workspace - attempt=889e9e45bc6a441cbd5edf26deab9549 completed and persisted
+...........................2026-10-23 16:26:34 [INFO] worker - Evaluation worker started automatically
+.2026-10-23 16:26:34 [INFO] worker - Evaluation worker ready: up to 3 sheets in parallel
+2026-10-23 16:26:34 [INFO] utils.gemini_service - GeminiService initialised → vLLM endpoint: https://dgx.geetauniversity.edu.in/v1 | model: google/gemma-4-31B-it
+2026-10-23 16:26:34 [INFO] utils.gemini_service - GeminiService initialised → vLLM endpoint: https://dgx.geetauniversity.edu.in/v1 | model: google/gemma-4-31B-it
+2026-10-23 16:26:34 [INFO] utils.gemini_service - GeminiService initialised → vLLM endpoint: https://dgx.geetauniversity.edu.in/v1 | model: google/gemma-4-31B-it
+2026-10-23 16:26:34 [INFO] utils.gemini_service - GeminiService initialised → vLLM endpoint: https://dgx.geetauniversity.edu.in/v1 | model: google/gemma-4-31B-it
+..2026-10-23 16:26:34 [INFO] worker - Evaluation worker ready: up to 1 sheets in parallel
+2026-10-23 16:26:34 [INFO] utils.gemini_service - GeminiService initialised → vLLM endpoint: https://dgx.geetauniversity.edu.in/v1 | model: google/gemma-4-31B-it
+2026-10-23 16:26:34 [INFO] utils.gemini_service - GeminiService initialised → vLLM endpoint: https://dgx.geetauniversity.edu.in/v1 | model: google/gemma-4-31B-it
+2026-10-23 16:26:34 [INFO] utils.gemini_service - GeminiService initialised → vLLM endpoint: https://dgx.geetauniversity.edu.in/v1 | model: google/gemma-4-31B-it
+2026-10-23 16:26:34 [INFO] utils.gemini_service - GeminiService initialised → vLLM endpoint: https://dgx.geetauniversity.edu.in/v1 | model: google/gemma-4-31B-it
+2026-10-23 16:26:34 [INFO] utils.gemini_service - GeminiService initialised → vLLM endpoint: https://dgx.geetauniversity.edu.in/v1 | model: google/gemma-4-31B-it
+....2026-10-23 16:26:36 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:36 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:36 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:36 [INFO] utils.course_processor - Total courses discovered: 1
+2026-10-23 16:26:36 [INFO] utils.workspace - attempt=9cc355b449104d0ab0997e27ea40fe1e sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=checking_cache
+2026-10-23 16:26:36 [INFO] utils.workspace - attempt=9cc355b449104d0ab0997e27ea40fe1e sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_answer_key
+2026-10-23 16:26:36 [INFO] utils.workspace - attempt=9cc355b449104d0ab0997e27ea40fe1e sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_student
+2026-10-23 16:26:36 [INFO] utils.workspace - attempt=9cc355b449104d0ab0997e27ea40fe1e sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=grading
+2026-10-23 16:26:36 [INFO] utils.workspace - attempt=9cc355b449104d0ab0997e27ea40fe1e sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=saving
+2026-10-23 16:26:36 [INFO] utils.workspace - attempt=9cc355b449104d0ab0997e27ea40fe1e completed and persisted
+2026-10-23 16:26:36 [INFO] utils.workspace - attempt=98b9fbeb817e4e92906f89b01cf7d6c0 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=checking_cache
+2026-10-23 16:26:36 [INFO] utils.workspace - attempt=98b9fbeb817e4e92906f89b01cf7d6c0 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=grading
+2026-10-23 16:26:36 [WARNING] utils.workspace - attempt=98b9fbeb817e4e92906f89b01cf7d6c0 status=error error_type=ValueError
+.2026-10-23 16:26:36 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:36 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:36 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:36 [INFO] utils.course_processor - Total courses discovered: 1
+2026-10-23 16:26:36 [INFO] utils.workspace - attempt=6391fb98f42f4870b3145760c2328b50 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=checking_cache
+2026-10-23 16:26:36 [INFO] utils.workspace - attempt=6391fb98f42f4870b3145760c2328b50 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_answer_key
+2026-10-23 16:26:36 [INFO] utils.workspace - attempt=6391fb98f42f4870b3145760c2328b50 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_student
+2026-10-23 16:26:36 [INFO] utils.workspace - attempt=6391fb98f42f4870b3145760c2328b50 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=grading
+2026-10-23 16:26:36 [INFO] utils.workspace - attempt=6391fb98f42f4870b3145760c2328b50 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=saving
+2026-10-23 16:26:36 [INFO] utils.workspace - attempt=6391fb98f42f4870b3145760c2328b50 completed and persisted
+.2026-10-23 16:26:36 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:36 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:36 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:36 [INFO] utils.course_processor - Total courses discovered: 1
+2026-10-23 16:26:36 [WARNING] utils.workspace - attempt=ac99a344174844f6b3cd286b0a094538 status=cancelled error_type=InterruptedError
+.2026-10-23 16:26:36 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:36 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:36 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:36 [INFO] utils.course_processor - Total courses discovered: 1
+2026-10-23 16:26:36 [INFO] utils.workspace - attempt=ac26643070164b84b492f2d44e1c1ae3 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=checking_cache
+2026-10-23 16:26:36 [INFO] utils.workspace - attempt=ac26643070164b84b492f2d44e1c1ae3 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_answer_key
+2026-10-23 16:26:36 [INFO] utils.workspace - attempt=ac26643070164b84b492f2d44e1c1ae3 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_student
+2026-10-23 16:26:36 [INFO] utils.workspace - attempt=ac26643070164b84b492f2d44e1c1ae3 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=grading
+2026-10-23 16:26:36 [INFO] utils.workspace - attempt=ac26643070164b84b492f2d44e1c1ae3 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=saving
+2026-10-23 16:26:36 [INFO] utils.workspace - attempt=ac26643070164b84b492f2d44e1c1ae3 completed and persisted
+2026-10-23 16:26:36 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:36 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:36 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:36 [INFO] utils.course_processor - Total courses discovered: 1
+.2026-10-23 16:26:36 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:36 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:36 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:36 [INFO] utils.course_processor - Total courses discovered: 1
+.2026-10-23 16:26:36 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:36 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:36 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:36 [INFO] utils.course_processor - Total courses discovered: 1
+2026-10-23 16:26:36 [INFO] utils.workspace - attempt=30add6b690004f5d8b6eb0e522c50844 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=checking_cache
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=30add6b690004f5d8b6eb0e522c50844 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_answer_key
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=30add6b690004f5d8b6eb0e522c50844 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_student
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=30add6b690004f5d8b6eb0e522c50844 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=grading
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=30add6b690004f5d8b6eb0e522c50844 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=saving
+.2026-10-23 16:26:37 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:37 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:37 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:37 [INFO] utils.course_processor - Total courses discovered: 1
+.2026-10-23 16:26:37 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:37 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:37 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:37 [INFO] utils.course_processor - Total courses discovered: 1
+2026-10-23 16:26:37 [WARNING] utils.workspace - attempt=2b79e799e0ea49de82250a39166d4456 status=queued error_type=LeaseLost
+.2026-10-23 16:26:37 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:37 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:37 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:37 [INFO] utils.course_processor - Total courses discovered: 1
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=5a9354af4d87421ca27f48f64bcf5a7e sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=checking_cache
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=5a9354af4d87421ca27f48f64bcf5a7e sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_answer_key
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=5a9354af4d87421ca27f48f64bcf5a7e sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_student
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=5a9354af4d87421ca27f48f64bcf5a7e sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=grading
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=5a9354af4d87421ca27f48f64bcf5a7e sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=saving
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=5a9354af4d87421ca27f48f64bcf5a7e completed and persisted
+.2026-10-23 16:26:37 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:37 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:37 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:37 [INFO] utils.course_processor - Total courses discovered: 1
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=bb6ea76347594dcd80dee2ed5ad717d3 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=checking_cache
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=bb6ea76347594dcd80dee2ed5ad717d3 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_answer_key
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=bb6ea76347594dcd80dee2ed5ad717d3 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_student
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=bb6ea76347594dcd80dee2ed5ad717d3 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=grading
+2026-10-23 16:26:37 [WARNING] utils.workspace - attempt=bb6ea76347594dcd80dee2ed5ad717d3 status=error error_type=ValueError
+.2026-10-23 16:26:37 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:37 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:37 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:37 [INFO] utils.course_processor - Total courses discovered: 1
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=c3d783aad4fb4de59da32b372eebfe6b sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=checking_cache
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=c3d783aad4fb4de59da32b372eebfe6b sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_answer_key
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=c3d783aad4fb4de59da32b372eebfe6b sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_student
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=c3d783aad4fb4de59da32b372eebfe6b sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=grading
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=c3d783aad4fb4de59da32b372eebfe6b sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=saving
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=c3d783aad4fb4de59da32b372eebfe6b completed and persisted
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=efcb899509ad49ecab6446303a2348b8 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=checking_cache
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=efcb899509ad49ecab6446303a2348b8 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=grading
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=efcb899509ad49ecab6446303a2348b8 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=saving
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=efcb899509ad49ecab6446303a2348b8 completed and persisted
+.2026-10-23 16:26:37 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:37 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:37 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:37 [INFO] utils.course_processor - Total courses discovered: 1
+.2026-10-23 16:26:37 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:37 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:37 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:37 [INFO] utils.course_processor - Total courses discovered: 1
+.2026-10-23 16:26:37 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:37 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:37 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:37 [INFO] utils.course_processor - Total courses discovered: 1
+.2026-10-23 16:26:37 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:37 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:37 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:37 [INFO] utils.course_processor - Total courses discovered: 1
+.2026-10-23 16:26:37 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:37 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:37 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:37 [INFO] utils.course_processor - Total courses discovered: 1
+2026-10-23 16:26:37 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:37 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:37 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:37 [INFO] utils.course_processor - Total courses discovered: 1
+2026-10-23 16:26:37 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:37 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:37 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:37 [INFO] utils.course_processor - Total courses discovered: 1
+.2026-10-23 16:26:37 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:37 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:37 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:37 [INFO] utils.course_processor - Total courses discovered: 1
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=3b3297c71d2248918939a21f57802fa3 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=checking_cache
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=3b3297c71d2248918939a21f57802fa3 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_answer_key
+2026-10-23 16:26:37 [WARNING] utils.workspace - attempt=3b3297c71d2248918939a21f57802fa3 status=error error_type=RuntimeError
+.2026-10-23 16:26:37 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:37 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:37 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:37 [INFO] utils.course_processor - Total courses discovered: 1
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=55a35e66b357432c8184a079cbeaf045 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=checking_cache
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=55a35e66b357432c8184a079cbeaf045 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_answer_key
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=55a35e66b357432c8184a079cbeaf045 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_answer_key_page_1_of_2
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=55a35e66b357432c8184a079cbeaf045 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracted_answer_key_page_1_of_2
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=55a35e66b357432c8184a079cbeaf045 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_answer_key_page_2_of_2
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=55a35e66b357432c8184a079cbeaf045 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracted_answer_key_page_2_of_2
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=55a35e66b357432c8184a079cbeaf045 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_student
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=55a35e66b357432c8184a079cbeaf045 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_student_page_1_of_2
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=55a35e66b357432c8184a079cbeaf045 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracted_student_page_1_of_2
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=55a35e66b357432c8184a079cbeaf045 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_student_page_2_of_2
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=55a35e66b357432c8184a079cbeaf045 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracted_student_page_2_of_2
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=55a35e66b357432c8184a079cbeaf045 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=grading
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=55a35e66b357432c8184a079cbeaf045 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=saving
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=55a35e66b357432c8184a079cbeaf045 completed and persisted
+.2026-10-23 16:26:37 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:37 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:37 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:37 [INFO] utils.course_processor - Total courses discovered: 1
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=30c8db585be7492f8238c75cfbff3dcb sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=checking_cache
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=30c8db585be7492f8238c75cfbff3dcb sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_answer_key
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=30c8db585be7492f8238c75cfbff3dcb sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_answer_key_page_1_of_2
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=30c8db585be7492f8238c75cfbff3dcb sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracted_answer_key_page_1_of_2
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=30c8db585be7492f8238c75cfbff3dcb sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_answer_key_page_2_of_2
+2026-10-23 16:26:37 [WARNING] utils.workspace - attempt=30c8db585be7492f8238c75cfbff3dcb status=error error_type=RuntimeError
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=e392cda3db1f4199b8e112c763131b5a sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=checking_cache
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=e392cda3db1f4199b8e112c763131b5a sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_answer_key
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=e392cda3db1f4199b8e112c763131b5a sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_answer_key_page_1_of_2
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=e392cda3db1f4199b8e112c763131b5a sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracted_answer_key_page_1_of_2
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=e392cda3db1f4199b8e112c763131b5a sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_answer_key_page_2_of_2
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=e392cda3db1f4199b8e112c763131b5a sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracted_answer_key_page_2_of_2
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=e392cda3db1f4199b8e112c763131b5a sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_student
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=e392cda3db1f4199b8e112c763131b5a sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_student_page_1_of_2
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=e392cda3db1f4199b8e112c763131b5a sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracted_student_page_1_of_2
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=e392cda3db1f4199b8e112c763131b5a sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_student_page_2_of_2
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=e392cda3db1f4199b8e112c763131b5a sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracted_student_page_2_of_2
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=e392cda3db1f4199b8e112c763131b5a sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=grading
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=e392cda3db1f4199b8e112c763131b5a sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=saving
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=e392cda3db1f4199b8e112c763131b5a completed and persisted
+.2026-10-23 16:26:37 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:37 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:37 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:37 [INFO] utils.course_processor - Total courses discovered: 1
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=c9cd833e13324376a5379d0f8b837fc0 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=checking_cache
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=c9cd833e13324376a5379d0f8b837fc0 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_answer_key
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=c9cd833e13324376a5379d0f8b837fc0 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_student
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=c9cd833e13324376a5379d0f8b837fc0 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=grading
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=c9cd833e13324376a5379d0f8b837fc0 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=saving
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=c9cd833e13324376a5379d0f8b837fc0 completed and persisted
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=c35d26206d9d42abacf727cd868020f7 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=checking_cache
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=c35d26206d9d42abacf727cd868020f7 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=grading
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=c35d26206d9d42abacf727cd868020f7 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=saving
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=c35d26206d9d42abacf727cd868020f7 completed and persisted
+.2026-10-23 16:26:37 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:37 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:37 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:37 [INFO] utils.course_processor - Total courses discovered: 1
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=ee22625d44c84a8199d61bcc7fa62d88 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=checking_cache
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=ee22625d44c84a8199d61bcc7fa62d88 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_answer_key
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=ee22625d44c84a8199d61bcc7fa62d88 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_student
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=ee22625d44c84a8199d61bcc7fa62d88 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=grading
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=ee22625d44c84a8199d61bcc7fa62d88 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=saving
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=ee22625d44c84a8199d61bcc7fa62d88 completed and persisted
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=cdebd9ede3924b3f884496fd7bf49587 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=checking_cache
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=cdebd9ede3924b3f884496fd7bf49587 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_answer_key
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=cdebd9ede3924b3f884496fd7bf49587 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_student
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=cdebd9ede3924b3f884496fd7bf49587 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=grading
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=cdebd9ede3924b3f884496fd7bf49587 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=saving
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=cdebd9ede3924b3f884496fd7bf49587 completed and persisted
+.2026-10-23 16:26:37 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:37 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:37 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:37 [INFO] utils.course_processor - Total courses discovered: 1
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=5597c56f477d42f3959e6ac20581cc7e sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=checking_cache
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=5597c56f477d42f3959e6ac20581cc7e sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_answer_key
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=5597c56f477d42f3959e6ac20581cc7e sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_student
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=5597c56f477d42f3959e6ac20581cc7e sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=grading
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=5597c56f477d42f3959e6ac20581cc7e sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=saving
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=5597c56f477d42f3959e6ac20581cc7e completed and persisted
+.2026-10-23 16:26:37 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:37 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:37 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:37 [INFO] utils.course_processor - Total courses discovered: 1
+.2026-10-23 16:26:37 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:37 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:37 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:37 [INFO] utils.course_processor - Total courses discovered: 1
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=3daedabfed5249dea80bd6d6917a816d sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=checking_cache
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=3daedabfed5249dea80bd6d6917a816d sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_answer_key
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=3daedabfed5249dea80bd6d6917a816d sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_student
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=3daedabfed5249dea80bd6d6917a816d sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=grading
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=3daedabfed5249dea80bd6d6917a816d sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=saving
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=3daedabfed5249dea80bd6d6917a816d completed and persisted
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=ec63eb51d7544d749e0fef3278f4f184 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=checking_cache
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=ec63eb51d7544d749e0fef3278f4f184 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=grading
+2026-10-23 16:26:37 [WARNING] utils.workspace - attempt=ec63eb51d7544d749e0fef3278f4f184 status=error error_type=ValueError
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=c92fd316aff34af095d10afea47078f5 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=checking_cache
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=c92fd316aff34af095d10afea47078f5 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=grading
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=c92fd316aff34af095d10afea47078f5 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=saving
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=c92fd316aff34af095d10afea47078f5 completed and persisted
+.2026-10-23 16:26:37 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:37 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:37 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:37 [INFO] utils.course_processor - Total courses discovered: 1
+2026-10-23 16:26:37 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:37 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:37 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:37 [INFO] utils.course_processor - Total courses discovered: 1
+.2026-10-23 16:26:37 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:37 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:37 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:37 [INFO] utils.course_processor - Total courses discovered: 1
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=c3708870fa5e44afa3e5da755544ff3c sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=checking_cache
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=c3708870fa5e44afa3e5da755544ff3c sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_answer_key
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=c3708870fa5e44afa3e5da755544ff3c sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_student
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=c3708870fa5e44afa3e5da755544ff3c sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=grading
+2026-10-23 16:26:37 [WARNING] utils.workspace - attempt=c3708870fa5e44afa3e5da755544ff3c status=cancelled error_type=InterruptedError
+.2026-10-23 16:26:37 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:37 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:37 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:37 [INFO] utils.course_processor - Total courses discovered: 1
+.2026-10-23 16:26:37 [INFO] utils.course_processor - Using UI-provided config: max_marks=100
+2026-10-23 16:26:37 [INFO] utils.course_processor -   [FS3401_MSE] Model answer: model_answer.pdf
+2026-10-23 16:26:37 [INFO] utils.course_processor - Discovered course FS3401_MSE: 1 student sheets
+2026-10-23 16:26:37 [INFO] utils.course_processor - Total courses discovered: 1
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=3d345354088b409997bbec2a65c7db91 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=checking_cache
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=3d345354088b409997bbec2a65c7db91 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_answer_key
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=3d345354088b409997bbec2a65c7db91 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=extracting_student
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=3d345354088b409997bbec2a65c7db91 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=grading
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=3d345354088b409997bbec2a65c7db91 sheet=366b2f6116113fea15a1a1e4b2e77eb12a3743e12bb276a49c64205a1be77490 stage=saving
+2026-10-23 16:26:37 [INFO] utils.workspace - attempt=3d345354088b409997bbec2a65c7db91 completed and persisted
+........................
+----------------------------------------------------------------------
+Ran 184 tests in 8.824s
+
+OK

@@ -19,19 +19,19 @@ class RecoveryTests(unittest.TestCase):
     setUp = test_workspace.WorkspaceTests.setUp
     process = test_workspace.WorkspaceTests.process
 
-    def test_connection_outage_beyond_retry_limit_resumes_same_attempt(self):
+    def test_connection_outage_pauses_until_explicit_retry(self):
         import requests
         self.service.enqueue(self.sheet_id, 'admin')
         self.db.jobs.update_one({'_id': self.sheet_id}, {'$set': {'retry_count': 20}})
         self.llm.evaluate_answer.side_effect = requests.exceptions.ConnectionError('offline')
         self.service.process(self.service.claim('worker'), self.pdf, self.llm, 'worker')
-        job = self.db.jobs.find_one()
-        self.assertEqual(job['state'], 'queued')
-        self.db.jobs.update_one({'_id': self.sheet_id}, {'$set': {'next_run_at': now()}})
+        self.assertEqual(self.db.jobs.find_one()['state'], 'paused')
+        self.assertIsNone(self.service.claim('worker'))
         self.llm.evaluate_answer.side_effect = None
+        self.service.enqueue(self.sheet_id, 'admin')
         self.service.process(self.service.claim('worker'), self.pdf, self.llm, 'worker')
         self.assertEqual(self.db.jobs.find_one()['state'], 'completed')
-        self.assertEqual(self.db.attempts.count_documents({}), 1)
+        self.assertEqual(self.db.attempts.count_documents({}), 2)
         self.assertEqual(self.pdf.extract_text_from_pdf.call_count, 2)
 
     def test_expired_lease_is_not_user_cancellation(self):
@@ -55,7 +55,7 @@ class RecoveryTests(unittest.TestCase):
         self.service.claim('old-worker')
         self.db.jobs.update_one({'_id': self.sheet_id}, {'$set': {'retry_count': 50}})
         self.service.recover_interrupted('replacement')
-        self.assertEqual(self.db.jobs.find_one()['state'], 'queued')
+        self.assertEqual(self.db.jobs.find_one()['state'], 'paused')
 
     def test_partial_preparation_registers_issues_and_corrected_upload_preserves_other_courses(self):
         broken = Path(self.temp.name) / 'CS101A'
@@ -99,6 +99,7 @@ class RecoveryTests(unittest.TestCase):
         self.assertIsNone(row['active'])
         self.assertIsNone(self.service.claim('worker'))
         self.db.jobs.update_one({'_id': self.sheet_id}, {'$set': {'next_run_at': now()}})
+        self.db.course_runs.update_many({'state': 'retry'}, {'$set': {'next_run_at': now()}})
         self.llm.evaluate_answer.side_effect = None
         self.service.process(self.service.claim('worker'), self.pdf, self.llm, 'worker')
         self.assertEqual(self.db.jobs.find_one()['state'], 'completed')
@@ -109,7 +110,7 @@ class RecoveryTests(unittest.TestCase):
         self.db.jobs.update_one({'_id': self.sheet_id}, {'$set': {'retry_count': 5}})
         self.llm.evaluate_answer.side_effect = TimeoutError('offline')
         self.service.process(self.service.claim('worker'), self.pdf, self.llm, 'worker')
-        self.assertEqual(self.db.jobs.find_one()['state'], 'error')
+        self.assertEqual(self.db.jobs.find_one()['state'], 'paused')
 
     def test_old_worker_cannot_publish_after_generation_changes(self):
         self.service.enqueue(self.sheet_id, 'admin')
@@ -185,6 +186,7 @@ class RecoveryTests(unittest.TestCase):
             self.service.process(self.service.claim('worker'), pdf, self.llm, 'worker')
             self.assertEqual(render.call_count, 2)
         self.db.jobs.update_one({'_id': self.sheet_id}, {'$set': {'next_run_at': now()}})
+        self.db.course_runs.update_many({'state': 'retry'}, {'$set': {'next_run_at': now()}})
         with patch.object(pdf, 'extract_text_from_pdf', side_effect=ValueError('scanned')), patch.object(pdf, 'page_count', return_value=2), patch.object(pdf, 'render_page', side_effect=lambda *args: Mock()) as render, patch.object(pdf, 'extract_text_from_images_via_gemini', return_value='complete page'):
             self.service.process(self.service.claim('worker'), pdf, self.llm, 'worker')
             self.assertEqual(render.call_count, 3)

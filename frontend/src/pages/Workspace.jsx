@@ -5,7 +5,11 @@ import ResultDetails from '../components/ResultDetails';
 import './Workspace.css';
 
 export function stageLabel(stage) {
-  const labels = { retry_wait: 'Temporary issue — automatic retry scheduled', needs_review: 'Source or marking scheme needs review', queued: 'Waiting for evaluation', starting: 'Starting evaluation', checking_cache: 'Checking saved work', grading: 'AI is marking the answer sheet', saving: 'Saving marks and feedback', completed: 'Evaluation complete', error: 'Failed — retry required', cancelled: 'Cancelled', ready: 'Ready to evaluate', extracting_answer_key: 'Reading the answer key', extracting_student: 'Reading the student answer sheet', extracting_question_paper: 'Reading the question paper' };
+  const courseStages = { waiting_for_course_marking_scheme: 'Waiting for the shared course marking scheme', validating_course_marking_scheme: 'Validating course marks before reading student sheets', course_marking_scheme_ready: 'Course marking scheme validated' };
+  if (courseStages[stage]) return courseStages[stage];
+  const gradingStages = { building_marking_scheme: 'Building the marking scheme', mapping_student_answers: 'Matching student answers to questions', marking_questions: 'Marking individual questions' };
+  if (gradingStages[stage]) return gradingStages[stage];
+  const labels = { paused: 'Paused — retry required', retry_wait: 'Temporary issue — automatic retry scheduled', needs_review: 'Source or marking scheme needs review', queued: 'Waiting for evaluation', starting: 'Starting evaluation', checking_cache: 'Checking saved work', grading: 'AI is marking the answer sheet', saving: 'Saving marks and feedback', completed: 'Evaluation complete', error: 'Failed — retry required', cancelled: 'Cancelled', ready: 'Ready to evaluate', extracting_answer_key: 'Reading the answer key', extracting_student: 'Reading the student answer sheet', extracting_question_paper: 'Reading the question paper' };
   const completedPage = (stage || '').match(/^extracted_(answer_key|student|question_paper)_page_(\d+)_of_(\d+)$/);
   if (completedPage) return `${{ answer_key: 'Answer key', student: 'Student answer sheet', question_paper: 'Question paper' }[completedPage[1]]}: ${completedPage[2]} of ${completedPage[3]} pages read`;
   const page = (stage || '').match(/^extracting_(answer_key|student|question_paper)_page_(\d+)_of_(\d+)$/);
@@ -124,7 +128,7 @@ export default function Workspace({ resultsOnly = false }) {
     anchor.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
   });
   useEffect(() => { setSelected([]); setTab('all'); setDetail(null); setHistory(null); setHistorySheet(null); }, [resultsOnly]);
-  const visible = sheets.filter(s => (!resultsOnly || !!s.active) && (!filter || s.exam_id === filter) && (!courseFilter || s.course_code === courseFilter) && (tab === 'all' || (tab === 'pending' ? s.active && !s.active.verified : tab === 'verified' ? s.active?.verified : tab === 'existing' ? !!s.active : ['error', 'needs_review'].includes(s.job?.state))));
+  const visible = sheets.filter(s => (!resultsOnly || !!s.active) && (!filter || s.exam_id === filter) && (!courseFilter || s.course_code === courseFilter) && (tab === 'all' || (tab === 'pending' ? s.active && !s.active.verified : tab === 'verified' ? s.active?.verified : tab === 'existing' ? !!s.active : ['error', 'paused', 'needs_review'].includes(s.job?.state))));
   const selectedSet = new Set(selected);
   const selectedRows = visible.filter(s => selectedSet.has(s._id));
   const canRun = selectedRows.length > 0 && selectedRows.every(s => allowed(s.course_code, 'uploaders'));
@@ -141,13 +145,13 @@ export default function Workspace({ resultsOnly = false }) {
   const selectedBusy = selectedRows.some(s => ['queued', 'processing', 'managing'].includes(s.job?.state));
   const deleteDescription = { cache: 'Clear cached OCR and AI responses for the selected sheets. Saved marks and history remain.', records: 'Delete all marks, verification and attempt history for the selected sheets. Cached work and sheet records remain.', both: 'Delete all marks, verification, history and cached work. Sheet records remain for evaluation.', sheet: 'Remove the selected sheet records, marks, verification, history and cached work.' }[scope];
   const canReview = selectedRows.length > 0 && selectedRows.every(s => allowed(s.course_code, 'reviewers') && s.active);
-  const counts = { ready: 0, queued: 0, processing: 0, review: 0, verified: 0, error: 0, cancelled: 0, needs_review: 0 };
+  const counts = { ready: 0, queued: 0, processing: 0, review: 0, verified: 0, error: 0, cancelled: 0, paused: 0, needs_review: 0 };
   visible.forEach(s => {
-    if (['queued', 'processing', 'error', 'cancelled', 'needs_review'].includes(s.job?.state)) counts[s.job.state]++;
+    if (['queued', 'processing', 'error', 'paused', 'cancelled', 'needs_review'].includes(s.job?.state)) counts[s.job.state]++;
     else if (s.active) counts[s.active.verified ? 'verified' : 'review']++;
     else counts.ready++;
   });
-  if (pageInfo?.counts) Object.assign(counts, { ready: 0, queued: 0, processing: 0, review: 0, verified: 0, error: 0, cancelled: 0, needs_review: 0 }, pageInfo.counts);
+  if (pageInfo?.counts) Object.assign(counts, { ready: 0, queued: 0, processing: 0, review: 0, verified: 0, error: 0, cancelled: 0, paused: 0, needs_review: 0 }, pageInfo.counts);
   const viewTotal = pageInfo?.total ?? visible.length;
   const successful = counts.review + counts.verified;
   const activity = (resultsOnly ? [] : visible).flatMap(sheet => {
@@ -187,8 +191,8 @@ export default function Workspace({ resultsOnly = false }) {
         })}>Save parallel limit</button>
         <span>Saved limit: {parallelism ?? '…'} / 5. Shared across all users. Lowering the limit lets current work finish.</span>
       </div>}
-      <div className="progress-cards">{Object.entries({ ready: 'Ready to evaluate', queued: 'Waiting in queue', processing: 'Evaluating now', review: 'Awaiting review', verified: 'Verified', error: 'Needs retry', cancelled: 'Cancelled', needs_review: 'Source needs review' }).map(([key, label]) => <div key={key}><strong>{counts[key]}</strong><span>{label}</span></div>)}</div>
-      <p>{counts.needs_review ? 'Some sheets need source or marking-scheme review. Check their current work messages below and correct the source before retrying.' : counts.processing ? 'Evaluation is running. See the current step for each student below.' : counts.queued ? (workerOnline ? 'Sheets are waiting for the processing worker.' : 'Saved jobs are waiting for the worker to reconnect. If this persists after connectivity returns, check the backend worker.') : counts.review ? 'Results are ready. Open Review results to inspect feedback and verify marks for export.' : counts.error ? `${counts.error} sheets failed. Nothing is running. Select failed sheets and click Evaluate / use existing to retry. AI request errors may require configuration changes before retrying.` : counts.ready ? 'Select ready sheets below, then click Evaluate / use existing.' : 'Upload a course folder, then select sheets to start evaluation.'}</p>
+      <div className="progress-cards">{Object.entries({ ready: 'Ready to evaluate', queued: 'Waiting in queue', processing: 'Evaluating now', review: 'Awaiting review', verified: 'Verified', error: 'Needs retry', paused: 'Paused — retry required', cancelled: 'Cancelled', needs_review: 'Source needs review' }).map(([key, label]) => <div key={key}><strong>{counts[key]}</strong><span>{label}</span></div>)}</div>
+      <p>{counts.needs_review ? 'Some sheets need source or marking-scheme review. Check their current work messages below and correct the source before retrying.' : counts.processing ? 'Evaluation is running. See the current step for each student below.' : counts.queued ? (workerOnline ? 'Sheets are waiting for the processing worker.' : 'Saved jobs are waiting for the worker to reconnect. If this persists after connectivity returns, check the backend worker.') : counts.review ? 'Results are ready. Open Review results to inspect feedback and verify marks for export.' : counts.paused ? 'Some sheets reached their retry budget or deadline. Saved progress is retained. Check their messages, then select them and click Evaluate / use existing to retry.' : counts.error ? `${counts.error} sheets failed. Nothing is running. Select failed sheets and click Evaluate / use existing to retry. AI request errors may require configuration changes before retrying.` : counts.ready ? 'Select ready sheets below, then click Evaluate / use existing.' : 'Upload a course folder, then select sheets to start evaluation.'}</p>
       <div className="overall-progress"><label htmlFor="evaluation-progress">Evaluation completion for this view: {successful} / {viewTotal} sheets successful</label>
         <progress id="evaluation-progress" max={viewTotal || 1} value={successful} />
         <p>{viewTotal ? Math.round(successful / viewTotal * 100) : 0}% successful · {counts.processing} running · {counts.queued} queued · {counts.error} failed · {counts.cancelled} cancelled</p>
@@ -197,7 +201,7 @@ export default function Workspace({ resultsOnly = false }) {
       {visible.filter(s => s.job?.state === 'processing').map(s => <article className="running-sheet" key={s._id}>
         <strong>{s.course_code} / {s.roll_number}</strong> {stopControl(s)}<p>{s.job.cancel_requested ? 'Stopping — waiting for the current request to return' : stageLabel(s.job.stage)}</p>
         <progress aria-label={`Progress for ${s.roll_number}`} max={s.job.progress?.total || 1} value={s.job.progress ? s.job.progress.completed : undefined} />
-        <p>{s.job.progress ? `${s.job.progress.completed} / ${s.job.progress.total} pages read in this document` : 'Working — this stage has no measurable percentage yet.'}</p>
+        <p>{s.job.progress ? `${s.job.progress.completed} / ${s.job.progress.total} ${s.job.progress.unit || 'pages'}${!s.job.progress.unit || s.job.progress.unit === 'pages' ? ' read in this document' : ' completed'}` : 'Working — this stage has no measurable percentage yet.'}</p>
         <small>{s.job.updated_at ? `Current stage started ${Math.max(0, Math.floor(((updated || new Date()) - new Date(s.job.updated_at)) / 1000))} seconds ago. ` : ''}Waiting for the worker or AI response; updates appear when the stage changes.</small>
       </article>)}
       <p><strong>Workflow:</strong> 1. Upload PDFs → 2. Evaluate → 3. Review and verify → 4. Export marks</p>

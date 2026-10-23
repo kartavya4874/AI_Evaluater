@@ -1,0 +1,8 @@
+........attempt=21132c7e2a4a41599cc871654aa90163 status=cancelled error_type=InterruptedError
+...attempt=5f1df5de449d4c82ba1ff8eecaefd6f7 status=queued error_type=LeaseLost
+..attempt=000ff6ccd80d4841abb48f27b5be19d7 status=error error_type=ModelOutputError
+..
+----------------------------------------------------------------------
+Ran 15 tests in 0.475s
+
+OK

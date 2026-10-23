@@ -106,6 +106,20 @@ test('deletion requires explicit confirmation and carries only selected IDs', as
 test('explains OCR page progress without inventing completion percentages', () => {
   expect(stageLabel('extracting_student_page_2_of_5')).toBe('Reading the student answer sheet — page 2 of 5');
   expect(stageLabel('grading')).toBe('AI is marking the answer sheet');
+  expect(stageLabel('building_marking_scheme')).toBe('Building the marking scheme');
+  expect(stageLabel('mapping_student_answers')).toBe('Matching student answers to questions');
+  expect(stageLabel('marking_questions')).toBe('Marking individual questions');
+  expect(stageLabel('waiting_for_course_marking_scheme')).toBe('Waiting for the shared course marking scheme');
+  expect(stageLabel('validating_course_marking_scheme')).toBe('Validating course marks before reading student sheets');
+});
+
+test('grading progress counts questions rather than displaying pages', async () => {
+  api.get.mockResolvedValue({ data: { sheets: [{ ...rows[1], job: { state: 'processing', stage: 'marking_questions',
+    progress: { completed: 2, total: 6, unit: 'questions' } } }], courses: [], worker_online: true } });
+  render(<Workspace />);
+  await screen.findByText('102');
+  expect(screen.getByText('2 / 6 questions completed')).toBeInTheDocument();
+  expect(screen.getByRole('progressbar', { name: 'Progress for 102' })).toHaveAttribute('value', '2');
 });
 
 test('administrator can save a parallel limit with a maximum of five', async () => {
@@ -199,4 +213,16 @@ test('skipped courses expose issues and a corrected-folder upload with original 
   expect(screen.getByLabelText(/Maximum marks/)).toHaveValue(50);
   expect(screen.getByRole('button', { name: 'Upload corrected folders' })).toBeInTheDocument();
   expect(screen.getByText(/Choose only the corrected course folders/)).toBeInTheDocument();
+});
+
+
+test('paused sheets show explicit retry guidance and cannot be stopped', async () => {
+  api.get.mockResolvedValue({ data: { sheets: [{ ...rows[1], job: { state: 'paused', stage: 'paused', error: 'Retry budget reached' } }], courses: [], worker_online: true } });
+  render(<Workspace />);
+  await screen.findByText('102');
+  expect(screen.getAllByText('Paused — retry required').length).toBeGreaterThan(0);
+  expect(screen.getByText(/Some sheets reached their retry budget/)).toBeInTheDocument();
+  expect(screen.queryByRole('button', { name: 'Stop 102' })).not.toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: 'Failed — retry' }));
+  expect(screen.getByText('102')).toBeInTheDocument();
 });

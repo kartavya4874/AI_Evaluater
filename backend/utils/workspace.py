@@ -14,14 +14,18 @@ from contextlib import contextmanager
 
 from pymongo import ReturnDocument
 from utils.result_validation import validate_result, ReviewRequired
+from utils.run_policy import RunPaused, remaining_budget, run_deadline, PIPELINE_REVISION
+from config import Config
 
 VERSION = 'grading-v3'
 ACTIVE = ['queued', 'processing']
-MAX_RETRIES = 5
+MAX_RETRIES = Config.EVALUATION_MAX_RETRIES
 LEASE_SECONDS = 90
 logger = logging.getLogger(__name__)
 # Bounded striped locks coalesce shared document work inside the coordinator.
 CACHE_LOCKS = [threading.RLock() for _ in range(128)]
+STRUCTURED_CACHE_LOCKS = [threading.RLock() for _ in range(128)]
+COURSE_MARKING_LOCKS = [threading.RLock() for _ in range(128)]
 
 
 def now():
@@ -39,6 +43,18 @@ def file_hash(path):
         for chunk in iter(lambda: source.read(1024 * 1024), b''):
             h.update(chunk)
     return h.hexdigest()
+
+
+def course_question_paper(sheet, marking_scheme):
+    path = (marking_scheme or {}).get('question_path') or sheet.get('question_path')
+    if not path:
+        # Compatibility for sheets prepared before paper paths were retained.
+        import re
+        candidates = [p for p in Path(sheet['model_path']).parent.glob('*.pdf')
+                      if re.fullmatch(r'(?:[a-z0-9][a-z0-9_ -]*?[_ -]?)?question[_\s]?paper', p.stem.lower())]
+        if len(candidates) == 1:
+            path = str(candidates[0])
+    return path if path and Path(path).is_file() else None
 
 
 def safe_path(root, relative):
@@ -82,6 +98,16 @@ class Workspace:
 
     def audit(self, actor, action, **details):
         self.db.audit.insert_one({'actor': actor, 'action': action, 'at': now(), **details})
+
+    def course_context(self, sheet):
+        from utils.marking_schemes import scheme_id
+        scheme = self.db.marking_schemes.find_one({'_id': scheme_id(sheet['course_code'], sheet['exam_type'])})
+        paper = course_question_paper(sheet, scheme)
+        paper_hash = file_hash(paper) if paper else None
+        key = digest([PIPELINE_REVISION, 'course-marking-preflight-v1', sheet['exam_id'], sheet['course_code'],
+            sheet['exam_type'], sheet['max_marks'], sheet['config']['key'], sheet['config']['model'],
+            sheet['config']['prompt'], sheet.get('cache_generation'), paper_hash, scheme.get('revision') if scheme else None])
+        return key, scheme, paper, paper_hash
 
     def prepare(self, directory, exam_id, exam_type, max_marks, actor, issues=None):
         from utils.course_processor import CourseProcessor
@@ -146,6 +172,11 @@ class Workspace:
         existing = self.db.jobs.find_one({'_id': sheet_id})
         if existing and existing['state'] in ACTIVE + ['managing']:
             return existing
+        if existing and existing['state'] in ('paused', 'error', 'cancelled'):
+            key, _, _, _ = self.course_context(sheet)
+            self.db.course_runs.update_one({'_id': key, 'state': 'paused'}, {'$set': {
+                'state': 'retry', 'retry_count': 0, 'next_run_at': now(), 'updated_at': now(),
+                'deadline_at': now() + timedelta(seconds=Config.EVALUATION_RUN_TIMEOUT_SECONDS)}})
         active = self.db.attempts.find_one({'_id': sheet.get('active_attempt')})
         if active and active.get('config') == sheet['config'] and active.get('status') == 'completed' and not force:
             return {'_id': sheet_id, 'state': 'reused'}
@@ -153,10 +184,12 @@ class Workspace:
         if request_id and self.db.attempts.find_one({'_id': attempt_id}):
             return {'_id': sheet_id, 'state': 'reused'}
         job = {'state': 'queued', 'stage': 'queued', 'attempt_id': attempt_id,
-               'actor': actor, 'force': force, 'cancel_requested': False,
+               'actor': actor, 'force': force, 'fresh_mapping': bool(existing and existing['state'] in ('needs_review', 'error', 'paused')), 'cancel_requested': False,
                'sheet_snapshot': sheet,
                'created_at': now(), 'updated_at': now(), 'error': None, 'progress': None, 'retry_count': 0, 'next_run_at': now(),
                'events': [{'stage': 'queued', 'at': now()}]}
+        job.update(run_started_at=now(), deadline_at=now() + timedelta(seconds=Config.EVALUATION_RUN_TIMEOUT_SECONDS),
+                   pipeline_revision=PIPELINE_REVISION)
         if existing:
             changed = self.db.jobs.update_one({'_id': sheet_id, 'state': existing['state'],
                                                'attempt_id': existing['attempt_id']}, {'$set': job})
@@ -181,7 +214,8 @@ class Workspace:
         attempts_by_sheet = {}
         for attempt in self.db.attempts.find(attempt_query, {'ocr': 0, 'file_path': 0, 'model_path': 0}).sort('created_at', -1):
             attempts_by_sheet.setdefault(attempt['sheet_id'], []).append(attempt)
-        jobs = {j['_id']: j for j in self.db.jobs.find({'_id': {'$in': ids}}, {'sheet_snapshot': 0})} if include_jobs else {}
+        jobs = {j['_id']: j for j in self.db.jobs.find({'_id': {'$in': ids}}, {
+            'sheet_snapshot': 0, 'marking_scheme_snapshot': 0, 'paper_path_snapshot': 0, 'paper_hash_snapshot': 0})} if include_jobs else {}
         output = []
         for sheet in sheets:
             attempts = attempts_by_sheet.get(sheet['_id'], [])
@@ -198,6 +232,8 @@ class Workspace:
         self.db.sheets.update_many({'execution.owner': owner, 'execution.state': 'processing',
                                    'execution.expires': {'$gt': now()}},
                                   {'$set': {'execution.expires': now() + timedelta(seconds=LEASE_SECONDS)}})
+        self.db.course_runs.update_many({'owner': owner, 'state': 'preparing', 'expires': {'$gt': now()}},
+            {'$set': {'expires': now() + timedelta(seconds=LEASE_SECONDS)}})
 
     def page(self, query, page=1, size=50, view='all', results_only=False):
         pipeline = [{'$match': query},
@@ -218,13 +254,13 @@ class Workspace:
         elif view == 'verified':
             pipeline.append({'$match': {'_active.verified': True}})
         elif view == 'failed':
-            pipeline.append({'$match': {'_job.state': {'$in': ['error', 'needs_review']}}})
+            pipeline.append({'$match': {'_job.state': {'$in': ['error', 'paused', 'needs_review']}}})
         elif view == 'needs_review':
             pipeline.append({'$match': {'_job.state': 'needs_review'}})
         if results_only and view in ('pending', 'verified'):
             pipeline.append({'$match': {'_job.state': {'$ne': 'needs_review'}}})
         pipeline.extend([{'$addFields': {'_state': {'$cond': [
-            {'$in': ['$_job.state', ['needs_review'] if results_only else ['queued', 'processing', 'error', 'cancelled', 'needs_review']]}, '$_job.state',
+            {'$in': ['$_job.state', ['needs_review'] if results_only else ['queued', 'processing', 'error', 'paused', 'cancelled', 'needs_review']]}, '$_job.state',
             {'$cond': ['$_valid', {'$cond': ['$_active.verified', 'verified', 'review']}, 'ready']}]}}},
             {'$facet': {
                 'rows': [{'$sort': {'created_at': -1, '_id': 1}}, {'$skip': (page - 1) * size}, {'$limit': size}, {'$project': {'_id': 1}}],
@@ -319,26 +355,86 @@ class Workspace:
             self.audit(actor, 'manage', sheet_ids=ids, scope=action)
 
     def claim(self, owner):
+        expired = list(self.db.jobs.find({'state': 'queued', 'deadline_at': {'$lte': now()}}, {'_id': 1, 'attempt_id': 1}))
+        for item in expired:
+            paused = self.db.jobs.update_one({'_id': item['_id'], 'attempt_id': item['attempt_id'], 'state': 'queued'},
+                {'$set': {'state': 'paused', 'stage': 'paused', 'error': 'Run deadline reached while queued. Saved work retained; explicitly retry.', 'updated_at': now()}})
+            if paused.modified_count:
+                self.db.attempts.update_one({'_id': item['attempt_id'], 'status': 'processing'}, {'$set': {
+                    'status': 'paused', 'finished_at': now(), 'error': {'type': 'RunPaused',
+                    'message': 'Run deadline reached while queued. Saved work retained; explicitly retry.'}}})
         self.db.jobs.update_many({'state': 'managing', 'reservation_expires': {'$lt': now()}}, {'$set': {
             'state': 'error', 'stage': 'error', 'error': 'Management operation interrupted; inspect records before retrying'}})
         eligible = {'state': 'queued', '$or': [
             {'next_run_at': {'$exists': False}}, {'next_run_at': {'$lte': now()}}]}
-        courses = self.db.jobs.distinct('sheet_snapshot.course_code', eligible)
-        if courses:
-            course = min(courses, key=lambda code: (self.last_served.get(code, 0), code))
-            eligible['sheet_snapshot.course_code'] = course
-            self.last_served[course] = time.monotonic()
-        job = self.db.jobs.find_one_and_update(eligible, {'$set': {
-            'state': 'processing', 'stage': 'starting', 'error': None, 'owner': owner, 'token': uuid.uuid4().hex, 'claimed_at': now(), 'updated_at': now()},
-            '$push': {'events': {'$each': [{'stage': 'starting', 'at': now()}], '$slice': -100}}},
-            sort=[('created_at', 1)], return_document=ReturnDocument.AFTER)
+        courses = sorted(self.db.jobs.distinct('sheet_snapshot.course_code', eligible),
+                         key=lambda code: (self.last_served.get(code, 0), code))
+        job = None
+        from pymongo.errors import DuplicateKeyError
+        for course in courses:
+            seen = set()
+            for candidate in self.db.jobs.find({**eligible, 'sheet_snapshot.course_code': course}).sort('created_at', 1):
+                key, scheme, paper, paper_hash = self.course_context(candidate['sheet_snapshot'])
+                if key in seen:
+                    continue
+                seen.add(key)
+                context = self.db.course_runs.find_one({'_id': key})
+                if context and context['state'] == 'preparing' and context['expires'] > now():
+                    self.db.jobs.update_one({'_id': candidate['_id'], 'state': 'queued'},
+                        {'$set': {'stage': 'waiting_for_course_marking_scheme'}})
+                    continue
+                if context and (context.get('state') == 'paused' or context.get('deadline_at', now() + timedelta(seconds=1)) <= now() and context['state'] not in ('ready', 'blocked')):
+                    self.db.jobs.update_one({'_id': candidate['_id'], 'state': 'queued'}, {'$set': {
+                        'state': 'paused', 'stage': 'paused', 'error': context.get('error') or 'Course preparation deadline reached. Saved work retained; explicitly retry.'}})
+                    self.db.course_runs.update_one({'_id': key, 'state': {'$nin': ['ready', 'blocked']}}, {'$set': {'state': 'paused'}})
+                    continue
+                if context and context.get('state') == 'retry' and context.get('next_run_at', now()) > now():
+                    continue
+                token = uuid.uuid4().hex
+                preparing = not context or context['state'] not in ('ready', 'blocked')
+                if preparing:
+                    changes = {'state': 'preparing', 'owner': owner, 'token': token,
+                               'expires': now() + timedelta(seconds=LEASE_SECONDS), 'updated_at': now()}
+                    if context:
+                        claimed = self.db.course_runs.update_one({'_id': key, 'state': context['state'],
+                            'token': context.get('token')}, {'$set': changes})
+                        if not claimed.modified_count:
+                            continue
+                    else:
+                        try:
+                            self.db.course_runs.insert_one({'_id': key, **changes, 'retry_count': 0,
+                                'deadline_at': run_deadline(candidate), 'course_code': course,
+                                'exam_id': candidate['sheet_snapshot']['exam_id'], 'exam_type': candidate['sheet_snapshot']['exam_type']})
+                        except DuplicateKeyError:
+                            continue
+                job = self.db.jobs.find_one_and_update({'_id': candidate['_id'], 'state': 'queued', 'attempt_id': candidate['attempt_id']}, {'$set': {
+                    'state': 'processing', 'stage': 'starting', 'error': None, 'owner': owner, 'token': token,
+                    'course_run_key': key, 'marking_scheme_snapshot': scheme, 'paper_path_snapshot': paper,
+                    'paper_hash_snapshot': paper_hash, 'claimed_at': now(), 'updated_at': now()},
+                    '$push': {'events': {'$each': [{'stage': 'starting', 'at': now()}], '$slice': -100}}}, return_document=ReturnDocument.AFTER)
+                if job:
+                    self.last_served[course] = time.monotonic()
+                    break
+                if preparing:
+                    self.db.course_runs.update_one({'_id': key, 'token': token, 'state': 'preparing'}, {'$set': {'state': 'retry'}})
+            if job:
+                break
         if job:
+            # Migrate existing queued jobs without resetting their original age.
+            deadline = run_deadline(job)
+            course_run = self.db.course_runs.find_one({'_id': job['course_run_key']})
+            if course_run and course_run['state'] == 'preparing':
+                deadline = min(deadline, course_run.get('deadline_at', deadline))
+            self.db.jobs.update_one({'_id': job['_id'], 'token': job['token']},
+                {'$set': {'deadline_at': deadline, 'run_started_at': job.get('run_started_at') or job.get('created_at') or now()}})
+            job['deadline_at'] = deadline
             changed = self.db.sheets.update_one({'_id': job['_id'], 'config': job['sheet_snapshot']['config']}, {'$set': {
                 'execution': {'token': job['token'], 'owner': owner, 'state': 'processing',
                               'cancel_requested': False, 'expires': now() + timedelta(seconds=LEASE_SECONDS)}}})
             if not changed.matched_count:
                 self.db.jobs.update_one({'_id': job['_id'], 'token': job['token']}, {'$set': {
                     'state': 'error', 'stage': 'error', 'error': 'Inputs changed; prepare and evaluate again'}})
+                self.db.course_runs.update_one({'_id': job['course_run_key'], 'token': job['token'], 'state': 'preparing'}, {'$set': {'state': 'retry', 'next_run_at': now()}})
                 return None
             self.db.attempts.update_one({'_id': job['attempt_id'], 'status': {'$ne': 'completed'}},
                 {'$set': {'status': 'processing', 'token': job['token']}})
@@ -376,6 +472,8 @@ class Workspace:
                 'state': 'error', 'error': str(exc)[:500], 'updated_at': now()}})
 
     def recover_interrupted(self, owner):
+        self.db.course_runs.update_many({'state': 'preparing', 'owner': {'$ne': owner}}, {'$set': {
+            'state': 'retry', 'next_run_at': now(), 'updated_at': now()}})
         # Repair only the known old lease-loss cancellation; never revive an
         # explicitly cancelled job or a source/marking error.
         self.db.jobs.update_many({'state': 'cancelled', 'cancel_requested': {'$ne': True},
@@ -400,6 +498,8 @@ class Workspace:
             elif attempt and attempt.get('status') == 'completed':
                 self.publish({**job, 'token': token}, sheet, owner)
                 state, message = 'completed', None
+            elif retries > Config.EVALUATION_MAX_RETRIES or now() >= run_deadline(job):
+                state, message = 'paused', 'Recovery budget or deadline reached. Saved work retained; explicitly retry.'
             else:
                 state, message = 'queued', 'Worker interrupted; resuming saved work automatically'
                 self.db.attempts.update_one({'_id': job['attempt_id']}, {'$set': {'status': 'processing'}})
@@ -410,7 +510,7 @@ class Workspace:
                 '$push': {'events': {'$each': [{'stage': state, 'at': now(), 'message': message}], '$slice': -100}}})
             if state != 'completed':
                 self.db.sheets.update_one({'_id': sheet['_id'], 'execution.token': token}, {'$set': {'execution.state': state}})
-            if state in ('error', 'cancelled'):
+            if state in ('error', 'paused', 'cancelled'):
                 self.db.attempts.update_one({'_id': job['attempt_id'], 'status': {'$ne': 'completed'}},
                     {'$set': {'status': state, 'marks': None, 'percentage': None, 'grade': None,
                               'error': {'type': 'WORKER_INTERRUPTED', 'message': message}, 'finished_at': now()}})
@@ -428,11 +528,10 @@ class Workspace:
                    'created_at': now(), 'marks': None, 'percentage': None, 'grade': None,
                    'actor': job['actor'], 'token': job['token'], 'config': sheet['config'], 'file_path': sheet['file_path'],
                    'model_path': sheet['model_path']}
+        attempt.update(pipeline_revision=PIPELINE_REVISION, deadline_at=run_deadline(job))
         self.db.attempts.update_one({'_id': attempt_id}, {'$setOnInsert': attempt}, upsert=True)
 
         def check_cancelled():
-            if now() - job.get('claimed_at', now()) > timedelta(hours=24):
-                raise ReviewRequired('This attempt exceeded its 24-hour processing window; inspect and retry')
             lease = self.db.worker_leases.find_one({'_id': 'inference'})
             if lease and (lease['owner'] != owner or lease['expires'] <= now()):
                 raise LeaseLost('Worker connection/lease interrupted; saved work will resume automatically')
@@ -440,8 +539,11 @@ class Workspace:
             if (not current or current.get('owner') != owner or current.get('cancel_requested')
                     or current.get('state') != 'processing' or current.get('attempt_id') != attempt_id):
                 raise InterruptedError('Evaluation cancelled')
+            remaining_budget(job)
 
         llm.check_cancelled = check_cancelled
+        llm.request_context = f'sheet={sheet["_id"]} attempt={attempt_id}'
+        llm.remaining_budget = lambda: remaining_budget(job)
 
         def stage(name, progress=None):
             check_cancelled()
@@ -525,47 +627,87 @@ class Workspace:
             if (file_hash(sheet['file_path']) != sheet['config']['content_hash']
                     or file_hash(sheet['model_path']) != sheet['config']['key']):
                 raise ValueError('Source files changed after preparation; upload and prepare again')
-            from utils.marking_schemes import scheme_id
-            marking_scheme = self.db.marking_schemes.find_one({'_id': scheme_id(sheet['course_code'], sheet['exam_type'])})
-            grade_key = digest([sheet['_id'], 'grade-marking-fallback-v1', sheet.get('cache_generation'), sheet['config'],
-                                marking_scheme.get('revision') if marking_scheme else None])
+            if job.get('course_run_key'):
+                rubric_key, marking_scheme, paper_path = job['course_run_key'], job.get('marking_scheme_snapshot'), job.get('paper_path_snapshot')
+                if paper_path and file_hash(paper_path) != job.get('paper_hash_snapshot'):
+                    raise ValueError('Question paper changed during this run; prepare and retry explicitly')
+            else:
+                rubric_key, marking_scheme, paper_path, _ = self.course_context(sheet)
+            grade_key = digest([sheet['_id'], 'grade-preflight-v1', sheet['config'], rubric_key])
             cached = None if job['force'] else cache_read(grade_key)
             if cached:
                 metrics['result_cache_hit'] = True
                 result = validate_result(cached['result'], sheet['max_marks'])
             else:
                 extraction_started = time.monotonic()
-                model_text = extract(sheet['model_path'], 'answer_key')
-                student_text = extract(sheet['file_path'], 'student')
-                metrics['extraction_seconds'] = round(time.monotonic() - extraction_started, 3)
-                stage('grading')
-                grading_started = time.monotonic()
                 def structured_cache(prompt, value=None):
                     check_cancelled()
-                    cache_id = digest(['structured-v1', sheet.get('cache_generation'), sheet['exam_id'], sheet['course_code'], sheet['config']['model'], prompt])
+                    cache_id = digest([PIPELINE_REVISION, 'structured-v1', sheet.get('cache_generation'), sheet['exam_id'], sheet['course_code'], sheet['config']['model'], prompt])
                     if value is None:
                         # Force fresh scores, retaining reusable OCR and mapping.
-                        if job.get('force') and prompt.startswith('Grade ONLY question '):
+                        if (job.get('force') and prompt.startswith('Grade ONLY question ')) or (job.get('fresh_mapping') and prompt.startswith('Assign ALL text')):
                             return None
                         saved = cache_read(cache_id)
                         return saved.get('json') if saved else None
                     cache_write(cache_id, {'json': value})
+                @contextmanager
+                def structured_cache_lock(prompt):
+                    identity = digest([sheet.get('cache_generation'), sheet['exam_id'], sheet['course_code'],
+                                       sheet['config']['model'], prompt])
+                    lock = STRUCTURED_CACHE_LOCKS[int(identity[:8], 16) % len(STRUCTURED_CACHE_LOCKS)]
+                    # Only one coordinator owns jobs. Coalesce an in-flight
+                    # shared prompt and recheck its durable cache after waiting.
+                    while not lock.acquire(timeout=1):
+                        check_cancelled()
+                    try:
+                        check_cancelled()
+                        yield
+                    finally:
+                        lock.release()
                 llm.structured_cache = structured_cache
+                llm.structured_cache_lock = structured_cache_lock
+                llm.report_stage = stage
                 llm.marking_scheme = marking_scheme if marking_scheme and marking_scheme.get('questions') else None
                 def load_question_paper():
-                    path = (marking_scheme or {}).get('question_path') or sheet.get('question_path')
-                    if not path:
-                        # Older prepared sheets did not retain the paper path.
-                        # Search only their own course folder, never another course.
-                        import re
-                        candidates = [p for p in Path(sheet['model_path']).parent.glob('*.pdf')
-                                      if re.fullmatch(r'(?:[a-z0-9][a-z0-9_ -]*?[_ -]?)?question[_\s]?paper', p.stem.lower())]
-                        if len(candidates) == 1:
-                            path = str(candidates[0])
-                    if not path or not Path(path).is_file():
-                        return None
-                    return extract(path, 'question_paper')
+                    return extract(paper_path, 'question_paper') if paper_path else None
                 llm.question_paper_loader = load_question_paper
+                stage('waiting_for_course_marking_scheme')
+                lock = COURSE_MARKING_LOCKS[int(rubric_key[:8], 16) % len(COURSE_MARKING_LOCKS)]
+                while not lock.acquire(timeout=1):
+                    check_cancelled()
+                try:
+                    check_cancelled()
+                    course_run = self.db.course_runs.find_one({'_id': rubric_key})
+                    if course_run and course_run['state'] == 'blocked':
+                        raise ReviewRequired(course_run['error'])
+                    prepared = {'rubric': course_run['rubric'], 'model_text': course_run['model_text']} if course_run and course_run['state'] == 'ready' else None
+                    if not prepared:
+                        stage('validating_course_marking_scheme')
+                        model_text = extract(sheet['model_path'], 'answer_key')
+                        from utils.structured_grading import NeedsReview
+                        try:
+                            rubric = llm.prepare_marking_scheme(model_text, sheet['max_marks'])
+                        except NeedsReview as exc:
+                            self.db.course_runs.update_one({'_id': rubric_key, 'token': job['token'], 'state': 'preparing'},
+                                {'$set': {'state': 'blocked', 'error': str(exc)[:500], 'updated_at': now()}})
+                            raise
+                        prepared = {'rubric': rubric, 'model_text': model_text}
+                        saved_course = self.db.course_runs.update_one({'_id': rubric_key, 'token': job['token'], 'state': 'preparing'},
+                            {'$set': {**prepared, 'state': 'ready', 'updated_at': now()}})
+                        if not saved_course.matched_count:
+                            raise LeaseLost('Course preparation ownership changed; saved work will resume safely')
+                    if course_run and course_run['state'] == 'ready':
+                        metrics['cache_hits'] += 1
+                    llm.prepared_rubric = prepared['rubric']
+                    model_text = prepared['model_text']
+                finally:
+                    lock.release()
+                stage('course_marking_scheme_ready')
+                # No student PDF is read until the course prerequisites pass.
+                student_text = extract(sheet['file_path'], 'student')
+                metrics['extraction_seconds'] = round(time.monotonic() - extraction_started, 3)
+                stage('grading')
+                grading_started = time.monotonic()
                 result = validate_result(llm.evaluate_answer(student_text, model_text, sheet['max_marks'],
                                          question=None, exam_type=sheet['exam_type']), sheet['max_marks'])
                 metrics['grading_seconds'] = round(time.monotonic() - grading_started, 3)
@@ -590,13 +732,29 @@ class Workspace:
                 # Keep the valid result and processing job for startup reconciliation.
                 raise
             retries = job.get('retry_count', 0) + 1
-            infrastructure = isinstance(exc, (requests.exceptions.ConnectionError, requests.exceptions.Timeout, PyMongoError, LeaseLost))
             retryable = isinstance(exc, (requests.exceptions.ConnectionError, requests.exceptions.Timeout, TimeoutError, PyMongoError))
             current_job = self.db.jobs.find_one({'_id': sheet['_id'], 'attempt_id': attempt_id})
             if current_job and current_job.get('cancel_requested'):
                 exc = InterruptedError('Evaluation cancelled')
                 retryable = False
-            status = 'queued' if retryable and (infrastructure or retries <= MAX_RETRIES) else ('cancelled' if isinstance(exc, InterruptedError) else 'needs_review' if isinstance(exc, ReviewRequired) else 'error')
+            exhausted = retryable and (retries > Config.EVALUATION_MAX_RETRIES or now() >= run_deadline(job))
+            if isinstance(exc, RunPaused) or exhausted:
+                status = 'paused'
+                if exhausted:
+                    exc = RunPaused(f'Retry budget or run deadline reached: {str(exc)[:250]}. Saved work retained; explicitly retry after checking the dependency.')
+            else:
+                status = 'queued' if retryable else ('cancelled' if isinstance(exc, InterruptedError) else 'needs_review' if isinstance(exc, ReviewRequired) else 'error')
+            course_key = job.get('course_run_key')
+            if course_key:
+                course_run = self.db.course_runs.find_one({'_id': course_key, 'token': job['token'], 'state': 'preparing'})
+                if course_run:
+                    course_retries = course_run.get('retry_count', 0) + 1
+                    course_status = 'retry' if status in ('queued', 'cancelled') else 'blocked' if status == 'needs_review' else 'paused'
+                    if course_retries > Config.EVALUATION_MAX_RETRIES or now() >= course_run.get('deadline_at', run_deadline(job)):
+                        course_status = 'paused'
+                    self.db.course_runs.update_one({'_id': course_key, 'token': job['token'], 'state': 'preparing'}, {'$set': {
+                        'state': course_status, 'retry_count': course_retries, 'error': str(exc)[:500],
+                        'next_run_at': now() + timedelta(seconds=min(300, 5 * 2 ** min(course_retries, 6))), 'updated_at': now()}})
             logger.warning('attempt=%s status=%s error_type=%s', attempt_id, status, type(exc).__name__)
             self.db.attempts.update_one({'_id': attempt_id, 'status': 'processing', 'token': job['token']}, {'$set': {
                 'status': 'processing' if status == 'queued' else status, 'error': {'type': type(exc).__name__, 'message': str(exc)[:500]}, 'finished_at': now()}})

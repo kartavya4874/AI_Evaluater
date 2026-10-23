@@ -29,6 +29,7 @@ class WorkspaceTests(unittest.TestCase):
         self.pdf = Mock()
         self.pdf.extract_text_from_pdf.return_value = 'Extracted complete text'
         self.llm = Mock()
+        self.llm.prepare_marking_scheme.return_value = {'questions': []}
         self.llm.evaluate_answer.return_value = grade()
 
     def process(self, force=False):
